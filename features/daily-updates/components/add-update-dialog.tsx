@@ -57,11 +57,13 @@ export function AddUpdateDialog({ projectId }: AddUpdateDialogProps) {
 
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
-            <DialogTrigger render={<Button />}>
+            <DialogTrigger render={<Button className="cursor-pointer" />}>
                 Log Update
             </DialogTrigger>
 
-            <DialogContent className="sm:max-w-[425px]">
+            <DialogContent className="sm:max-w-[550px] p-8">
+                {/* Visually hidden button to catch Base UI's auto-focus and prevent the orange ring */}
+                <button type="button" className="sr-only" />
                 <DialogHeader>
                     <DialogTitle>Log Daily Update</DialogTitle>
                     <DialogDescription>
@@ -75,7 +77,7 @@ export function AddUpdateDialog({ projectId }: AddUpdateDialogProps) {
                         <Textarea
                             id="content"
                             placeholder="e.g. Added a new feature to the landing page..."
-                            className="min-h-[120px]"
+                            className="h-[250px] resize-none overflow-y-auto"
                             {...form.register("content")}
                         />
                         {form.formState.errors.content && (
@@ -86,10 +88,10 @@ export function AddUpdateDialog({ projectId }: AddUpdateDialogProps) {
                     </div>
 
                     <div className="pt-4 flex justify-end gap-2">
-                        <Button type="button" variant="outline" onClick={() => setIsOpen(false)}>
+                        <Button type="button" variant="outline" className="cursor-pointer" onClick={() => setIsOpen(false)}>
                             Cancel
                         </Button>
-                        <Button type="submit" disabled={form.formState.isSubmitting}>
+                        <Button type="submit" className="cursor-pointer" disabled={form.formState.isSubmitting}>
                             {form.formState.isSubmitting ? "Logging..." : "Log Update"}
                         </Button>
                     </div>

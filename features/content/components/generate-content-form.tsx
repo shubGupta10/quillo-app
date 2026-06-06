@@ -16,6 +16,13 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog"
 import { generateContentSchema, GenerateContentInput } from "../schemas/content.schema"
 import { generateContent } from "../actions/generate-content"
 import { IDailyUpdate } from "@/features/daily-updates/models/dailyUpdate.interface"
@@ -29,6 +36,7 @@ interface GenerateContentFormProps {
 export function GenerateContentForm({ projectId, updates }: GenerateContentFormProps) {
     const router = useRouter();
     const [isGenerating, setIsGenerating] = useState(false);
+    const [isUpdatesModalOpen, setIsUpdatesModalOpen] = useState(false);
 
     const form = useForm<GenerateContentInput>({
         resolver: zodResolver(generateContentSchema),
@@ -48,13 +56,11 @@ export function GenerateContentForm({ projectId, updates }: GenerateContentFormP
         try {
             const result = await generateContent(data);
             if (result.success && result.data) {
-                // Save variations and form metadata to sessionStorage
                 sessionStorage.setItem(`draftContent_${projectId}`, JSON.stringify({
                     variations: result.data,
                     metadata: data
                 }));
                 toast.success("Content generated successfully", { id: toastId });
-                // Redirect to review page
                 router.push(`/projects/${projectId}/review`);
             } else {
                 console.error(result.message || result.error);
@@ -85,10 +91,10 @@ export function GenerateContentForm({ projectId, updates }: GenerateContentFormP
             <div className="space-y-4">
                 <h3 className="text-lg font-semibold tracking-tight">1. Select Updates to Include</h3>
                 <div className="space-y-3">
-                    {updates.map((update) => (
-                        <div key={update._id} className="flex items-start space-x-3 p-3 border rounded-md">
+                    {updates.slice(0, 3).map((update) => (
+                        <div key={update._id} className="flex items-start space-x-3 p-3 border rounded-md hover:bg-muted/50 transition-colors">
                             <Checkbox 
-                                id={update._id} 
+                                id={`inline-${update._id}`} 
                                 checked={form.watch("sourceUpdates").includes(update._id)}
                                 onCheckedChange={(checked) => {
                                     const current = form.watch("sourceUpdates");
@@ -99,10 +105,10 @@ export function GenerateContentForm({ projectId, updates }: GenerateContentFormP
                                     }
                                 }}
                             />
-                            <div className="grid gap-1.5 leading-none">
+                            <div className="grid gap-1.5 leading-none flex-1">
                                 <label
-                                    htmlFor={update._id}
-                                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+                                    htmlFor={`inline-${update._id}`}
+                                    className="text-sm font-medium leading-none cursor-pointer"
                                 >
                                     {new Date(update.createdAt).toLocaleDateString()}
                                 </label>
@@ -112,6 +118,54 @@ export function GenerateContentForm({ projectId, updates }: GenerateContentFormP
                             </div>
                         </div>
                     ))}
+
+                    {updates.length > 3 && (
+                        <Dialog open={isUpdatesModalOpen} onOpenChange={setIsUpdatesModalOpen}>
+                            <DialogTrigger render={<Button variant="link" className="px-0 text-primary cursor-pointer hover:underline" />}>
+                                View all {updates.length} updates
+                            </DialogTrigger>
+                            <DialogContent className="sm:max-w-[650px] max-h-[85vh] overflow-y-auto p-8">
+                                <button type="button" className="sr-only" />
+                                <DialogHeader>
+                                    <DialogTitle className="text-xl">Select Updates</DialogTitle>
+                                </DialogHeader>
+                                <div className="space-y-3 mt-4">
+                                    {updates.map((update) => (
+                                        <div key={update._id} className="flex items-start space-x-3 p-4 border rounded-md hover:bg-muted/50 transition-colors">
+                                            <Checkbox 
+                                                id={`modal-${update._id}`} 
+                                                checked={form.watch("sourceUpdates").includes(update._id)}
+                                                onCheckedChange={(checked) => {
+                                                    const current = form.watch("sourceUpdates");
+                                                    if (checked) {
+                                                        form.setValue("sourceUpdates", [...current, update._id]);
+                                                    } else {
+                                                        form.setValue("sourceUpdates", current.filter(id => id !== update._id));
+                                                    }
+                                                }}
+                                            />
+                                            <div className="grid gap-1.5 leading-none flex-1">
+                                                <label
+                                                    htmlFor={`modal-${update._id}`}
+                                                    className="text-sm font-medium leading-none cursor-pointer"
+                                                >
+                                                    {new Date(update.createdAt).toLocaleDateString()}
+                                                </label>
+                                                <p className="text-sm text-muted-foreground leading-relaxed mt-1">
+                                                    {update.content}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                                <div className="pt-6 border-t mt-4 flex justify-end">
+                                    <Button type="button" className="cursor-pointer" onClick={() => setIsUpdatesModalOpen(false)}>
+                                        Done
+                                    </Button>
+                                </div>
+                            </DialogContent>
+                        </Dialog>
+                    )}
                 </div>
                 {form.formState.errors.sourceUpdates && (
                     <p className="text-sm text-destructive">

@@ -38,7 +38,7 @@ export function ProjectHeaderActions({ project }: ProjectHeaderActionsProps) {
     return (
         <div className="flex items-center gap-2">
             <EditProjectDialog project={project}>
-                <Button variant="outline" size="sm" className="h-9">
+                <Button variant="outline" size="sm" className="h-9 cursor-pointer">
                     <Edit2 className="w-4 h-4 mr-2" />
                     Edit
                 </Button>
@@ -49,7 +49,7 @@ export function ProjectHeaderActions({ project }: ProjectHeaderActionsProps) {
                     <Button 
                         variant="outline" 
                         size="sm" 
-                        className="h-9 text-destructive hover:bg-destructive/10 hover:text-destructive border-destructive/20"
+                        className="h-9 text-destructive hover:bg-destructive/10 hover:text-destructive border-destructive/20 cursor-pointer"
                     >
                         <Trash2 className="w-4 h-4 mr-2" />
                         Delete
@@ -63,8 +63,8 @@ export function ProjectHeaderActions({ project }: ProjectHeaderActionsProps) {
                         This action cannot be undone. Are you sure you want to delete this project?
                     </div>
                     <div className="flex justify-end gap-2 mt-4">
-                        <Button variant="outline" onClick={() => setIsOpen(false)}>Cancel</Button>
-                        <Button variant="default" onClick={handleDelete}>Delete</Button>
+                        <Button variant="outline" className="cursor-pointer" onClick={() => setIsOpen(false)}>Cancel</Button>
+                        <Button variant="destructive" className="cursor-pointer" onClick={handleDelete}>Delete</Button>
                     </div>
                 </DialogContent>
             </Dialog>
