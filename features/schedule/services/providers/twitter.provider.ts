@@ -28,7 +28,8 @@ export const getTwitterPublisher = (): ISocialPublisher => {
             cookieStore.set("twitter_oauth_verifier", codeVerifier, {
                 httpOnly: true,
                 secure: process.env.NODE_ENV === "production",
-                maxAge: 60 * 10
+                maxAge: 60 * 10,
+                path: "/"
             })
             return url;
         },
