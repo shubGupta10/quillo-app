@@ -1,4 +1,4 @@
-import { LayoutDashboard, FolderKanban, FileText, Settings, Star, CreditCard, User } from "lucide-react";
+import { LayoutDashboard, FolderKanban, FileText, Settings, Star, CreditCard, User, Calendar } from "lucide-react";
 
 export interface NavItem {
   title: string;
@@ -22,6 +22,11 @@ export const dashboardNavigation: NavItem[] = [
     title: "Content",
     href: "/content",
     icon: FileText,
+  },
+  {
+    title: "Schedule",
+    href: "/schedule",
+    icon: Calendar,
   },
   {
     title: "Profile",

@@ -49,6 +49,15 @@ const contentSchema = new mongoose.Schema<IContent>({
     scheduledFor: {
         type: Date,
     },
+    publishedAt: {
+        type: Date
+    },
+    providerPostId: {
+        type: String,
+    },
+    errorDetails: {
+        type: String,
+    }
 }, { timestamps: true })
 
 const Content = mongoose.models.content || mongoose.model('content', contentSchema);

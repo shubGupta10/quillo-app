@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Edit2, Copy, Trash2 } from "lucide-react";
+import { Edit2, Copy, Trash2, CalendarClock } from "lucide-react";
 import { EditContentDialog } from "./edit-content-dialog";
 import { deleteContent } from "../actions/delete-content";
 import { useRouter } from "next/navigation";
@@ -10,10 +10,13 @@ import { toast } from "sonner";
 import {
     Dialog,
     DialogContent,
+    DialogFooter,
     DialogHeader,
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
+import { scheduleContent } from "@/features/schedule/actions/schedule.content";
+import { Input } from "@/components/ui/input";
 
 interface ContentDetailsActionsProps {
     content: any;
@@ -22,6 +25,10 @@ interface ContentDetailsActionsProps {
 export function ContentDetailsActions({ content }: ContentDetailsActionsProps) {
     const router = useRouter();
     const [isOpen, setIsOpen] = useState(false);
+     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+    const [isScheduleDialogOpen, setIsScheduleDialogOpen] = useState(false);
+    const [scheduledDate, setScheduledDate] = useState("");
+    const [isScheduling, setIsScheduling] = useState(false);
 
     const handleCopy = () => {
         navigator.clipboard.writeText(content.content);
@@ -40,8 +47,59 @@ export function ContentDetailsActions({ content }: ContentDetailsActionsProps) {
         }
     };
 
+    const handleSchedule = async () => {
+        if(!scheduledDate){
+              toast.error("Please select a date and time");
+            return;
+        }
+
+        setIsScheduling(true);
+        const res = await scheduleContent(content._id, new Date(scheduledDate));
+        setIsScheduling(false);
+
+        if(res.success){
+            toast.success("Content scheduled successfully!");
+            setIsScheduleDialogOpen(false);
+        } else {
+            toast.error(res.error || "Failed to schedule content")
+        }
+    };
+
     return (
         <div className="flex items-center gap-2">
+
+            <Dialog>
+                <DialogTrigger render={
+                    <Button variant="default" size="sm" className="h-9">
+                        <CalendarClock className="w-4 h-4 mr-2" />
+                        Schedule
+                    </Button>
+                } />
+
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Schedule Post</DialogTitle>
+                    </DialogHeader>
+
+                    <div className="py-4">
+                        <p className="text-sm text-muted-foreground mb-4"> Select when you want this content to be automatically published</p>
+
+                        <Input
+                          type="datetime-local"
+                          value={scheduledDate}
+                          onChange={(e) => setScheduledDate(e.target.value)}
+                        />
+                    </div>
+
+                    <DialogFooter>
+                          <Button variant="outline" onClick={() => setIsScheduleDialogOpen(false)}>Cancel</Button>
+                        <Button onClick={handleSchedule} disabled={isScheduling || !scheduledDate}>
+                            {isScheduling ? "Scheduling..." : "Confirm Schedule"}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
             <Button variant="outline" size="sm" className="h-9" onClick={handleCopy}>
                 <Copy className="w-4 h-4 mr-2" />
                 Copy

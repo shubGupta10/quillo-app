@@ -3,7 +3,8 @@ import { ObjectId } from "mongoose";
 export enum Status {
     DRAFT = "DRAFT",
     PUBLISHED = "PUBLISHED",
-    SCHEDULED = "SCHEDULED"
+    SCHEDULED = "SCHEDULED",
+    FAILED = "FAILED"
 }
 
 export enum Platform {
@@ -42,7 +43,10 @@ export interface IContent {
     title?: string;
     content: string;
     status: Status;
+    providerPostId?: string
+    errorDetails: string;
     scheduledFor?: Date;
+    publishedAt?: Date
     updatedAt: Date;
     createdAt: Date;
 }
