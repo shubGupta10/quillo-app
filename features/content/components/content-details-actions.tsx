@@ -68,7 +68,7 @@ export function ContentDetailsActions({ content }: ContentDetailsActionsProps) {
     return (
         <div className="flex items-center gap-2">
 
-            <Dialog>
+            <Dialog open={isScheduleDialogOpen} onOpenChange={setIsScheduleDialogOpen}>
                 <DialogTrigger render={
                     <Button variant="default" size="sm" className="h-9">
                         <CalendarClock className="w-4 h-4 mr-2" />
