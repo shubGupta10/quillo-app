@@ -68,17 +68,18 @@ export function ContentDetailsActions({ content }: ContentDetailsActionsProps) {
     return (
         <div className="flex items-center gap-2">
 
+            {content.status !== "PUBLISHED" && (
             <Dialog open={isScheduleDialogOpen} onOpenChange={setIsScheduleDialogOpen}>
                 <DialogTrigger render={
                     <Button variant="default" size="sm" className="h-9">
                         <CalendarClock className="w-4 h-4 mr-2" />
-                        Schedule
+                        {content.status === "SCHEDULED" ? "Reschedule" : "Schedule"}
                     </Button>
                 } />
 
                 <DialogContent>
                     <DialogHeader>
-                        <DialogTitle>Schedule Post</DialogTitle>
+                        <DialogTitle>{content.status === "SCHEDULED" ? "Reschedule Post" : "Schedule Post"}</DialogTitle>
                     </DialogHeader>
 
                     <div className="py-4">
@@ -94,11 +95,12 @@ export function ContentDetailsActions({ content }: ContentDetailsActionsProps) {
                     <DialogFooter>
                           <Button variant="outline" onClick={() => setIsScheduleDialogOpen(false)}>Cancel</Button>
                         <Button onClick={handleSchedule} disabled={isScheduling || !scheduledDate}>
-                            {isScheduling ? "Scheduling..." : "Confirm Schedule"}
+                            {isScheduling ? "Scheduling..." : content.status === "SCHEDULED" ? "Confirm Reschedule" : "Confirm Schedule"}
                         </Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
+            )}
 
             <Button variant="outline" size="sm" className="h-9" onClick={handleCopy}>
                 <Copy className="w-4 h-4 mr-2" />
