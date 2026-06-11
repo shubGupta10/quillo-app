@@ -1,11 +1,15 @@
 import Link from "next/link";
+import { Command } from "lucide-react";
 
 
 export function MarketingFooter() {
   return (
     <footer className="border-t py-12 bg-card">
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
-        <div className="text-xl font-bold text-primary">Quillo</div>
+        <div className="flex items-center gap-2">
+          <Command className="h-6 w-6 text-primary" />
+          <span className="text-xl font-bold text-primary">Quillo</span>
+        </div>
         <p className="mt-4 text-muted-foreground max-w-sm">
           The ultimate content generation platform for builders, makers, and creators. Turn your daily progress into engaging social content effortlessly.
         </p>

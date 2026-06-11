@@ -1,5 +1,5 @@
 import React from "react";
-import { Sparkles, ArrowRight } from "lucide-react";
+import { Command, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
@@ -68,7 +68,7 @@ export const Footer7 = () => {
           <div className="flex w-full flex-col justify-between gap-6 lg:items-start max-w-sm">
             {/* Logo */}
             <div className="flex items-center gap-2 lg:justify-start text-primary">
-              <Sparkles className="w-6 h-6" />
+              <Command className="w-6 h-6" />
               <h2 className="text-xl font-bold tracking-tight text-foreground">Quillo</h2>
             </div>
             <p className="text-sm text-muted-foreground leading-relaxed">

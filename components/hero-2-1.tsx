@@ -54,9 +54,9 @@ const Hero2 = () => {
 
             {/* Hero Image */}
             <img
-              src="https://kikxai.netlify.app/_next/image?url=%2Fassets%2Fhero-image.png&w=1920&q=75"
-              alt="Hero Image"
-              className="relative w-full h-auto shadow-md grayscale-100 rounded"
+              src="/hero-image.png"
+              alt="Dashboard Preview"
+              className="relative w-full h-auto shadow-lg rounded border border-border"
             />
           </div>
         </div>

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Command } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -25,7 +26,7 @@ export async function AppSidebar() {
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" render={<Link href="/dashboard" />}>
               <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                <span className="font-bold text-sm">Q</span>
+                <Command className="size-5" />
               </div>
               <span className="font-semibold">Quillo</span>
             </SidebarMenuButton>
