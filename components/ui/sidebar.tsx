@@ -263,8 +263,8 @@ function SidebarTrigger({
       data-sidebar="trigger"
       data-slot="sidebar-trigger"
       variant="ghost"
-      size="icon-sm"
-      className={cn(className)}
+      size="icon"
+      className={cn("h-6 w-6 p-0", className)}
       onClick={(event) => {
         onClick?.(event)
         toggleSidebar()
@@ -518,7 +518,7 @@ function SidebarMenuButton({
       },
       props
     ),
-    render: !tooltip ? render : <TooltipTrigger render={render} />,
+    render: render,
     state: {
       slot: "sidebar-menu-button",
       sidebar: "menu-button",
@@ -539,7 +539,9 @@ function SidebarMenuButton({
 
   return (
     <Tooltip>
-      {comp}
+      <TooltipTrigger asChild>
+        {comp}
+      </TooltipTrigger>
       <TooltipContent
         side="right"
         align="center"

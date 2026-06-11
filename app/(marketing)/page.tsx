@@ -1,30 +1,21 @@
-import Link from "next/link";
+import { Hero2 } from "@/components/hero-2-1";
+import { IntegrationsSection } from "@/components/integrations-section";
+import { FeaturesSection } from "@/components/features-section";
+import { BeforeAfterSection } from "@/components/before-after-section";
+import { TestimonialsSection } from "@/components/testimonial-v2";
+import { QuilloPricing } from "@/components/quillo-pricing";
+import { Footer7 } from "@/components/footer-7";
 
 export default function MarketingPage() {
   return (
-    <div className="py-20 md:py-32">
-      <div className="max-w-7xl mx-auto px-6 lg:px-8 text-center space-y-8">
-        <h1 className="text-4xl md:text-6xl font-bold tracking-tight">
-          Turn your daily work into <span className="text-primary">content</span>
-        </h1>
-        <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-          The SaaS platform that helps builders effortlessly log updates and generate platform-specific posts to share their journey.
-        </p>
-        <div className="flex items-center justify-center space-x-4 pt-8">
-          <Link
-            href="/sign-in"
-            className="px-8 py-3 text-base font-medium bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
-          >
-            Sign In to Dashboard
-          </Link>
-          <a
-            href="#features"
-            className="px-8 py-3 text-base font-medium border rounded-md hover:bg-accent transition-colors"
-          >
-            Learn More
-          </a>
-        </div>
-      </div>
+    <div className="flex flex-col min-h-screen">
+      <Hero2 />
+      <IntegrationsSection />
+      <FeaturesSection />
+      <BeforeAfterSection />
+      <TestimonialsSection />
+      <QuilloPricing />
+      <Footer7 />
     </div>
   );
 }
