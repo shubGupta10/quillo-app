@@ -28,12 +28,15 @@ import { generateContent } from "../actions/generate-content"
 import { IDailyUpdate } from "@/features/daily-updates/models/dailyUpdate.interface"
 import { Platform, Perspective, Tone, ContentLength } from "../models/content.interface"
 
+import { IUserPreferences } from "@/features/auth/model/auth.interface"
+
 interface GenerateContentFormProps {
     projectId: string;
     updates: (IDailyUpdate & { _id: string })[];
+    preferences?: IUserPreferences;
 }
 
-export function GenerateContentForm({ projectId, updates }: GenerateContentFormProps) {
+export function GenerateContentForm({ projectId, updates, preferences }: GenerateContentFormProps) {
     const router = useRouter();
     const [isGenerating, setIsGenerating] = useState(false);
     const [isUpdatesModalOpen, setIsUpdatesModalOpen] = useState(false);
@@ -43,10 +46,10 @@ export function GenerateContentForm({ projectId, updates }: GenerateContentFormP
         defaultValues: {
             projectId: projectId,
             sourceUpdates: [],
-            platform: Platform.LINKEDIN,
-            perspective: Perspective.FIRST_PERSON,
-            tone: Tone.PROFESSIONAL,
-            contentLength: ContentLength.MEDIUM,
+            platform: (preferences?.defaultPlatform as Platform) || Platform.LINKEDIN,
+            perspective: (preferences?.defaultPerspective as Perspective) || Perspective.FIRST_PERSON,
+            tone: (preferences?.defaultTone as Tone) || Tone.PROFESSIONAL,
+            contentLength: (preferences?.defaultLength as ContentLength) || ContentLength.MEDIUM,
         },
     });
 

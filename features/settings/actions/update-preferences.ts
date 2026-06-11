@@ -1,10 +1,13 @@
 "use server"
 
+import mongoose from "mongoose";
+
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { connectDB } from "@/lib/db";
 import Auth from "@/features/auth/model/auth.model";
 import { UpdatePreferencesInput, updatePreferencesSchema } from "../schemas/settings.schema";
+import { revalidatePath } from "next/cache";
 
 export async function updatePreferences(data: UpdatePreferencesInput) {
     try {
@@ -21,10 +24,20 @@ export async function updatePreferences(data: UpdatePreferencesInput) {
         await connectDB();
 
         await Auth.findOneAndUpdate(
-            { authUserId: session.user.id },
-            { $set: { preferences: validated.data } },
-            { upsert: false }
+            { email: session.user.email },
+            { 
+                $set: { 
+                    preferences: validated.data,
+                    fullName: session.user.name,
+                    image: session.user.image || "",
+                },
+                $setOnInsert: {
+                    authUserId: mongoose.Types.ObjectId.isValid(session.user.id) ? new mongoose.Types.ObjectId(session.user.id) : new mongoose.Types.ObjectId()
+                }
+            },
+            { upsert: true }
         );
+        revalidatePath("/", "layout")
 
         return { success: true };
     } catch (error: any) {

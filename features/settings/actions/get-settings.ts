@@ -14,7 +14,7 @@ export async function getSettings() {
 
         await connectDB();
 
-        const userDoc = await Auth.findOne({ authUserId: session.user.id });
+        const userDoc = await Auth.findOne({ email: session.user.email }).lean();
 
         return {
             success: true,
