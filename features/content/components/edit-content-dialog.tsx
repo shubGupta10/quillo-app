@@ -48,40 +48,46 @@ export function EditContentDialog({ content, children }: EditContentDialogProps)
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger render={children}/>
-            <DialogContent className="max-w-3xl w-[90vw]">
+            <DialogContent className="sm:max-w-[850px] max-h-[90vh] overflow-y-auto p-8">
                 <DialogHeader>
                     <DialogTitle>Edit Content</DialogTitle>
                 </DialogHeader>
                 
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                    <div className="space-y-2">
-                        <Label>Title</Label>
-                        <Input {...form.register("title")} />
-                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {/* Left Column */}
+                        <div className="space-y-6">
+                            <div className="space-y-2">
+                                <Label>Title</Label>
+                                <Input {...form.register("title")} />
+                            </div>
 
-                    <div className="space-y-2">
-                        <Label>Status</Label>
-                        <Select 
-                            onValueChange={(val) => form.setValue("status", val as Status)}
-                            value={form.watch("status")}
-                        >
-                            <SelectTrigger>
-                                <SelectValue placeholder="Select status" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {Object.values(Status).map(s => (
-                                    <SelectItem key={s} value={s}>{s}</SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                    </div>
+                            <div className="space-y-2">
+                                <Label>Status</Label>
+                                <Select 
+                                    onValueChange={(val) => form.setValue("status", val as Status)}
+                                    value={form.watch("status")}
+                                >
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Select status" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {Object.values(Status).map(s => (
+                                            <SelectItem key={s} value={s}>{s}</SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        </div>
 
-                    <div className="space-y-2">
-                        <Label>Content</Label>
-                        <Textarea 
-                            {...form.register("content")} 
-                            className="min-h-[400px] max-h-[70vh] resize-y p-4 text-base leading-relaxed"
-                        />
+                        {/* Right Column */}
+                        <div className="space-y-2">
+                            <Label>Content</Label>
+                            <Textarea 
+                                {...form.register("content")} 
+                                className="min-h-[400px] h-full max-h-[70vh] resize-y p-4 text-base leading-relaxed"
+                            />
+                        </div>
                     </div>
 
                     <div className="flex justify-end gap-2">
