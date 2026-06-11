@@ -144,13 +144,13 @@ export const getLinkedinPublisher = (): ISocialPublisher => {
                     throw new Error(errorDetails);
                 }
 
-                const responseData = await response.json();
+                const postId = response.headers.get("x-restli-id") || "LINKEDIN_POST";
 
                 await Content.updateOne(
                     { _id: contentId },
                     {
                         status: Status.PUBLISHED,
-                        providerPostId: "LINKEDIN_POST"
+                        providerPostId: postId
                     }
                 );
 
