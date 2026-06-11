@@ -10,6 +10,11 @@ export async function GET(
 ) {
     try {
         const { provider } = await params;
+
+        if (provider === "google") {
+            return auth.handler(request);
+        }
+
         const searchParams = request.nextUrl.searchParams;
         const code = searchParams.get("code");
         const error = searchParams.get("error");
