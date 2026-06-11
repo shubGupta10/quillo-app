@@ -11,7 +11,7 @@ export default async function DashboardPage() {
   const result = await getDashboardData();
 
   if (!result.success || !result.data) {
-    redirect("/login");
+    redirect("/sign-in");
   }
 
   const { stats, timeline, recentProjects, recentContent } = result.data;
