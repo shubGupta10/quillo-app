@@ -90,7 +90,7 @@ export default async function DashboardPage() {
                     <div className="min-w-0">
                       <p className="font-medium truncate">{project.name}</p>
                       <p className="text-sm text-muted-foreground">
-                        {project.updatesCount} updates · {project.contentCount} posts · Updated {new Date(project.updatedAt).toLocaleDateString()}
+                        {project.updatesCount} updates · {project.contentCount} posts · Updated {project.updatedAt && !isNaN(new Date(project.updatedAt).getTime()) ? new Date(project.updatedAt).toLocaleDateString() : "Unknown"}
                       </p>
                     </div>
                     <ArrowRight className="h-4 w-4 text-muted-foreground shrink-0" />
@@ -133,7 +133,7 @@ export default async function DashboardPage() {
                             {content.platform}
                           </Badge>
                           <span className="text-xs text-muted-foreground">
-                            {new Date(content.createdAt).toLocaleDateString()}
+                            {content.createdAt && !isNaN(new Date(content.createdAt).getTime()) ? new Date(content.createdAt).toLocaleDateString() : "Unknown date"}
                           </span>
                         </div>
                       </div>
@@ -159,7 +159,9 @@ export default async function DashboardPage() {
                     <span className="absolute -left-1.5 top-1.5 h-3 w-3 rounded-full border-2 border-background bg-primary" />
                     <p className="text-sm font-medium leading-tight">{item.title}</p>
                     <span className="text-xs text-muted-foreground">
-                      {new Date(item.date).toLocaleDateString()} · {new Date(item.date).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                      {item.date && !isNaN(new Date(item.date).getTime()) 
+                        ? `${new Date(item.date).toLocaleDateString()} · ${new Date(item.date).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`
+                        : "Unknown date"}
                     </span>
                   </div>
                 ))}
