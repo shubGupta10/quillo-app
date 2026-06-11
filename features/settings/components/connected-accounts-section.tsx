@@ -16,12 +16,19 @@ const XIcon = createLucideIcon('X', [
   ],
 ]);
 
+const LinkedinIcon = createLucideIcon('Linkedin', [
+  ['path', { d: 'M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z', key: '1' }],
+  ['rect', { width: '4', height: '12', x: '2', y: '9', key: '2' }],
+  ['circle', { cx: '4', cy: '4', r: '2', key: '3' }],
+]);
+
 const platformIcons: Partial<Record<Platform, any>> = {
     [Platform.TWITTER]: XIcon,
+    [Platform.LINKEDIN]: LinkedinIcon
 }
 
 export function ConnectAccountsSection({ connectedAccounts}: { connectedAccounts: any[]}){
-    const supportedPlatforms = [Platform.TWITTER];
+    const supportedPlatforms = [Platform.TWITTER, Platform.LINKEDIN];
 
     const handleConnect = async(platform: Platform) => {
         const res = await connectSocialAccount(platform);
