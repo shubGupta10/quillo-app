@@ -8,6 +8,7 @@ import SocialAccount from "@/features/schedule/model/socialAccount.model";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import Project from "@/features/projects/models/project.model";
+import { redis } from "@/lib/redis";
 
 export async function scheduleContent(contentId: string, scheduledFor: Date) {
     try {
@@ -16,6 +17,18 @@ export async function scheduleContent(contentId: string, scheduledFor: Date) {
         });
         if (!session?.user) {
             return { success: false, error: "Unauthorized" };
+        }
+
+        const lockKey = `schedule_lock_${contentId}`;
+        const locked = await redis.set(lockKey, "locked", {
+            nx: true, ex: 5
+        });
+
+        if (!locked) {
+            return {
+                success: false,
+                error: "Action already in progres. Please wait...."
+            }
         }
 
         await connectDB();

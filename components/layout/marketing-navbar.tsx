@@ -1,12 +1,14 @@
 import Link from "next/link";
+import { Command } from "lucide-react";
 import { marketingNavigation } from "@/constants/navigation";
 
 export function MarketingNavbar() {
   return (
     <header className="h-16 absolute top-0 w-full z-50 bg-transparent">
       <div className="max-w-7xl mx-auto px-6 lg:px-8 h-full flex items-center justify-between">
-        <Link href="/" className="text-2xl font-bold text-primary">
-          Quillo
+        <Link href="/" className="flex items-center gap-2">
+          <Command className="h-7 w-7 text-primary" />
+          <span className="text-2xl font-bold text-primary">Quillo</span>
         </Link>
         <nav className="hidden md:flex space-x-8">
           {marketingNavigation.map((item) => (

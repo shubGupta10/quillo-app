@@ -8,12 +8,13 @@ export default async function proxy(request: NextRequest) {
     if (
         pathname.startsWith("/api/") ||
         pathname.startsWith("/_next/") ||
-        pathname.startsWith("/favicon.ico")
+        pathname.startsWith("/favicon.ico") ||
+        pathname.endsWith(".svg")
     ) {
         return NextResponse.next();
     }
 
-   
+
     const sessionResponse = await fetch(
         new URL("/api/auth/get-session", request.nextUrl.origin),
         {
@@ -31,7 +32,7 @@ export default async function proxy(request: NextRequest) {
         return NextResponse.redirect(new URL("/dashboard", request.url));
     }
 
-   
+
     if (!isAuthenticated && !isPublicRoute) {
         return NextResponse.redirect(new URL("/sign-in", request.url));
     }

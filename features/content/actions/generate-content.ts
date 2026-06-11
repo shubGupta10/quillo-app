@@ -23,6 +23,7 @@ import Content from "../models/content.model";
 import { buildPrompt } from "../components/build-prompt";
 import { ai } from "@/lib/ai";
 import { generatedContentResponseSchema } from "../schemas/content-response.schema";
+import { aiRateLimit } from "@/lib/rate-limit";
 
 
 export async function generateContent(
@@ -48,6 +49,15 @@ export async function generateContent(
             return {
                 success: false,
                 message: "Unauthorized"
+            }
+        }
+
+        const { success: rateLimitSuccess } = await aiRateLimit.limit(session.user.id)
+
+        if (!rateLimitSuccess) {
+            return {
+                success: false,
+                error: "You have reached your daily limit for AI generation. Please try again tomorrow.",
             }
         }
 
