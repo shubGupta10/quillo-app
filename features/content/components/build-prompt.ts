@@ -235,6 +235,20 @@ If Content Length is LONG:
 - Never use Thread: or 🧵.
 - LONG means a longer single post, not a thread.
 `;
+
+        case "REDDIT":
+            return `
+REDDIT RULES
+
+- Write like a builder sharing progress with a community.
+- Tell a brief story: explain the context, the problem, what you tried, and the result.
+- Keep it conversational, honest, and problem-focused.
+- Do NOT use marketing language, startup buzzwords, or hype.
+- Do not add artificial engagement bait.
+- Prefer sharing a challenge you faced and how you solved it.
+- Format with clear, short paragraphs.
+`;
+
     }
 }
 

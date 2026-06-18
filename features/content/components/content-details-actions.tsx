@@ -68,7 +68,7 @@ export function ContentDetailsActions({ content }: ContentDetailsActionsProps) {
     return (
         <div className="flex items-center gap-2">
 
-            {content.status !== "PUBLISHED" && (
+            {content.status !== "PUBLISHED" && content.platform !== "REDDIT" && (
             <Dialog open={isScheduleDialogOpen} onOpenChange={setIsScheduleDialogOpen}>
                 <DialogTrigger render={
                     <Button variant="default" size="sm" className="h-9">

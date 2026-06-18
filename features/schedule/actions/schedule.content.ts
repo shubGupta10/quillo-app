@@ -46,6 +46,11 @@ export async function scheduleContent(contentId: string, scheduledFor: Date) {
             return { success: false, error: "Content not found" };
         }
 
+        if (contentToSchedule.platform === "REDDIT") {
+            return { success: false, error: "Reddit content cannot be scheduled." };
+        }
+
+
         if (contentToSchedule.projectId.userId.toString() !== session.user.id) {
             return { success: false, error: "Unauthorized: You do not own this content" };
         }
