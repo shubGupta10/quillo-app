@@ -5,6 +5,8 @@ import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import Image from "next/image";
+
 export default async function ContentDetailsPage({
     params
 }: {
@@ -20,7 +22,7 @@ export default async function ContentDetailsPage({
     const content = result.data;
 
     return (
-        <div className="max-w-4xl mx-auto px-6 lg:px-8 py-8 space-y-8">
+        <div className="max-w-7xl mx-auto space-y-8">
             <Link href="/content" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground">
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Back to Content
@@ -53,11 +55,41 @@ export default async function ContentDetailsPage({
                 </div>
             </div>
 
-            <div className="bg-card border rounded-lg p-8 shadow-sm">
+            <div className="bg-card border rounded-lg p-6 shadow-sm">
                 <div className="prose prose-sm dark:prose-invert max-w-none whitespace-pre-wrap font-medium leading-relaxed text-card-foreground">
                     {content.content}
                 </div>
             </div>
+
+            {content.attachment && content.attachment.length > 0 && (
+                <div className="space-y-4">
+                    <h2 className="text-xl font-semibold tracking-tight">Attachments</h2>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {content.attachment.map((file: any, idx: number) => (
+                            <div key={idx} className="border rounded-lg overflow-hidden bg-card shadow-sm">
+                                {file.type?.startsWith("image") ? (
+                                    <a href={file.url} target="_blank" rel="noopener noreferrer">
+                                        <Image
+                                            src={file.url}
+                                            alt={file.fileName || "Attachment"}
+                                            width={600}
+                                            height={400}
+                                            className="w-full h-48 object-cover"
+                                        />
+                                    </a>
+                                ) : (
+                                    <div className="h-48 flex items-center justify-center bg-muted/30">
+                                        <span className="text-muted-foreground text-sm">File preview not available</span>
+                                    </div>
+                                )}
+                                <div className="p-3">
+                                    <p className="text-sm truncate text-muted-foreground">{file.fileName}</p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

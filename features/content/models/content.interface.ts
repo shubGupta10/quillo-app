@@ -42,6 +42,12 @@ export interface IContent {
     contentLength: ContentLength;
     title?: string;
     content: string;
+    attachment?: {
+        url: string;
+        type: string;
+        fileName: string;
+        size: number;
+    }[];
     status: Status;
     providerPostId?: string
     errorDetails: string;

@@ -110,13 +110,47 @@ export const getLinkedinPublisher = (): ISocialPublisher => {
                     throw new Error("Content not found");
                 }
 
-                // 2. Safely decrypt the token in memory
                 const decryptedAccess = decrypt(account.accessToken);
 
                 console.log(`Publishing content ${contentId} to LinkedIn...`);
+                const personUrn = `urn:li:person:${account.providerUserId}`;
+                let imageUrn = null;
 
-                const payload = {
-                    author: `urn:li:person:${account.providerUserId}`,
+                if (content.attachment && content.attachment.length > 0) {
+                    console.log("Image found! Uploading to LinkedIn...");
+
+                    const initRes = await fetch("https://api.linkedin.com/rest/images?action=initializeUpload", {
+                        method: "POST",
+                        headers: {
+                            "Authorization": `Bearer ${decryptedAccess}`,
+                            "Content-Type": "application/json",
+                            "LinkedIn-Version": "202605",
+                            "X-Restli-Protocol-Version": "2.0.0"
+                        },
+                        body: JSON.stringify({
+                            initializeUploadRequest: { owner: personUrn }
+                        })
+                    });
+
+                    if (!initRes.ok) throw new Error("Failed to initialize LinkedIn image upload");
+                    const initData = await initRes.json();
+                    const uploadUrl = initData.value.uploadUrl;
+                    imageUrn = initData.value.image;
+
+                    const imageFetch = await fetch(content.attachment[0].url);
+                    const imageBuffer = await imageFetch.arrayBuffer();
+
+                    const uploadRes = await fetch(uploadUrl, {
+                        method: "PUT",
+                        headers: { "Authorization": `Bearer ${decryptedAccess}` },
+                        body: imageBuffer
+                    });
+
+                    if (!uploadRes.ok) throw new Error("Failed to upload image file to LinkedIn");
+                }
+
+                const payload: any = {
+                    author: personUrn,
                     commentary: content.content,
                     visibility: "PUBLIC",
                     distribution: {
@@ -127,6 +161,13 @@ export const getLinkedinPublisher = (): ISocialPublisher => {
                     lifecycleState: "PUBLISHED",
                     isReshareDisabledByAuthor: false
                 };
+
+                if (imageUrn) {
+                    payload.content = {
+                        media: { id: imageUrn }
+                    };
+                }
+
 
                 const response = await fetch("https://api.linkedin.com/rest/posts", {
                     method: "POST",

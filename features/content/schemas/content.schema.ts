@@ -26,6 +26,14 @@ export type GenerateContentInput =
 export const saveContentSchema = generateContentSchema.extend({
     title: z.string().min(1, "Title is required"),
     content: z.string().min(1, "Content is required"),
+    attachment: z.array(
+        z.object({
+            url: z.string(),
+            type: z.string(),
+            fileName: z.string(),
+            size: z.number(),
+        })
+    ).optional(),
 });
 
 export type SaveContentInput =

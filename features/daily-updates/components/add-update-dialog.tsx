@@ -1,10 +1,12 @@
 "use client"
 
-import { useState } from "react"
+import { useCallback, useRef, useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
+import { useUploadThing } from "@/lib/uploadthing"
+import { X, Upload, Loader2 } from "lucide-react"
 
 import {
     Dialog,
@@ -27,6 +29,9 @@ interface AddUpdateDialogProps {
 export function AddUpdateDialog({ projectId }: AddUpdateDialogProps) {
     const router = useRouter();
     const [isOpen, setIsOpen] = useState(false);
+    const [uploadedFiles, setUploadedFiles] = useState<any[]>([]);
+    const [isUploading, setIsUploading] = useState(false);
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     const form = useForm<CreateDailyUpdateInput>({
         resolver: zodResolver(createDailyUpdateSchema),
@@ -36,14 +41,52 @@ export function AddUpdateDialog({ projectId }: AddUpdateDialogProps) {
         },
     });
 
+    const { startUpload } = useUploadThing("dailyUpdateAttachment", {
+        onClientUploadComplete: (res) => {
+            if (res && res.length > 0) {
+                const newFiles = res.map(file => ({
+                    url: file.serverData.url,
+                    type: file.serverData.type,
+                    fileName: file.serverData.fileName,
+                    size: file.serverData.size,
+                }));
+                setUploadedFiles(prev => [...prev, ...newFiles]);
+                toast.success("File uploaded successfully");
+            }
+            setIsUploading(false);
+        },
+        onUploadError: (error) => {
+            console.error("Upload error:", error);
+            toast.error(`Upload failed: ${error.message}`);
+            setIsUploading(false);
+        },
+    });
+
+    const handleFileSelect = useCallback(async (files: File[]) => {
+        if (!files.length) return;
+        setIsUploading(true);
+        await startUpload(files);
+    }, [startUpload]);
+
+    const handleDrop = useCallback((e: React.DragEvent) => {
+        e.preventDefault();
+        const files = Array.from(e.dataTransfer.files);
+        handleFileSelect(files);
+    }, [handleFileSelect]);
+
     async function onSubmit(data: CreateDailyUpdateInput) {
         try {
-            const result = await createDailyUpdate(data);
+            const payload = {
+                ...data,
+                attachment: uploadedFiles
+            };
+            const result = await createDailyUpdate(payload);
 
             if (result.success) {
                 toast.success("Update logged successfully");
                 setIsOpen(false);
                 form.reset();
+                setUploadedFiles([]);
                 router.refresh();
             } else {
                 console.error(result.error);
@@ -55,11 +98,23 @@ export function AddUpdateDialog({ projectId }: AddUpdateDialogProps) {
         }
     }
 
+    const handleFormSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        const isValid = await form.trigger();
+        if (!isValid) return;
+
+        const data = form.getValues();
+        const payload = {
+            ...data,
+            attachment: uploadedFiles
+        };
+
+        await onSubmit(payload as CreateDailyUpdateInput);
+    };
+
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
-            <DialogTrigger render={<Button className="cursor-pointer" />}>
-                Log Update
-            </DialogTrigger>
+            <DialogTrigger render={<Button className="cursor-pointer">Log Update</Button>} />
 
             <DialogContent className="sm:max-w-[550px] p-8">
                 {/* Visually hidden button to catch Base UI's auto-focus and prevent the orange ring */}
@@ -71,7 +126,7 @@ export function AddUpdateDialog({ projectId }: AddUpdateDialogProps) {
                     </DialogDescription>
                 </DialogHeader>
 
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                <form onSubmit={handleFormSubmit} className="space-y-4">
                     <div className="space-y-2">
                         <Label htmlFor="content">Update</Label>
                         <Textarea
@@ -87,11 +142,72 @@ export function AddUpdateDialog({ projectId }: AddUpdateDialogProps) {
                         )}
                     </div>
 
+                    <div className="space-y-2">
+                        <Label>Attachment (Optional)</Label>
+                        {uploadedFiles.length > 0 ? (
+                            <div className="flex flex-col gap-2">
+                                {uploadedFiles.map((file, idx) => (
+                                    <div key={idx} className="flex items-center justify-between p-3 border rounded-md bg-muted/30">
+                                        <span className="text-sm truncate">{file.fileName}</span>
+                                        <Button 
+                                            type="button" 
+                                            variant="ghost" 
+                                            size="icon" 
+                                            className="h-6 w-6 text-muted-foreground hover:text-destructive cursor-pointer" 
+                                            onClick={() => {
+                                                const newAttachments = [...uploadedFiles];
+                                                newAttachments.splice(idx, 1);
+                                                setUploadedFiles(newAttachments);
+                                            }}
+                                        >
+                                            <X className="h-4 w-4" />
+                                        </Button>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <div
+                                className="border border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors hover:border-primary/50 hover:bg-muted/30"
+                                onDrop={handleDrop}
+                                onDragOver={(e) => e.preventDefault()}
+                                onClick={() => fileInputRef.current?.click()}
+                            >
+                                <input
+                                    ref={fileInputRef}
+                                    type="file"
+                                    accept="image/*,.pdf,.txt"
+                                    className="hidden"
+                                    onChange={(e) => {
+                                        const files = Array.from(e.target.files || []);
+                                        handleFileSelect(files);
+                                        e.target.value = "";
+                                    }}
+                                />
+                                {isUploading ? (
+                                    <div className="flex flex-col items-center gap-2 py-2">
+                                        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                                        <p className="text-sm text-muted-foreground">Uploading...</p>
+                                    </div>
+                                ) : (
+                                    <div className="flex flex-col items-center gap-2 py-2">
+                                        <Upload className="h-6 w-6 text-muted-foreground" />
+                                        <p className="text-sm text-muted-foreground">
+                                            Drop a file here or click to browse
+                                        </p>
+                                        <p className="text-xs text-muted-foreground/60">
+                                            Images, PDFs, or text files
+                                        </p>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </div>
+
                     <div className="pt-4 flex justify-end gap-2">
                         <Button type="button" variant="outline" className="cursor-pointer" onClick={() => setIsOpen(false)}>
                             Cancel
                         </Button>
-                        <Button type="submit" className="cursor-pointer" disabled={form.formState.isSubmitting}>
+                        <Button type="submit" className="cursor-pointer" disabled={form.formState.isSubmitting || isUploading}>
                             {form.formState.isSubmitting ? "Logging..." : "Log Update"}
                         </Button>
                     </div>

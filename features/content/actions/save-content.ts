@@ -6,6 +6,7 @@ import { headers } from "next/headers";
 import Content from "../models/content.model";
 import Project from "@/features/projects/models/project.model";
 import { SaveContentInput, saveContentSchema } from "../schemas/content.schema";
+import DailyUpdate from "@/features/daily-updates/models/dailyUpdate.model";
 
 export async function saveContent(data: SaveContentInput) {
     try {
@@ -41,6 +42,12 @@ export async function saveContent(data: SaveContentInput) {
             };
         }
 
+        const souceUpdatesList = await DailyUpdate.find({
+            _id: { $in: validatedFields.data.sourceUpdates }
+        });
+
+        const extractedAttachments = souceUpdatesList.flatMap(update => update.attachment || []);
+
         const createdContent = await Content.create({
             projectId: project._id,
             sourceUpdates: validatedFields.data.sourceUpdates,
@@ -50,6 +57,7 @@ export async function saveContent(data: SaveContentInput) {
             contentLength: validatedFields.data.contentLength,
             title: validatedFields.data.title,
             content: validatedFields.data.content,
+            attachment: extractedAttachments
         });
 
         return {

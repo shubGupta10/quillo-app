@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { IDailyUpdate } from "../models/dailyUpdate.interface";
 import { Button } from "@/components/ui/button";
-import { Trash2 } from "lucide-react";
+import { Trash2, Paperclip } from "lucide-react";
 import { deleteDailyUpdate } from "../actions/delete-daily-update";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -71,6 +71,27 @@ export function UpdateCard({ update }: UpdateCardProps) {
             </div>
             
             <p className="whitespace-pre-wrap">{update.content}</p>
+
+            {update.attachment && update.attachment.length > 0 && (
+                <div className="pt-4 mt-2 border-t">
+                    <div className="flex flex-wrap gap-2">
+                        {update.attachment.map((att, idx) => (
+                            <a 
+                                key={idx}
+                                href={att.url}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="flex items-center gap-2 px-3 py-2 border rounded-md bg-muted/20 hover:bg-muted/50 transition-colors text-sm w-fit"
+                            >
+                                <Paperclip className="h-4 w-4 text-muted-foreground" />
+                                <span className="text-blue-500 hover:underline">
+                                    Show image
+                                </span>
+                            </a>
+                        ))}
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

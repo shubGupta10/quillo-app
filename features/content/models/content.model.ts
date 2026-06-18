@@ -41,6 +41,26 @@ const contentSchema = new mongoose.Schema<IContent>({
         type: String,
         required: true
     },
+    attachment: [
+        {
+            url: {
+                type: String,
+                required: true,
+            },
+            type: {
+                type: String,
+                required: true,
+            },
+            fileName: {
+                type: String,
+                required: true,
+            },
+            size: {
+                type: Number,
+                required: true,
+            },
+        },
+    ],
     status: {
         type: String,
         enum: Object.values(Status),
