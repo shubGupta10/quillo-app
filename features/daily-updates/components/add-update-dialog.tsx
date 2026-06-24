@@ -41,6 +41,10 @@ export function AddUpdateDialog({ projectId }: AddUpdateDialogProps) {
         },
     });
 
+    const contentValue = form.watch("content");
+    const charCount = contentValue?.length ?? 0;
+    const MAX_CHARS = 1000;
+
     const { startUpload } = useUploadThing("dailyUpdateAttachment", {
         onClientUploadComplete: (res) => {
             if (res && res.length > 0) {
@@ -133,13 +137,29 @@ export function AddUpdateDialog({ projectId }: AddUpdateDialogProps) {
                             id="content"
                             placeholder="e.g. Added a new feature to the landing page..."
                             className="h-[250px] resize-none overflow-y-auto"
+                            maxLength={MAX_CHARS}
                             {...form.register("content")}
                         />
-                        {form.formState.errors.content && (
-                            <p className="text-sm text-destructive">
-                                {form.formState.errors.content.message}
-                            </p>
-                        )}
+                        <div className="flex items-center justify-between">
+                            <div>
+                                {form.formState.errors.content && (
+                                    <p className="text-sm text-destructive">
+                                        {form.formState.errors.content.message}
+                                    </p>
+                                )}
+                            </div>
+                            <span
+                                className={`text-xs tabular-nums ${
+                                    charCount >= MAX_CHARS
+                                        ? "text-destructive font-medium"
+                                        : charCount >= 900
+                                        ? "text-amber-500"
+                                        : "text-muted-foreground"
+                                }`}
+                            >
+                                {charCount}/{MAX_CHARS}
+                            </span>
+                        </div>
                     </div>
 
                     <div className="space-y-2">
