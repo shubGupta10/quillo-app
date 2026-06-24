@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Edit2, Copy, Trash2, CalendarClock } from "lucide-react";
+import { Edit2, Copy, Trash2, CalendarClock, Info } from "lucide-react";
 import { EditContentDialog } from "./edit-content-dialog";
 import { deleteContent } from "../actions/delete-content";
 import { useRouter } from "next/navigation";
@@ -82,14 +82,40 @@ export function ContentDetailsActions({ content }: ContentDetailsActionsProps) {
                         <DialogTitle>{content.status === "SCHEDULED" ? "Reschedule Post" : "Schedule Post"}</DialogTitle>
                     </DialogHeader>
 
-                    <div className="py-4">
-                        <p className="text-sm text-muted-foreground mb-4"> Select when you want this content to be automatically published</p>
+                    <div className="py-4 space-y-4">
+                        <p className="text-sm text-muted-foreground"> Select when you want this content to be automatically published</p>
 
                         <Input
                           type="datetime-local"
                           value={scheduledDate}
                           onChange={(e) => setScheduledDate(e.target.value)}
                         />
+
+                        {content.status !== "PUBLISHED" && (
+                            <div className="bg-muted/50 border rounded-lg p-4 mt-4 space-y-3">
+                                <div className="flex items-center gap-2 text-sm font-medium text-foreground">
+                                    <Info className="w-4 h-4 text-muted-foreground" />
+                                    <span>Recommended Times</span>
+                                </div>
+                                {content.platform === "LINKEDIN" ? (
+                                    <ul className="space-y-1.5 text-xs text-muted-foreground">
+                                        <li><span className="font-medium text-foreground">Monday:</span> 10am - 12pm</li>
+                                        <li><span className="font-medium text-foreground">Tuesday:</span> 10am - 12pm or 3pm - 6pm</li>
+                                        <li><span className="font-medium text-foreground">Wednesday:</span> 10am - 12pm or 4pm (Peak)</li>
+                                        <li><span className="font-medium text-foreground">Thursday:</span> 10am - 12pm or 3pm - 6pm</li>
+                                        <li><span className="font-medium text-foreground">Friday:</span> 10am - 12pm</li>
+                                        <li className="opacity-70">Weekends: Lower engagement</li>
+                                    </ul>
+                                ) : (
+                                    <ul className="space-y-1.5 text-xs text-muted-foreground">
+                                        <li><span className="font-medium text-foreground">Monday:</span> 9am - 11am</li>
+                                        <li><span className="font-medium text-foreground">Tue - Thu:</span> 9am - 11am or 5pm - 7pm</li>
+                                        <li><span className="font-medium text-foreground">Friday:</span> 9am - 11am</li>
+                                        <li className="opacity-70">Weekends: Lower engagement</li>
+                                    </ul>
+                                )}
+                            </div>
+                        )}
                     </div>
 
                     <DialogFooter>
