@@ -7,6 +7,7 @@ const dynamicTitles: Record<string, string> = {
   "/dashboard": "Dashboard",
   "/projects": "Projects",
   "/content": "Content",
+  "/schedule": "Schedule",
   "/settings": "Settings",
   "/profile": "Profile",
 }

@@ -3,13 +3,14 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { dashboardNavigation } from "@/constants/navigation";
-import { SidebarMenu, SidebarMenuItem, SidebarMenuButton } from "@/components/ui/sidebar";
+import { SidebarMenu, SidebarMenuItem, SidebarMenuButton, useSidebar } from "@/components/ui/sidebar";
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { LogOut } from "lucide-react";
 
 export function NavItems() {
   const pathname = usePathname();
+  const { setOpenMobile } = useSidebar();
 
   return (
     <SidebarMenu>
@@ -20,7 +21,7 @@ export function NavItems() {
             <SidebarMenuButton
               isActive={isActive}
               tooltip={item.title}
-              render={<Link href={item.href} />}
+              render={<Link href={item.href} onClick={() => setOpenMobile(false)} />}
               className={isActive ? "text-primary font-medium" : ""}
             >
               {item.icon && <item.icon />}
