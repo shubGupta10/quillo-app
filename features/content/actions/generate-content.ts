@@ -24,6 +24,7 @@ import { buildPrompt } from "../components/build-prompt";
 import { ai } from "@/lib/ai";
 import { generatedContentResponseSchema } from "../schemas/content-response.schema";
 import { aiRateLimit } from "@/lib/rate-limit";
+import { checkGenerationLimit, incrementGenerationUsage } from "@/features/subscriptions/services/usage.service";
 
 
 export async function generateContent(
@@ -59,6 +60,15 @@ export async function generateContent(
                 success: false,
                 error: "You have reached your daily limit for AI generation. Please try again tomorrow.",
             }
+        }
+
+        // Check monthly quota (persistent, cost-protection layer)
+        const quota = await checkGenerationLimit(session.user.id);
+        if (!quota.allowed) {
+            return {
+                success: false,
+                error: `You've used all ${quota.limit} generations for this month. Your quota resets on ${new Date(quota.resetDate).toLocaleDateString()}.`,
+            };
         }
 
         await connectDB();
@@ -135,6 +145,9 @@ export async function generateContent(
                 error: "Invalid AI response format",
             };
         }
+
+        // Increment only after a confirmed successful generation
+        await incrementGenerationUsage(session.user.id);
 
         return {
             success: true,

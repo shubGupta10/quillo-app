@@ -34,9 +34,12 @@ interface GenerateContentFormProps {
     projectId: string;
     updates: (IDailyUpdate & { _id: string })[];
     preferences?: IUserPreferences;
+    limitReached?: boolean;
+    generationsUsed?: number;
+    generationsLimit?: number;
 }
 
-export function GenerateContentForm({ projectId, updates, preferences }: GenerateContentFormProps) {
+export function GenerateContentForm({ projectId, updates, preferences, limitReached = false, generationsUsed = 0, generationsLimit = 20 }: GenerateContentFormProps) {
     const router = useRouter();
     const [isGenerating, setIsGenerating] = useState(false);
     const [isUpdatesModalOpen, setIsUpdatesModalOpen] = useState(false);
@@ -247,10 +250,20 @@ export function GenerateContentForm({ projectId, updates, preferences }: Generat
                 </div>
             </div>
 
-            <div className="pt-4 border-t flex justify-end">
-                <Button type="submit" disabled={isGenerating}>
-                    {isGenerating ? "Generating Variations..." : "Generate Content"}
-                </Button>
+            <div className="pt-4 border-t space-y-3">
+                {limitReached && (
+                    <div className="flex items-start gap-2 rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2.5">
+                        <span className="text-destructive text-xs leading-relaxed">
+                            You&apos;ve used all <strong>{generationsLimit}</strong> generations for this month.
+                            Your quota resets at the start of your next billing period.
+                        </span>
+                    </div>
+                )}
+                <div className="flex justify-end">
+                    <Button type="submit" disabled={isGenerating || limitReached}>
+                        {isGenerating ? "Generating Variations..." : "Generate Content"}
+                    </Button>
+                </div>
             </div>
 
         </form>

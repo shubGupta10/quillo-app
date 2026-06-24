@@ -5,6 +5,7 @@ import { UpdateList } from "@/features/daily-updates/components/update-list";
 import { AddUpdateDialog } from "@/features/daily-updates/components/add-update-dialog";
 import { GenerateContentForm } from "@/features/content/components/generate-content-form";
 import { getSettings } from "@/features/settings/actions/get-settings";
+import { getSubscriptionStatus } from "@/features/subscriptions/actions/get-subscription-status";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
@@ -15,15 +16,19 @@ export default async function ProjectDetailsPage({
 }) {
   const { projectId } = await params;
 
-  const [projectRes, updatesRes, settingsRes] = await Promise.all([
+  const [projectRes, updatesRes, settingsRes, subscriptionStatus] = await Promise.all([
     getProject(projectId),
     getDailyUpdates(projectId),
-    getSettings()
+    getSettings(),
+    getSubscriptionStatus(),
   ]);
 
   const project = projectRes.success ? projectRes.data : null;
   const updates = updatesRes.success && updatesRes.data ? updatesRes.data : [];
   const preferences = settingsRes.success && settingsRes.data ? settingsRes.data.preferences : undefined;
+  const limitReached = subscriptionStatus ? !subscriptionStatus.allowed : false;
+  const generationsUsed = subscriptionStatus?.used ?? 0;
+  const generationsLimit = subscriptionStatus?.limit ?? 20;
 
   if (!project) {
       return (
@@ -54,7 +59,14 @@ export default async function ProjectDetailsPage({
               <p className="text-sm text-muted-foreground mt-1">Select your updates and use AI to create a post.</p>
             </div>
             
-            <GenerateContentForm projectId={projectId} updates={updates} preferences={preferences} />
+            <GenerateContentForm
+              projectId={projectId}
+              updates={updates}
+              preferences={preferences}
+              limitReached={limitReached}
+              generationsUsed={generationsUsed}
+              generationsLimit={generationsLimit}
+            />
           </div>
 
           {/* Recent Updates Section */}

@@ -13,6 +13,7 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { NavItems } from "./nav-items";
 import { NavUser } from "../nav-user";
+import { UsageWidget } from "@/features/subscriptions/components/usage-widget";
 
 export async function AppSidebar() {
   const session = await auth.api.getSession({
@@ -39,6 +40,7 @@ export async function AppSidebar() {
       </SidebarContent>
 
       <SidebarFooter className="border-t border-sidebar-border">
+        <UsageWidget />
         {session?.user ? (
           <NavUser user={{ name: session.user.name ?? "User", email: session.user.email ?? "", avatar: session.user.image ?? "" }} />
         ) : (
