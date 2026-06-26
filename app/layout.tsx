@@ -24,6 +24,7 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   title: "Quillo",
   description: "Turn your daily work into engaging content.",
+  manifest: "/manifest.json",
 };
 
 export default function RootLayout({
