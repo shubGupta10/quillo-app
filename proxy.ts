@@ -10,7 +10,11 @@ export default async function proxy(request: NextRequest) {
         pathname.startsWith("/_next/") ||
         pathname.startsWith("/favicon.ico") ||
         pathname.endsWith(".svg") ||
-        pathname.endsWith("hero-image.png")
+        pathname.endsWith(".png") ||
+        pathname === "/manifest.json" ||
+        pathname === "/sw.js" ||
+        pathname.startsWith("/swe-worker-") ||
+        pathname.startsWith("/workbox-")
     ) {
         return NextResponse.next();
     }
