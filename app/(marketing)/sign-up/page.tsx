@@ -37,7 +37,7 @@ export default function SignUpPage() {
                 <Button
                     onClick={handleGoogleSignUp}
                     disabled={isLoading}
-                    className="w-full h-12 text-base font-medium"
+                    className="w-full h-12 text-base font-medium cursor-pointer"
                     variant="outline"
                 >
                     {isLoading ? (
