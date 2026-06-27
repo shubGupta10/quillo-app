@@ -38,7 +38,7 @@ export default async function ContentDetailsPage({
                 </div>
 
                 <div className="flex flex-wrap items-center gap-3">
-                    <Badge variant="outline" className="bg-primary/5 text-primary border-primary/20 px-3 py-1">
+                    <Badge variant="secondary" className="px-3 py-1">
                         {content.platform}
                     </Badge>
                     <Badge variant="secondary" className="px-3 py-1">
@@ -78,7 +78,7 @@ export default async function ContentDetailsPage({
                                         />
                                     </a>
                                 ) : (
-                                    <div className="h-48 flex items-center justify-center bg-muted/30">
+                                    <div className="h-48 flex items-center justify-center bg-muted">
                                         <span className="text-muted-foreground text-sm">File preview not available</span>
                                     </div>
                                 )}

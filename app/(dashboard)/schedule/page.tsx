@@ -47,13 +47,13 @@ export default async function SchedulePage() {
                 <div className="grid gap-4">
                     {scheduledPosts.map((post: any) => (
                         <Link href={`/content/${post._id}`} key={post._id} className="block w-full min-w-0">
-                            <div className="p-6 border rounded-lg bg-card hover:bg-accent/50 transition-colors space-y-3 overflow-hidden w-full">
+                            <div className="p-6 border rounded-lg bg-card hover:bg-accent transition-colors space-y-3 overflow-hidden w-full">
                                 <div className="space-y-1 min-w-0 overflow-hidden">
                                     <h3 className="font-medium truncate">{post.title || "Untitled Post"}</h3>
                                     <p className="text-sm text-muted-foreground line-clamp-2">{post.content.substring(0, 100)}...</p>
                                 </div>
                                 <div className="flex items-center gap-2 flex-wrap">
-                                    <Badge variant="outline" className="bg-primary/5 text-primary border-primary/20 shrink-0">
+                                    <Badge variant="secondary" className="shrink-0">
                                         {post.platform}
                                     </Badge>
                                     <div className="text-sm font-medium bg-muted px-3 py-1.5 rounded-md flex items-center shrink-0">

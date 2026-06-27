@@ -23,7 +23,7 @@ export default async function ContentPage( props: {
                     )}
                 </>
             ) : (
-                <div className="p-8 text-center border rounded-lg bg-destructive/10 text-destructive">
+                <div className="p-8 text-center border rounded-lg bg-destructive text-destructive-foreground">
                     Failed to load content. {result.error}
                 </div>
             )}

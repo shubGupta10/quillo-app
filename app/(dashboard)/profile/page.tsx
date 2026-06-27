@@ -29,7 +29,7 @@ export default async function ProfilePage() {
 
                 {/* Danger Zone */}
                 <section className="space-y-4">
-                    <div className="border-b border-destructive/30 pb-3">
+                    <div className="border-b border-destructive pb-3">
                         <h2 className="text-lg font-semibold text-destructive">Danger Zone</h2>
                     </div>
                     <DangerSection />

@@ -85,7 +85,7 @@ export default async function DashboardPage() {
                   <Link
                     key={project._id}
                     href={`/projects/${project._id}`}
-                    className="flex items-center justify-between gap-4 px-4 py-3 hover:bg-muted/50 transition-colors first:rounded-t-lg last:rounded-b-lg"
+                    className="flex items-center justify-between gap-4 px-4 py-3 hover:bg-muted transition-colors first:rounded-t-lg last:rounded-b-lg"
                   >
                     <div className="min-w-0">
                       <p className="font-medium truncate">{project.name}</p>
@@ -124,7 +124,7 @@ export default async function DashboardPage() {
                     <Link
                       key={content._id}
                       href={`/content/${content._id}`}
-                      className="flex items-center justify-between gap-4 px-4 py-3 hover:bg-muted/50 transition-colors first:rounded-t-lg last:rounded-b-lg"
+                      className="flex items-center justify-between gap-4 px-4 py-3 hover:bg-muted transition-colors first:rounded-t-lg last:rounded-b-lg"
                     >
                       <div className="min-w-0">
                         <p className="font-medium truncate">{title}</p>
