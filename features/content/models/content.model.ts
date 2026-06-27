@@ -80,6 +80,8 @@ const contentSchema = new mongoose.Schema<IContent>({
     }
 }, { timestamps: true })
 
+contentSchema.index({ projectId: 1, createdAt: -1 })
+
 const Content = mongoose.models.content || mongoose.model('content', contentSchema);
 
 export default Content;

@@ -31,6 +31,7 @@ export async function getAllContent({ page = 1, limit = 6 }) {
             .sort({ createdAt: -1 })
             .skip(skip)
             .limit(limit)
+            .lean()
 
         const totalContent = await Content.countDocuments({
             projectId: { $in: projectIds }

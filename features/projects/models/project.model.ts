@@ -5,6 +5,7 @@ const projectSchema = new mongoose.Schema<IProject>({
     userId: {
         type: String,
         required: true,
+        index: true
     },
     name: {
         type: String,
