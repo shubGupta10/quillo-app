@@ -6,7 +6,7 @@ import { headers } from "next/headers";
 import DailyUpdate from "../models/dailyUpdate.model";
 import Project from "@/features/projects/models/project.model";
 
-export async function getDailyUpdates(projectId: string) {
+export async function getDailyUpdates(projectId: string, page = 1, limit = 5) {
     try {
         await connectDB();
         const session = await auth.api.getSession({
@@ -35,9 +35,13 @@ export async function getDailyUpdates(projectId: string) {
             };
         }
 
+        const skip = (page - 1) * limit;
+
         const updates = await DailyUpdate.find({
             projectId,
-        }).sort({ createdAt: -1 })
+        }).sort({ createdAt: -1 }).skip(skip).limit(limit);
+
+        const totalUpdates = await DailyUpdate.countDocuments({ projectId });
 
         if (!updates) {
             return {
@@ -49,6 +53,13 @@ export async function getDailyUpdates(projectId: string) {
         return {
             success: true,
             data: JSON.parse(JSON.stringify(updates)),
+            pagination: {
+                total: totalUpdates,
+                pages: Math.ceil(totalUpdates / limit),
+                page,
+                limit,
+                hasMore: skip + updates.length < totalUpdates
+            }
         }
     } catch (error: any) {
         return {

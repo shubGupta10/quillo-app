@@ -18,7 +18,7 @@ export default async function ProjectDetailsPage({
 
   const [projectRes, updatesRes, settingsRes, subscriptionStatus] = await Promise.all([
     getProject(projectId),
-    getDailyUpdates(projectId),
+    getDailyUpdates(projectId, 1, 5),
     getSettings(),
     getSubscriptionStatus(),
   ]);
@@ -81,7 +81,11 @@ export default async function ProjectDetailsPage({
               </div>
             </div>
             
-            <UpdateList updates={updates} />
+            <UpdateList
+             initialUpdates={updates}
+             projectId={projectId}
+             initialHasMore={updatesRes.success && updatesRes.pagination?.hasMore ? true : false}
+            />
           </div>
         </div>
   )
