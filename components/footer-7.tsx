@@ -52,13 +52,11 @@ export const Footer7 = () => {
             Join thousands of developers who are building in public and growing their audience without ever leaving their code editor.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
-            <Button size="lg" className="gap-2" asChild>
-              <Link href="/signup">
-                Start Logging for Free <ArrowRight className="w-4 h-4" />
-              </Link>
+            <Button size="lg" className="gap-2" render={<Link href="/signup" />}>
+              Start Logging for Free <ArrowRight className="w-4 h-4" />
             </Button>
-            <Button size="lg" variant="outline" asChild>
-              <Link href="#features">View Features</Link>
+            <Button size="lg" variant="outline" render={<Link href="#features" />}>
+              View Features
             </Button>
           </div>
         </div>
