@@ -16,7 +16,7 @@ export const quilloPlans = [
     ],
     btn: {
       text: "Start for Free",
-      href: "/signup",
+      href: "/sign-up",
     },
   },
   {
@@ -36,7 +36,7 @@ export const quilloPlans = [
     ],
     btn: {
       text: "Upgrade to Pro",
-      href: "/signup",
+      href: "/sign-up",
     },
   },
 ];
