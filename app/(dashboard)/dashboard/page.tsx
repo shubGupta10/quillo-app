@@ -3,7 +3,8 @@ import { ProjectDailog } from "@/features/projects/components/project-dailog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Folder, FileText, CheckCircle2, Calendar, ArrowRight } from "lucide-react";
+import { Folder, FileText, CheckCircle2, Calendar, ArrowRight, FolderOpen } from "lucide-react";
+import { EmptyState } from "@/components/ui/empty-state";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
@@ -74,14 +75,18 @@ export default async function DashboardPage() {
               </div>
             </div>
 
-            <div className="divide-y divide-border border rounded-lg bg-card">
-              {recentProjects.length === 0 ? (
-                <div className="p-8 flex flex-col items-center justify-center text-center">
-                  <p className="text-muted-foreground text-sm mb-4">No projects yet. Create one to get started.</p>
-                  <ProjectDailog />
-                </div>
-              ) : (
-                recentProjects.map((project: any) => (
+            {recentProjects.length === 0 ? (
+              <EmptyState
+                icon={FolderOpen}
+                title="No projects yet"
+                description="Create one to get started."
+                className="min-h-[250px]"
+              >
+                <ProjectDailog />
+              </EmptyState>
+            ) : (
+              <div className="divide-y divide-border border rounded-lg bg-card">
+                {recentProjects.map((project: any) => (
                   <Link
                     key={project._id}
                     href={`/projects/${project._id}`}
@@ -95,9 +100,9 @@ export default async function DashboardPage() {
                     </div>
                     <ArrowRight className="h-4 w-4 text-muted-foreground shrink-0" />
                   </Link>
-                ))
-              )}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Recent Content */}
@@ -109,16 +114,20 @@ export default async function DashboardPage() {
               </Link>
             </div>
 
-            <div className="divide-y divide-border border rounded-lg bg-card">
-              {recentContent.length === 0 ? (
-                <div className="p-8 flex flex-col items-center justify-center text-center">
-                  <p className="text-muted-foreground text-sm mb-4">No content generated yet.</p>
-                  <Link href="/projects">
-                    <Button variant="outline" size="sm">Go To Projects</Button>
-                  </Link>
-                </div>
-              ) : (
-                recentContent.map((content: any) => {
+            {recentContent.length === 0 ? (
+              <EmptyState
+                icon={FileText}
+                title="No content yet"
+                description="Generate your first post to see it here."
+                className="min-h-[250px]"
+              >
+                <Link href="/projects">
+                  <Button variant="outline" size="sm">Go To Projects</Button>
+                </Link>
+              </EmptyState>
+            ) : (
+              <div className="divide-y divide-border border rounded-lg bg-card">
+                {recentContent.map((content: any) => {
                   const title = content.title || "Untitled Content";
                   return (
                     <Link
@@ -140,9 +149,9 @@ export default async function DashboardPage() {
                       <ArrowRight className="h-4 w-4 text-muted-foreground shrink-0" />
                     </Link>
                   );
-                })
-              )}
-            </div>
+                })}
+              </div>
+            )}
           </div>
         </div>
 

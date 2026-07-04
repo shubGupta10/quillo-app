@@ -5,6 +5,8 @@ import { IDailyUpdate } from "../models/dailyUpdate.interface";
 import { UpdateCard } from "./update-card";
 import { getDailyUpdates } from "../actions/get-daily-updates";
 import { Button } from "@/components/ui/button";
+import { EmptyState } from "@/components/ui/empty-state";
+import { PenLine } from "lucide-react";
 
 interface UpdateListProps {
     initialUpdates: (IDailyUpdate & { _id: string })[];
@@ -20,12 +22,11 @@ export function UpdateList({ initialUpdates, projectId, initialHasMore }: Update
     
     if (!initialUpdates || initialUpdates.length === 0) {
         return (
-            <div className="p-8 border rounded-lg bg-card text-center space-y-4 py-16">
-                <h3 className="text-xl font-semibold">No updates yet</h3>
-                <p className="text-muted-foreground">
-                    Log your first update to start generating content.
-                </p>
-            </div>
+            <EmptyState
+                icon={PenLine}
+                title="No updates yet"
+                description="Log your first update to start generating content."
+            />
         );
     }
 

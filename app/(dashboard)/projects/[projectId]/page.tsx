@@ -1,5 +1,6 @@
 import { getProject } from "@/features/projects/actions/get-project";
 import { ProjectHeader } from "@/features/projects/components/project-header";
+import { ProjectTabs } from "@/features/projects/components/project-tabs";
 import { getDailyUpdates } from "@/features/daily-updates/actions/get-daily-updates";
 import { UpdateList } from "@/features/daily-updates/components/update-list";
 import { AddUpdateDialog } from "@/features/daily-updates/components/add-update-dialog";
@@ -52,41 +53,44 @@ export default async function ProjectDetailsPage({
           {/* Project Header */}
           <ProjectHeader project={project} />
 
-          {/* Generate Content Section */}
-          <div className="space-y-6">
-            <div className="border-b pb-4">
-              <h2 className="text-xl font-semibold tracking-tight">Generate Content</h2>
-              <p className="text-sm text-muted-foreground mt-1">Select your updates and use AI to create a post.</p>
-            </div>
-            
-            <GenerateContentForm
-              projectId={projectId}
-              updates={updates}
-              preferences={preferences}
-              limitReached={limitReached}
-              generationsUsed={generationsUsed}
-              generationsLimit={generationsLimit}
-            />
-          </div>
-
-          {/* Recent Updates Section */}
-          <div className="space-y-6">
-            <div className="flex justify-between items-center border-b pb-4">
-              <div>
-                <h2 className="text-xl font-semibold tracking-tight">Recent Updates</h2>
-                <p className="text-sm text-muted-foreground mt-1">Log what you worked on today.</p>
+          <ProjectTabs
+            updatesContent={
+              <div className="space-y-6">
+                <div className="flex justify-between items-center pb-2">
+                  <div>
+                    <h2 className="text-xl font-semibold tracking-tight">Recent Updates</h2>
+                    <p className="text-sm text-muted-foreground mt-1">Log what you worked on today.</p>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <AddUpdateDialog projectId={projectId} />
+                  </div>
+                </div>
+                
+                <UpdateList
+                  initialUpdates={updates}
+                  projectId={projectId}
+                  initialHasMore={updatesRes.success && updatesRes.pagination?.hasMore ? true : false}
+                />
               </div>
-              <div className="flex items-center gap-4">
-                <AddUpdateDialog projectId={projectId} />
+            }
+            generateContent={
+              <div className="space-y-6">
+                <div className="pb-2">
+                  <h2 className="text-xl font-semibold tracking-tight">Generate Content</h2>
+                  <p className="text-sm text-muted-foreground mt-1">Select your updates and use AI to create a post.</p>
+                </div>
+                
+                <GenerateContentForm
+                  projectId={projectId}
+                  updates={updates}
+                  preferences={preferences}
+                  limitReached={limitReached}
+                  generationsUsed={generationsUsed}
+                  generationsLimit={generationsLimit}
+                />
               </div>
-            </div>
-            
-            <UpdateList
-             initialUpdates={updates}
-             projectId={projectId}
-             initialHasMore={updatesRes.success && updatesRes.pagination?.hasMore ? true : false}
-            />
-          </div>
+            }
+          />
         </div>
   )
 }
