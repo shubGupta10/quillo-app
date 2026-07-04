@@ -117,10 +117,12 @@ export function AddUpdateDialog({ projectId }: AddUpdateDialogProps) {
     };
 
     return (
-        <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <Dialog open={isOpen} onOpenChange={setIsOpen} disablePointerDismissal>
             <DialogTrigger render={<Button className="cursor-pointer">Log Update</Button>} />
 
-            <DialogContent className="sm:max-w-[550px] p-8">
+            <DialogContent 
+                className="sm:max-w-[550px] p-8"
+            >
                 {/* Visually hidden button to catch Base UI's auto-focus and prevent the orange ring */}
                 <button type="button" className="sr-only" />
                 <DialogHeader>
@@ -139,6 +141,12 @@ export function AddUpdateDialog({ projectId }: AddUpdateDialogProps) {
                             className="h-[250px] resize-none overflow-y-auto"
                             maxLength={MAX_CHARS}
                             {...form.register("content")}
+                            onKeyDown={(e) => {
+                                if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+                                    e.preventDefault();
+                                    handleFormSubmit(e as any);
+                                }
+                            }}
                         />
                         <div className="flex items-center justify-between">
                             <div>

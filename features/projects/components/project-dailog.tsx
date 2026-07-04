@@ -20,7 +20,7 @@ import { Input } from "@/components/ui/input"
 import { createProject } from "../actions/create-project"
 import { toast } from "sonner"
 
-export function ProjectDailog() {
+export function ProjectDialog() {
     const router = useRouter();
     const [isOpen, setIsOpen] = useState(false);
 
@@ -55,12 +55,12 @@ export function ProjectDailog() {
     }
 
     return (
-        <Dialog open={isOpen} onOpenChange={setIsOpen}>
-            <DialogTrigger render={<Button/>}>
-                New Project
-            </DialogTrigger>
+        <Dialog open={isOpen} onOpenChange={setIsOpen} disablePointerDismissal>
+            <DialogTrigger render={<Button>New Project</Button>} />
 
-            <DialogContent className="sm:max-w-[850px] max-h-[90vh] overflow-y-auto p-8">
+            <DialogContent 
+                className="sm:max-w-[850px] max-h-[90vh] overflow-y-auto p-8"
+            >
                 <button type="button" className="sr-only" />
                 <DialogHeader>
                     <DialogTitle className="text-2xl">Create Project</DialogTitle>

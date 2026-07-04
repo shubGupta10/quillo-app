@@ -2,7 +2,7 @@
 
 import { IProject } from "../models/project.interface"
 import { ProjectCard } from "./project-card"
-import { ProjectDailog } from "./project-dailog"
+import { ProjectDialog } from "./project-dailog"
 import { EmptyState } from "@/components/ui/empty-state"
 import { FolderOpen } from "lucide-react"
 
@@ -18,7 +18,7 @@ export function ProjectList({ projects }: ProjectListProps) {
                 title="No projects found"
                 description="Create your first project to get started with content generation."
             >
-                <ProjectDailog />
+                <ProjectDialog />
             </EmptyState>
         )
     }

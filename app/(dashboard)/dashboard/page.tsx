@@ -1,5 +1,5 @@
 import { getDashboardData } from "@/features/dashboard/actions/get-dashboard-data";
-import { ProjectDailog } from "@/features/projects/components/project-dailog";
+import { ProjectDialog } from "@/features/projects/components/project-dailog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -71,7 +71,7 @@ export default async function DashboardPage() {
                 <Link href="/projects" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                   View all
                 </Link>
-                <ProjectDailog />
+                <ProjectDialog />
               </div>
             </div>
 
@@ -82,7 +82,7 @@ export default async function DashboardPage() {
                 description="Create one to get started."
                 className="min-h-[250px]"
               >
-                <ProjectDailog />
+                <ProjectDialog />
               </EmptyState>
             ) : (
               <div className="divide-y divide-border border rounded-lg bg-card">
