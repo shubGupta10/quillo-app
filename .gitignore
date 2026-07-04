@@ -21,6 +21,8 @@
 /public/swe-worker-*.js
 /public/swe-worker-*.js.map
 
+system_architecture.md
+
 # production
 /build
 
