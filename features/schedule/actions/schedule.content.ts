@@ -86,7 +86,7 @@ export async function scheduleContent(contentId: string, scheduledFor: Date) {
         await sendEmail({
             to: session.user.email as string,
             subject: "Your post is scheduled! 📅",
-            html: getScheduledEmailHtml("Your Post", new Date(scheduledFor))
+            html: getScheduledEmailHtml(content.title || "Your Scheduled Content", new Date(scheduledFor))
         })
 
         return {

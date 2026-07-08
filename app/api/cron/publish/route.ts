@@ -49,7 +49,7 @@ export async function GET(request: NextRequest) {
                         await sendEmail({
                             to: userDoc.email as string,
                             subject: "Post Published Successfully! 🚀",
-                            html: getPublishedEmailHtml("Your Post", post.platform),
+                            html: getPublishedEmailHtml(post.title || "Your Content", post.platform),
                         })
                     }
                 }
