@@ -9,6 +9,8 @@ import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import Project from "@/features/projects/models/project.model";
 import { redis } from "@/lib/redis";
+import { sendEmail } from "@/lib/email/mailer";
+import { getScheduledEmailHtml } from "@/lib/email/templates";
 
 export async function scheduleContent(contentId: string, scheduledFor: Date) {
     try {
@@ -80,6 +82,12 @@ export async function scheduleContent(contentId: string, scheduledFor: Date) {
 
         revalidatePath(`/content/${contentId}`);
         revalidatePath("/content");
+
+        await sendEmail({
+            to: session.user.email as string,
+            subject: "Your post is scheduled! 📅",
+            html: getScheduledEmailHtml("Your Post", new Date(scheduledFor))
+        })
 
         return {
             success: true,

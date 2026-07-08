@@ -3,6 +3,9 @@ import Content from "@/features/content/models/content.model";
 import Project from "@/features/projects/models/project.model";
 import { getPublisher } from "@/features/schedule/services/publisher.factory";
 import { connectDB } from "@/lib/db";
+import { sendEmail } from "@/lib/email/mailer";
+import { getPublishedEmailHtml } from "@/lib/email/templates";
+import mongoose from "mongoose";
 import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -38,6 +41,18 @@ export async function GET(request: NextRequest) {
                 const publiser = getPublisher(post.platform);
 
                 const success = await publiser.publish(post._id.toString(), userId);
+
+                if (success) {
+                    const userDoc = await mongoose.connection.collection("user").findOne({ _id: userId.toString() });
+
+                    if (userDoc?.email) {
+                        await sendEmail({
+                            to: userDoc.email as string,
+                            subject: "Post Published Successfully! 🚀",
+                            html: getPublishedEmailHtml("Your Post", post.platform),
+                        })
+                    }
+                }
 
                 results.push({
                     contentId: post._id, success
