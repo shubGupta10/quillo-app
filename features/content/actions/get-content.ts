@@ -20,7 +20,7 @@ export async function getContent(contentId: string) {
             }
         }
 
-        const content = await Content.findById(contentId);
+        const content = await Content.findById(contentId).lean();
         if (!content) {
             return {
                 success: false,
@@ -28,7 +28,7 @@ export async function getContent(contentId: string) {
             }
         }
 
-        const project = await Project.findById(content.projectId);
+        const project = await Project.findById(content.projectId).lean();
 
         if (!project) {
             return {

@@ -23,35 +23,41 @@ export async function getDashboardData() {
         const projects = await Project.find({ userId }).sort({ updatedAt: -1 }).lean();
         const projectIds = projects.map(p => p._id);
 
-        // 2. Calculate Top Stats
-        const [totalUpdates, totalContent, contentThisWeek] = await Promise.all([
+        // 2. Fetch everything else in parallel
+        const [
+            totalUpdates,
+            totalContent,
+            contentThisWeek,
+            recentContent,
+            recentUpdates,
+            recentProjects
+        ] = await Promise.all([
             DailyUpdate.countDocuments({ projectId: { $in: projectIds } }),
             Content.countDocuments({ projectId: { $in: projectIds } }),
             Content.countDocuments({
                 projectId: { $in: projectIds },
                 createdAt: { $gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) }
-            })
+            }),
+            Content.find({ projectId: { $in: projectIds } })
+                .sort({ createdAt: -1 })
+                .limit(5)
+                .select("title platform createdAt status projectId")
+                .populate("projectId", "name")
+                .lean(),
+            DailyUpdate.find({ projectId: { $in: projectIds } })
+                .sort({ createdAt: -1 })
+                .limit(5)
+                .select("createdAt projectId")
+                .populate("projectId", "name")
+                .lean(),
+            Promise.all(projects.slice(0, 3).map(async (p) => {
+                const [updatesCount, contentCount] = await Promise.all([
+                    DailyUpdate.countDocuments({ projectId: p._id }),
+                    Content.countDocuments({ projectId: p._id })
+                ]);
+                return { ...p, updatesCount, contentCount };
+            }))
         ]);
-
-        const recentContent = await Content.find({ projectId: { $in: projectIds } })
-            .sort({ createdAt: -1 })
-            .limit(5)
-            .populate("projectId", "name")
-            .lean();
-
-        const recentProjects = await Promise.all(projects.slice(0, 3).map(async (p) => {
-            const [updatesCount, contentCount] = await Promise.all([
-                DailyUpdate.countDocuments({ projectId: p._id }),
-                Content.countDocuments({ projectId: p._id })
-            ]);
-            return { ...p, updatesCount, contentCount };
-        }));
-
-        const recentUpdates = await DailyUpdate.find({ projectId: { $in: projectIds } })
-            .sort({ createdAt: -1 })
-            .limit(5)
-            .populate("projectId", "name")
-            .lean();
 
         const timeline = [
             ...projects.slice(0, 3).map(p => ({

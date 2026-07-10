@@ -21,7 +21,7 @@ export async function getScheduledContent() {
 
         const userProjects = await Project.find({
             userId: session.user.id
-        }, '_id');
+        }, '_id').lean();
 
         const projectIds = userProjects.map(p => p._id);
 

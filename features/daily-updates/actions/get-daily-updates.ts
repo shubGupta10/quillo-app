@@ -19,7 +19,7 @@ export async function getDailyUpdates(projectId: string, page = 1, limit = 5) {
             }
         }
 
-        const project = await Project.findById(projectId);
+        const project = await Project.findById(projectId).lean();
 
         if (!project) {
             return {
@@ -37,11 +37,12 @@ export async function getDailyUpdates(projectId: string, page = 1, limit = 5) {
 
         const skip = (page - 1) * limit;
 
-        const updates = await DailyUpdate.find({
-            projectId,
-        }).sort({ createdAt: -1 }).skip(skip).limit(limit);
-
-        const totalUpdates = await DailyUpdate.countDocuments({ projectId });
+        const [updates, totalUpdates] = await Promise.all([
+            DailyUpdate.find({
+                projectId,
+            }).sort({ createdAt: -1 }).skip(skip).limit(limit).lean(),
+            DailyUpdate.countDocuments({ projectId })
+        ]);
 
         if (!updates) {
             return {

@@ -20,7 +20,7 @@ export async function getContents(projectId: string) {
             }
         }
 
-        const project = await Project.findById(projectId);
+        const project = await Project.findById(projectId).lean();
 
         if (!project) {
             return {
@@ -38,7 +38,7 @@ export async function getContents(projectId: string) {
 
         const contents = await Content.find({
             projectId
-        }).sort({ createdAt: -1 });
+        }).sort({ createdAt: -1 }).lean();
 
         return {
             success: true,

@@ -20,7 +20,7 @@ export async function getDailyUpdate(id: string) {
             }
         }
 
-        const update = await DailyUpdate.findById(id);
+        const update = await DailyUpdate.findById(id).lean();
 
         if (!update) {
             return {
@@ -29,7 +29,7 @@ export async function getDailyUpdate(id: string) {
             }
         }
 
-        const project = await Project.findById(update.projectId);
+        const project = await Project.findById(update.projectId).lean();
         if (!project) {
             return {
                 success: false,

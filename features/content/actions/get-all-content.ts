@@ -20,22 +20,23 @@ export async function getAllContent({ page = 1, limit = 6 }) {
             }
         }
 
-        const projects = await Project.find({ userId: session.user.id });
+        const projects = await Project.find({ userId: session.user.id }).lean();
         const projectIds = projects.map(p => p._id);
         const skip = (page - 1) * limit as any;
 
-        const contents = await Content.find({
-            projectId: { $in: projectIds }
-        })
-            .populate("projectId", "name")
-            .sort({ createdAt: -1 })
-            .skip(skip)
-            .limit(limit)
-            .lean()
-
-        const totalContent = await Content.countDocuments({
-            projectId: { $in: projectIds }
-        })
+        const [contents, totalContent] = await Promise.all([
+            Content.find({
+                projectId: { $in: projectIds }
+            })
+                .populate("projectId", "name")
+                .sort({ createdAt: -1 })
+                .skip(skip)
+                .limit(limit)
+                .lean(),
+            Content.countDocuments({
+                projectId: { $in: projectIds }
+            })
+        ]);
 
         return {
             success: true,
