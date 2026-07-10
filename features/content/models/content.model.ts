@@ -81,6 +81,7 @@ const contentSchema = new mongoose.Schema<IContent>({
 }, { timestamps: true })
 
 contentSchema.index({ projectId: 1, createdAt: -1 })
+contentSchema.index({ status: 1, projectId: 1 })
 
 const Content = mongoose.models.content || mongoose.model('content', contentSchema);
 

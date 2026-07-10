@@ -43,4 +43,6 @@ const dailyUpdateSchema = new mongoose.Schema<IDailyUpdate>({
 
 const DailyUpdate = mongoose.models.dailyUpdate || mongoose.model('dailyUpdate', dailyUpdateSchema);
 
+dailyUpdateSchema.index({ projectId: 1, createdAt: -1 });
+
 export default DailyUpdate;
