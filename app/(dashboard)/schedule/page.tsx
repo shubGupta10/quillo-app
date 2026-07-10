@@ -1,10 +1,30 @@
 import { getScheduledContent } from "@/features/schedule/actions/get-scheduled-content";
 import { Badge } from "@/components/ui/badge";
-import { CalendarClock, AlertCircle } from "lucide-react";
+import { CalendarClock, AlertCircle, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { Suspense } from "react";
 
-export default async function SchedulePage() {
+export default function SchedulePage() {
+    return (
+        <div className="max-w-7xl mx-auto space-y-8">
+            <div className="border-b pb-4">
+                <h1 className="text-3xl font-semibold tracking-tight">Scheduled Posts</h1>
+                <p className="text-sm text-muted-foreground mt-2">Content queued to be automatically published.</p>
+            </div>
+            
+            <Suspense fallback={
+                <div className="flex flex-col items-center justify-center py-20 border rounded-lg bg-card">
+                    <Loader2 className="w-8 h-8 text-primary animate-spin" />
+                </div>
+            }>
+                <ScheduleContent />
+            </Suspense>
+        </div>
+    );
+}
+
+async function ScheduleContent() {
     const result = await getScheduledContent();
 
     if (!result.success && result.error === "Unauthorized") {
@@ -14,16 +34,10 @@ export default async function SchedulePage() {
     // Error state
     if (!result.success) {
         return (
-            <div className="max-w-7xl mx-auto space-y-8">
-                <div className="border-b pb-4">
-                    <h1 className="text-3xl font-semibold tracking-tight">Scheduled Posts</h1>
-                    <p className="text-sm text-muted-foreground mt-2">Content queued to be automatically published.</p>
-                </div>
-                <div className="text-center py-20 border rounded-lg bg-card space-y-3">
-                    <AlertCircle className="w-10 h-10 mx-auto text-destructive opacity-60" />
-                    <p className="text-sm font-medium">Failed to load scheduled posts</p>
-                    <p className="text-sm text-muted-foreground">Please refresh the page and try again.</p>
-                </div>
+            <div className="text-center py-20 border rounded-lg bg-card space-y-3">
+                <AlertCircle className="w-10 h-10 mx-auto text-destructive opacity-60" />
+                <p className="text-sm font-medium">Failed to load scheduled posts</p>
+                <p className="text-sm text-muted-foreground">Please refresh the page and try again.</p>
             </div>
         );
     }
@@ -31,12 +45,7 @@ export default async function SchedulePage() {
     const scheduledPosts = result.data || [];
 
     return (
-        <div className="max-w-7xl mx-auto space-y-8">
-            <div className="border-b pb-4">
-                <h1 className="text-3xl font-semibold tracking-tight">Scheduled Posts</h1>
-                <p className="text-sm text-muted-foreground mt-2">Content queued to be automatically published.</p>
-            </div>
-
+        <>
             {scheduledPosts.length === 0 ? (
                 <div className="text-center py-20 border rounded-lg bg-card space-y-3">
                     <CalendarClock className="w-10 h-10 mx-auto text-muted-foreground opacity-30" />
@@ -50,7 +59,7 @@ export default async function SchedulePage() {
                             <div className="p-6 border rounded-lg bg-card hover:bg-accent transition-colors space-y-3 overflow-hidden w-full">
                                 <div className="space-y-1 min-w-0 overflow-hidden">
                                     <h3 className="font-medium truncate">{post.title || "Untitled Post"}</h3>
-                                    <p className="text-sm text-muted-foreground line-clamp-2">{post.content.substring(0, 100)}...</p>
+                                    <p className="text-sm text-muted-foreground line-clamp-2">{post.content?.substring(0, 100)}...</p>
                                 </div>
                                 <div className="flex items-center gap-2 flex-wrap">
                                     <Badge variant="secondary" className="shrink-0">
@@ -68,6 +77,6 @@ export default async function SchedulePage() {
                     ))}
                 </div>
             )}
-        </div>
+        </>
     );
 }

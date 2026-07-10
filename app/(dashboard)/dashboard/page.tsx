@@ -3,12 +3,25 @@ import { ProjectDialog } from "@/features/projects/components/project-dailog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Folder, FileText, CheckCircle2, Calendar, ArrowRight, FolderOpen } from "lucide-react";
+import { Folder, FileText, CheckCircle2, Calendar, ArrowRight, FolderOpen, Loader2 } from "lucide-react";
 import { EmptyState } from "@/components/ui/empty-state";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { Suspense } from "react";
 
-export default async function DashboardPage() {
+export default function DashboardPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex flex-col items-center justify-center flex-1 h-full min-h-[60vh]">
+        <Loader2 className="w-8 h-8 text-primary animate-spin" />
+      </div>
+    }>
+      <DashboardContent />
+    </Suspense>
+  );
+}
+
+async function DashboardContent() {
   const result = await getDashboardData();
 
   if (!result.success || !result.data) {

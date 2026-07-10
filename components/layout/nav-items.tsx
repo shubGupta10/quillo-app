@@ -21,7 +21,7 @@ export function NavItems() {
             <SidebarMenuButton
               isActive={isActive}
               tooltip={item.title}
-              render={<Link href={item.href} onClick={() => setOpenMobile(false)} />}
+              render={<Link href={item.href} prefetch={true} onClick={() => setOpenMobile(false)} />}
               className={isActive ? "text-primary font-medium" : ""}
             >
               {item.icon && <item.icon />}
