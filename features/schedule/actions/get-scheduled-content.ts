@@ -4,7 +4,6 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { connectDB } from "@/lib/db";
 import Content from "@/features/content/models/content.model";
-import Project from "@/features/projects/models/project.model";
 import { Status } from "@/features/content/models/content.interface";
 
 export async function getScheduledContent() {
@@ -19,20 +18,42 @@ export async function getScheduledContent() {
 
         await connectDB();
 
-        const userProjects = await Project.find({
-            userId: session.user.id
-        }, '_id').lean();
+        const scheduledPosts = await Content.aggregate([
+            {
+                $match: {
+                    status: Status.SCHEDULED
+                }
+            },
+            {
+                $lookup: {
+                    from: "projects",
+                    localField: "projectId",
+                    foreignField: "_id",
+                    as: "projectId"
+                }
+            },
+            {
+                $unwind: "$projectId"
+            },
+            {
+                $match: {
+                    "projectId.userId": session.user.id
+                }
+            },
+            {
+                $sort: {
+                    scheduledFor: 1
+                }
+            }
+        ])
 
-        const projectIds = userProjects.map(p => p._id);
-
-        const schedulePosts = await Content.find({
-            status: Status.SCHEDULED,
-            projectId: { $in: projectIds }
-        }).populate({ path: "projectId", model: Project, select: "name" }).sort({ scheduledFor: 1 }).lean();
+        if (!scheduledPosts) {
+            return { success: false, error: "Failed to fetch scheduled content" };
+        }
 
         return {
             success: true,
-            data: JSON.parse(JSON.stringify(schedulePosts))
+            data: JSON.parse(JSON.stringify(scheduledPosts))
         };
 
     } catch (error: any) {
@@ -40,3 +61,4 @@ export async function getScheduledContent() {
         return { success: false, error: error.message };
     }
 }
+
