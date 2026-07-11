@@ -4,6 +4,8 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Edit2, Copy, Trash2, CalendarClock, Info, Lock } from "lucide-react";
 import { EditContentDialog } from "./edit-content-dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useMemo } from "react";
 import { deleteContent } from "../actions/delete-content";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -28,9 +30,26 @@ export function ContentDetailsActions({ content, isPremium = false }: ContentDet
     const [isOpen, setIsOpen] = useState(false);
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
     const [isScheduleDialogOpen, setIsScheduleDialogOpen] = useState(false);
-    const [scheduledDate, setScheduledDate] = useState("");
+    const [selectedDate, setSelectedDate] = useState("");
+    const [selectedTime, setSelectedTime] = useState("");
     const [isScheduling, setIsScheduling] = useState(false);
 
+    const timeOptions = useMemo(() => {
+        const options = [];
+        for (let h = 0; h < 24; h++) {
+            for (let m = 0; m < 60; m += 15) {
+                const hour = h.toString().padStart(2, '0');
+                const min = m.toString().padStart(2, '0');
+                const ampm = h >= 12 ? 'PM' : 'AM';
+                const displayHour = h % 12 || 12;
+                options.push({ 
+                    value: `${hour}:${min}`, 
+                    label: `${displayHour}:${min} ${ampm}` 
+                });
+            }
+        }
+        return options;
+    }, []);
     const handleCopy = () => {
         navigator.clipboard.writeText(content.content);
         toast.success("Content copied successfully!");
@@ -59,23 +78,22 @@ export function ContentDetailsActions({ content, isPremium = false }: ContentDet
             });
             return;
         }
-        if (!scheduledDate) {
-            toast.error("Please select a date and time");
+        if (!selectedDate || !selectedTime) {
+            toast.error("Please select both a date and time");
             return;
         }
 
         setIsScheduling(true);
 
-        const [datePart, timePart] = scheduledDate.split('T');
-        const [year, month, day] = datePart.split('-').map(Number);
-        const [hour, minute] = timePart.split(':').map(Number);
-        
-        if (minute % 15 !== 0) {
-             toast.error("Please select a time in 15-minute intervals (e.g., :00, :15, :30, :45)");
-             setIsScheduling(false);
-             return;
-        }
+        const [year, month, day] = selectedDate.split('-').map(Number);
+        const [hour, minute] = selectedTime.split(':').map(Number);
         const localDate = new Date(year, month - 1, day, hour, minute);
+
+        if (localDate <= new Date()) {
+            toast.error("Scheduled time must be in the future");
+            setIsScheduling(false);
+            return;
+        }
 
         const res = await scheduleContent(content._id, localDate);
         setIsScheduling(false);
@@ -118,18 +136,32 @@ export function ContentDetailsActions({ content, isPremium = false }: ContentDet
                         <div className="py-4 space-y-4">
                             <p className="text-sm text-muted-foreground"> Select when you want this content to be automatically published</p>
 
-                            <div className="space-y-2">
-                                <Input
-                                    type="datetime-local"
-                                    value={scheduledDate}
-                                    step={900}
-                                    min={getMinDateTime()}
-                                    onChange={(e) => setScheduledDate(e.target.value)}
-                                    className="cursor-pointer"
-                                />
-                                <p className="text-[0.8rem] text-muted-foreground">
-                                    Times must be in 15-minute intervals (e.g. :00, :15, :30, :45).
-                                </p>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <label className="text-xs font-medium text-muted-foreground">Date</label>
+                                    <Input 
+                                        type="date" 
+                                        value={selectedDate} 
+                                        min={getMinDateTime().split('T')[0]} 
+                                        onChange={(e) => setSelectedDate(e.target.value)} 
+                                        className="cursor-pointer"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-xs font-medium text-muted-foreground">Time</label>
+                                    <Select value={selectedTime} onValueChange={(value) => setSelectedTime(value || "")}>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select time" />
+                                        </SelectTrigger>
+                                        <SelectContent className="max-h-[200px]" alignItemWithTrigger={false}>
+                                            {timeOptions.map(option => (
+                                                <SelectItem key={option.value} value={option.value}>
+                                                    {option.label}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                </div>
                             </div>
 
                             {content.status !== "PUBLISHED" && (
@@ -161,7 +193,7 @@ export function ContentDetailsActions({ content, isPremium = false }: ContentDet
 
                         <DialogFooter>
                             <Button variant="outline" onClick={() => setIsScheduleDialogOpen(false)}>Cancel</Button>
-                            <Button onClick={handleSchedule} disabled={isScheduling || !scheduledDate}>
+                            <Button onClick={handleSchedule} disabled={isScheduling || !selectedDate || !selectedTime}>
                                 {isScheduling ? "Scheduling..." : content.status === "SCHEDULED" ? "Confirm Reschedule" : "Confirm Schedule"}
                             </Button>
                         </DialogFooter>
