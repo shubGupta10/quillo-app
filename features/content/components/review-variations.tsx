@@ -3,8 +3,9 @@
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { ArrowLeft, Loader2 } from "lucide-react"
+import { ArrowLeft, Loader2, RefreshCcw } from "lucide-react"
 import { saveContent } from "../actions/save-content"
+import { generateContent } from "../actions/generate-content"
 import { SaveContentInput } from "../schemas/content.schema"
 import { toast } from "sonner"
 
@@ -20,6 +21,7 @@ export function ReviewVariations({ projectId }: ReviewVariationsProps) {
     } | null>(null);
     const [isLoaded, setIsLoaded] = useState(false);
     const [savingIndex, setSavingIndex] = useState<number | null>(null);
+    const [isRegenerating, setIsRegenerating] = useState(false);
 
     useEffect(() => {
         const stored = sessionStorage.getItem(`draftContent_${projectId}`);
@@ -39,6 +41,30 @@ export function ReviewVariations({ projectId }: ReviewVariationsProps) {
             setIsLoaded(true);
         }
     }, [projectId, router]);
+
+    async function handleRegenerate() {
+        if (!draftData) return;
+        setIsRegenerating(true);
+        const toastId = toast.loading("Regenerating variations...");
+        try {
+            const result = await generateContent(draftData.metadata);
+            if (result.success && result.data) {
+                const newData = {
+                    variations: result.data,
+                    metadata: draftData.metadata
+                };
+                sessionStorage.setItem(`draftContent_${projectId}`, JSON.stringify(newData));
+                setDraftData(newData);
+                toast.success("Content regenerated successfully", { id: toastId });
+            } else {
+                toast.error(result.message || result.error || "Failed to regenerate content", { id: toastId });
+            }
+        } catch (error) {
+            toast.error("Failed to regenerate content.", { id: toastId });
+        } finally {
+            setIsRegenerating(false);
+        }
+    }
 
     async function handleSave(variation: {title: string, content: string}, index: number) {
         if (!draftData) return;
@@ -86,12 +112,21 @@ export function ReviewVariations({ projectId }: ReviewVariationsProps) {
                 <Button variant="outline" size="icon" onClick={() => router.back()} className="shrink-0">
                     <ArrowLeft className="h-4 w-4" />
                 </Button>
-                <div>
+                <div className="flex-1">
                     <h1 className="text-3xl font-semibold tracking-tight">Review Variations</h1>
                     <p className="text-muted-foreground mt-1">
                         Select your preferred option to save it to your library.
                     </p>
                 </div>
+                <Button 
+                    variant="outline" 
+                    onClick={handleRegenerate}
+                    disabled={isRegenerating || savingIndex !== null}
+                    className="shrink-0"
+                >
+                    <RefreshCcw className={`h-4 w-4 mr-2 ${isRegenerating ? 'animate-spin' : ''}`} />
+                    {isRegenerating ? "Regenerating..." : "Regenerate"}
+                </Button>
             </div>
 
             <div className="space-y-12">

@@ -23,9 +23,9 @@ export default async function ContentDetailsPage({
 
     return (
         <div className="max-w-7xl mx-auto space-y-8">
-            <Link href="/content" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground">
+            <Link href={content.projectId ? `/projects/${content.projectId._id}` : "/content"} className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground">
                 <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to Content
+                Back to {content.projectId?.name ? `Project: ${content.projectId.name}` : "Content"}
             </Link>
 
             <div className="space-y-6 pb-6 border-b">
