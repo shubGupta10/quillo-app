@@ -1,9 +1,9 @@
 "use client"
-import { createLucideIcon } from 'lucide-react';
+import { createLucideIcon, CheckCircle2 } from 'lucide-react';
 
 import { Platform } from "@/features/content/models/content.interface"
 import { Button } from '@/components/ui/button';
-import { connectSocialAccount } from "@/features/schedule/actions/oauth-actions";
+import { connectSocialAccount, disconnectSocialAccount } from "@/features/schedule/actions/oauth-actions";
 import { toast } from "sonner";
 
 const XIcon = createLucideIcon('X', [
@@ -37,6 +37,15 @@ export function ConnectAccountsSection({ connectedAccounts}: { connectedAccounts
         }
     }
 
+    const handleDisconnect = async(platform: Platform) => {
+        const res = await disconnectSocialAccount(platform);
+        if (res.success) {
+            toast.success("Account disconnected");
+        } else {
+            toast.error(res.error || "Failed to disconnect account");
+        }
+    }
+
     return (
         <div className='space-y-1'>
             {supportedPlatforms.map((platform) => {
@@ -50,17 +59,25 @@ export function ConnectAccountsSection({ connectedAccounts}: { connectedAccounts
                                 <Icon className="w-5 h-5" />
                             </div>
                             <div className="min-w-0">
-                                <p className="text-sm font-medium">{platform.charAt(0) + platform.slice(1).toLowerCase()}</p>
+                                <div className="flex items-center gap-2">
+                                    <p className="text-sm font-medium">{platform.charAt(0) + platform.slice(1).toLowerCase()}</p>
+                                    {isConnected && (
+                                        <div className="flex items-center gap-1 text-[10px] uppercase font-bold tracking-wider text-green-600 bg-green-500/10 px-2 py-0.5 rounded-full">
+                                            <CheckCircle2 className="w-3 h-3" />
+                                            Connected
+                                        </div>
+                                    )}
+                                </div>
                                 <p className="text-xs text-muted-foreground mt-0.5">
-                                    {isConnected ? "Account is connected and ready for scheduling" : "Connect to schedule and publish automatically"}
+                                    {isConnected ? "Account is ready for automated scheduling and publishing." : "Connect to schedule and publish automatically."}
                                 </p>
                             </div>
                         </div>
-                        <div className="w-full sm:w-auto sm:min-w-[11rem] shrink-0">
+                        <div className="w-full sm:w-auto shrink-0 flex justify-end">
                             <Button 
                                 variant={isConnected ? "outline" : "default"}
-                                onClick={() => !isConnected && handleConnect(platform)}
-                                className={!isConnected ? "w-full sm:w-auto" : "w-full sm:w-auto text-destructive hover:bg-destructive/10"}
+                                onClick={() => isConnected ? handleDisconnect(platform) : handleConnect(platform)}
+                                className={isConnected ? "w-full sm:w-auto text-destructive hover:bg-destructive/10 border-destructive/20" : "w-full sm:w-auto min-w-[100px]"}
                             >
                                 {isConnected ? "Disconnect" : "Connect"}
                             </Button>
