@@ -4,7 +4,10 @@ import { ContentDetailsActions } from "@/features/content/components/content-det
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
+import { getOrCreateSubscription } from "@/features/subscriptions/services/usage.service";
+import { PlanType } from "@/features/subscriptions/model/subscriptions.interface";
 import Image from "next/image";
 
 export default async function ContentDetailsPage({
@@ -14,6 +17,15 @@ export default async function ContentDetailsPage({
 }) {
     const { contentId } = await params;
     const result = await getContent(contentId);
+
+    const session = await auth.api.getSession({
+        headers: await headers()
+    })
+    let isPremium = false;
+    if (session?.user.id) {
+        const subscription = await getOrCreateSubscription(session.user.id);
+        isPremium = subscription.planType !== PlanType.FREE
+    }
 
     if (!result.success || !result.data) {
         notFound();
@@ -33,8 +45,8 @@ export default async function ContentDetailsPage({
                     <h1 className="text-3xl font-semibold tracking-tight">
                         {content.title || "Untitled Content"}
                     </h1>
-                    
-                    <ContentDetailsActions content={content} />
+
+                    <ContentDetailsActions content={content} isPremium={isPremium} />
                 </div>
 
                 <div className="flex flex-wrap items-center gap-3">

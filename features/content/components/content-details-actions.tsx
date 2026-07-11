@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Edit2, Copy, Trash2, CalendarClock, Info } from "lucide-react";
+import { Edit2, Copy, Trash2, CalendarClock, Info, Lock } from "lucide-react";
 import { EditContentDialog } from "./edit-content-dialog";
 import { deleteContent } from "../actions/delete-content";
 import { useRouter } from "next/navigation";
@@ -20,9 +20,10 @@ import { Input } from "@/components/ui/input";
 
 interface ContentDetailsActionsProps {
     content: any;
+    isPremium?: boolean;
 }
 
-export function ContentDetailsActions({ content }: ContentDetailsActionsProps) {
+export function ContentDetailsActions({ content, isPremium = false }: ContentDetailsActionsProps) {
     const router = useRouter();
     const [isOpen, setIsOpen] = useState(false);
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -48,6 +49,16 @@ export function ContentDetailsActions({ content }: ContentDetailsActionsProps) {
     };
 
     const handleSchedule = async () => {
+        if (!isPremium && content.platform !== "LINKEDIN") {
+            toast.error(`${content.platform} automation is a Premium feature.`, {
+                action: {
+                    label: "Upgrade",
+                    onClick: () => router.push("/pricing")
+                },
+                duration: 5000
+            });
+            return;
+        }
         if (!scheduledDate) {
             toast.error("Please select a date and time");
             return;
@@ -58,6 +69,12 @@ export function ContentDetailsActions({ content }: ContentDetailsActionsProps) {
         const [datePart, timePart] = scheduledDate.split('T');
         const [year, month, day] = datePart.split('-').map(Number);
         const [hour, minute] = timePart.split(':').map(Number);
+        
+        if (minute % 15 !== 0) {
+             toast.error("Please select a time in 15-minute intervals (e.g., :00, :15, :30, :45)");
+             setIsScheduling(false);
+             return;
+        }
         const localDate = new Date(year, month - 1, day, hour, minute);
 
         const res = await scheduleContent(content._id, localDate);
@@ -71,6 +88,12 @@ export function ContentDetailsActions({ content }: ContentDetailsActionsProps) {
         }
     };
 
+    const getMinDateTime = () => {
+        const now = new Date();
+        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+        return now.toISOString().slice(0, 16);
+    };
+
     return (
         <div className="flex items-center gap-2">
 
@@ -78,7 +101,11 @@ export function ContentDetailsActions({ content }: ContentDetailsActionsProps) {
                 <Dialog open={isScheduleDialogOpen} onOpenChange={setIsScheduleDialogOpen}>
                     <DialogTrigger render={
                         <Button variant="default" size="sm" className="h-9">
-                            <CalendarClock className="w-4 h-4 mr-2" />
+                            {(!isPremium && content.platform !== "LINKEDIN") ? (
+                                <Lock className="w-4 h-4 mr-2" />
+                            ) : (
+                                <CalendarClock className="w-4 h-4 mr-2" />
+                            )}
                             {content.status === "SCHEDULED" ? "Reschedule" : "Schedule"}
                         </Button>
                     } />
@@ -91,11 +118,19 @@ export function ContentDetailsActions({ content }: ContentDetailsActionsProps) {
                         <div className="py-4 space-y-4">
                             <p className="text-sm text-muted-foreground"> Select when you want this content to be automatically published</p>
 
-                            <Input
-                                type="datetime-local"
-                                value={scheduledDate}
-                                onChange={(e) => setScheduledDate(e.target.value)}
-                            />
+                            <div className="space-y-2">
+                                <Input
+                                    type="datetime-local"
+                                    value={scheduledDate}
+                                    step={900}
+                                    min={getMinDateTime()}
+                                    onChange={(e) => setScheduledDate(e.target.value)}
+                                    className="cursor-pointer"
+                                />
+                                <p className="text-[0.8rem] text-muted-foreground">
+                                    Times must be in 15-minute intervals (e.g. :00, :15, :30, :45).
+                                </p>
+                            </div>
 
                             {content.status !== "PUBLISHED" && (
                                 <div className="bg-muted/50 border rounded-lg p-4 mt-4 space-y-3">

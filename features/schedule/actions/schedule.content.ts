@@ -11,6 +11,8 @@ import Project from "@/features/projects/models/project.model";
 import { redis } from "@/lib/redis";
 import { sendEmail } from "@/lib/email/mailer";
 import { getScheduledEmailHtml } from "@/lib/email/templates";
+import { getOrCreateSubscription } from "@/features/subscriptions/services/usage.service";
+import { PlanType } from "@/features/subscriptions/model/subscriptions.interface";
 
 export async function scheduleContent(contentId: string, scheduledFor: Date) {
     try {
@@ -46,6 +48,15 @@ export async function scheduleContent(contentId: string, scheduledFor: Date) {
 
         if (!contentToSchedule) {
             return { success: false, error: "Content not found" };
+        }
+        const subscription = await getOrCreateSubscription(session.user.id);
+        const isPremium = subscription.planType !== PlanType.FREE;
+
+        if (!isPremium && contentToSchedule.platform !== "LINKEDIN") {
+            return {
+                success: false,
+                error: `Automated scheduling for ${contentToSchedule.platform} requires a Premium subscription.`
+            }
         }
 
         if (contentToSchedule.platform === "REDDIT") {
