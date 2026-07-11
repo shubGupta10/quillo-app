@@ -4,6 +4,7 @@ import { CalendarClock, AlertCircle, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
+import { ClientDate } from "@/components/ui/client-date";
 
 export default function SchedulePage() {
     return (
@@ -67,9 +68,7 @@ async function ScheduleContent() {
                                     </Badge>
                                     <div className="text-sm font-medium bg-muted px-3 py-1.5 rounded-md flex items-center shrink-0">
                                         <CalendarClock className="w-4 h-4 mr-2 shrink-0" />
-                                        {new Date(post.scheduledFor).toLocaleString(undefined, {
-                                            month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit'
-                                        })}
+                                        <ClientDate date={post.scheduledFor} />
                                     </div>
                                 </div>
                             </div>

@@ -8,6 +8,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
+import { ClientDate } from "@/components/ui/client-date";
 
 export default function DashboardPage() {
   return (
@@ -107,8 +108,11 @@ async function DashboardContent() {
                   >
                     <div className="min-w-0">
                       <p className="font-medium truncate">{project.name}</p>
-                      <p className="text-sm text-muted-foreground">
-                        {project.updatesCount} updates · {project.contentCount} posts · Updated {project.updatedAt && !isNaN(new Date(project.updatedAt).getTime()) ? new Date(project.updatedAt).toLocaleDateString() : "Unknown"}
+                      <p className="text-sm text-muted-foreground flex items-center flex-wrap">
+                        {project.updatesCount} updates · {project.contentCount} posts · Updated 
+                        {project.updatedAt && !isNaN(new Date(project.updatedAt).getTime()) ? (
+                          <ClientDate className="ml-1" date={project.updatedAt} options={{ year: 'numeric', month: 'numeric', day: 'numeric' }} />
+                        ) : " Unknown"}
                       </p>
                     </div>
                     <ArrowRight className="h-4 w-4 text-muted-foreground shrink-0" />
@@ -155,7 +159,9 @@ async function DashboardContent() {
                             {content.platform}
                           </Badge>
                           <span className="text-xs text-muted-foreground">
-                            {content.createdAt && !isNaN(new Date(content.createdAt).getTime()) ? new Date(content.createdAt).toLocaleDateString() : "Unknown date"}
+                            {content.createdAt && !isNaN(new Date(content.createdAt).getTime()) ? (
+                              <ClientDate date={content.createdAt} options={{ year: 'numeric', month: 'numeric', day: 'numeric' }} />
+                            ) : "Unknown date"}
                           </span>
                         </div>
                       </div>
@@ -182,7 +188,7 @@ async function DashboardContent() {
                     <p className="text-sm font-medium leading-tight">{item.title}</p>
                     <span className="text-xs text-muted-foreground">
                       {item.date && !isNaN(new Date(item.date).getTime()) 
-                        ? `${new Date(item.date).toLocaleDateString()} · ${new Date(item.date).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`
+                        ? <ClientDate date={item.date} options={{ month: 'numeric', day: 'numeric', year: 'numeric', hour: "2-digit", minute: "2-digit" }} />
                         : "Unknown date"}
                     </span>
                   </div>
