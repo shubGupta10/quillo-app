@@ -8,7 +8,6 @@ const defaultSections = [
     title: "Product",
     links: [
       { name: "Features", href: "#features" },
-      { name: "Pricing", href: "#pricing" },
       { name: "Changelog", href: "#" },
       { name: "Documentation", href: "#" },
     ],
@@ -49,13 +48,13 @@ export const Footer7 = () => {
             Ready to stop context switching?
           </h2>
           <p className="text-lg text-muted-foreground mb-8">
-            Join thousands of developers who are building in public and growing their audience without ever leaving their code editor.
+            Log your daily progress while it's fresh, and let Quillo turn your work into content when you're ready to share it.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
-            <Button size="lg" className="gap-2" render={<Link href="/sign-up" />}>
-              Start Logging for Free <ArrowRight className="w-4 h-4" />
+            <Button size="lg" className="gap-2" render={<Link href="/sign-up" />} nativeButton={false}>
+              Join the Beta <ArrowRight className="w-4 h-4" />
             </Button>
-            <Button size="lg" variant="outline" render={<Link href="#features" />}>
+            <Button size="lg" variant="outline" render={<Link href="#features" />} nativeButton={false}>
               View Features
             </Button>
           </div>

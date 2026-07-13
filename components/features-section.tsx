@@ -1,16 +1,9 @@
 import { BentoGridShowcase } from "@/components/bento-product-features";
-import { Edit3, Sparkles, CalendarClock, FolderGit2, LibraryBig, MonitorSmartphone } from "lucide-react";
-import { BorderTrail } from "@/components/ui/border-trail";
+import { Edit3, Sparkles, CalendarClock, FolderGit2, LibraryBig, Lightbulb } from "lucide-react";
 
 function FeatureCard({ title, description, icon: Icon, children, className = "" }: any) {
   return (
     <div className={`relative flex flex-col h-full bg-card border border-border rounded-2xl overflow-hidden shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 ${className}`}>
-      <BorderTrail 
-        size={80} 
-        style={{
-          boxShadow: '0px 0px 40px 20px rgb(255 255 255 / 15%), 0 0 60px 30px rgb(0 0 0 / 20%)',
-        }}
-      />
       <div className="relative z-10 p-6 md:p-8 flex-1 flex flex-col bg-card/90 backdrop-blur-[2px]">
         <div className="flex items-center space-x-3 mb-3">
           <div className="p-2 bg-primary/10 rounded-lg">
@@ -42,8 +35,8 @@ export function FeaturesSection() {
 
         <BentoGridShowcase
           integration={
-            <FeatureCard 
-              title="Frictionless Logging" 
+            <FeatureCard
+              title="Frictionless Logging"
               description="Jot down your fixes, features, and thoughts the moment they happen. Quillo acts as your private engineering journal."
               icon={Edit3}
             >
@@ -54,43 +47,43 @@ export function FeaturesSection() {
             </FeatureCard>
           }
           trackers={
-            <FeatureCard 
-              title="Project Organization" 
-              description="Keep your side-hustles separate with dedicated workspaces."
+            <FeatureCard
+              title="Project Organization"
+              description="Manage multiple side-hustles in one account. Each project maintains its own context and logs."
               icon={FolderGit2}
             />
           }
           statistic={
-            <FeatureCard 
-              title="Content Library" 
+            <FeatureCard
+              title="Content Library"
               description="Save your best generated posts to publish whenever."
               icon={LibraryBig}
             />
           }
           focus={
-            <FeatureCard 
-              title="Platform Previews" 
-              description="See exactly how your post looks on X or LinkedIn."
-              icon={MonitorSmartphone}
+            <FeatureCard
+              title="Content Ideas"
+              description="Get multiple post angles and content opportunities from a single daily log."
+              icon={Lightbulb}
             />
           }
           productivity={
-            <FeatureCard 
-              title="AI Generation" 
-              description="Turn raw logs into engaging, platform-specific content."
+            <FeatureCard
+              title="Contextual Generation"
+              description="The AI uses your project's history as context, ensuring posts sound authentic and technical."
               icon={Sparkles}
             />
           }
           shortcuts={
-            <FeatureCard 
-              title="Smart Scheduling" 
-              description="Queue up an entire week of content in one click. Quillo handles the posting while you get back to building."
+            <FeatureCard
+              title="Smart Scheduling"
+              description="Schedule content internally and get reminded when it's time to publish. Maintain full control over your accounts."
               icon={CalendarClock}
             >
               <div className="w-full h-12 bg-background rounded-lg border border-border flex items-center justify-between px-4 mt-4">
                 <div className="flex space-x-2">
                   <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-                  <span className="text-xs font-medium text-foreground">Next post scheduled</span>
+                  <span className="text-xs font-medium text-foreground">Next reminder scheduled</span>
                 </div>
                 <span className="text-xs text-muted-foreground">Tomorrow, 9:00 AM</span>
               </div>

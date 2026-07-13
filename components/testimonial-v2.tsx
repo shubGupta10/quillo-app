@@ -18,13 +18,13 @@ const testimonials: Testimonial[] = [
     role: "Software Engineer",
   },
   {
-    text: "The frictionless logging is the best part. I just drop a line in the terminal and Quillo turns it into a full LinkedIn post. Saved me hours.",
+    text: "The frictionless logging is the best part. I just drop a quick note in the dashboard and Quillo turns it into a full LinkedIn post. Saved me hours.",
     image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=150&h=150",
     name: "Sarah Chen",
     role: "Indie Hacker",
   },
   {
-    text: "I hate context switching. Being able to document my progress without leaving VSCode is a game changer for my deep work.",
+    text: "I hate context switching. Being able to quickly document my progress in one place is a game changer for my deep work.",
     image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=150&h=150",
     name: "Marcus Johnson",
     role: "Full Stack Developer",
@@ -99,10 +99,9 @@ const TestimonialsColumn = (props: {
                   aria-hidden={index === 1 ? "true" : "false"}
                   tabIndex={index === 1 ? -1 : 0}
                   whileHover={{ 
-                    scale: 1.03,
-                    y: -8,
-                    boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.12), 0 10px 10px -5px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(0, 0, 0, 0.05)",
-                    transition: { type: "spring", stiffness: 400, damping: 17 }
+                    y: -4,
+                    boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(0, 0, 0, 0.05)",
+                    transition: { duration: 0.2, ease: "easeOut" }
                   }}
                   className="p-8 rounded-3xl border border-border shadow-lg shadow-black/5 max-w-xs w-full bg-card transition-all duration-300 cursor-default select-none group focus:outline-none" 
                 >

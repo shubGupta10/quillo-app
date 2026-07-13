@@ -51,14 +51,4 @@ export const marketingNavigation: NavItem[] = [
     href: "/#testimonials",
     icon: Star,
   },
-  {
-    title: "Pricing",
-    href: "/#pricing",
-    icon: CreditCard,
-  },
-  {
-    title: "FAQ",
-    href: "/#faq",
-    icon: Star,
-  },
 ];

@@ -221,7 +221,7 @@ export function PricingCard({
 					plan.highlighted && 'bg-muted/40',
 				)}
 			>
-				<Button className="w-full" variant={plan.highlighted ? 'default' : 'outline'} render={<Link href={plan.btn.href} />}>
+				<Button className="w-full" variant={plan.highlighted ? 'default' : 'outline'} render={<Link href={plan.btn.href} />} nativeButton={false}>
 					{plan.btn.text}
 				</Button>
 			</div>

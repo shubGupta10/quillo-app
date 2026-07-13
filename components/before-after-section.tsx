@@ -29,7 +29,7 @@ const MessyBeforeUI = () => (
 );
 
 const CleanAfterUI = () => (
-  <div className="w-full h-full bg-[#0d1117] flex flex-col pointer-events-none p-6 md:p-10 font-mono text-sm md:text-base border-l-4 border-primary/50 shadow-[0_0_50px_rgba(var(--primary),0.1)]">
+  <div className="w-full h-full bg-[#0d1117] flex flex-col pointer-events-none p-6 md:p-10 font-mono text-sm md:text-base border-l-4 border-primary/50 shadow-xl">
     <div className="flex justify-between items-center mb-6">
       <div className="flex space-x-2">
         <div className="w-3 h-3 rounded-full bg-red-500/80" />
