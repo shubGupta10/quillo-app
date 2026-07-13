@@ -1,15 +1,16 @@
 import { z } from "zod";
+import { VALIDATION_LIMITS } from "@/lib/constants/limits";
 
 export const createProjectSchema = z.object({
     name: z
         .string()
         .min(3, "Project name must be at least 3 characters")
-        .max(100, "Project name cannot exceed 100 characters"),
+        .max(VALIDATION_LIMITS.MAX_PROJECT_NAME_CHARS, `Project name cannot exceed ${VALIDATION_LIMITS.MAX_PROJECT_NAME_CHARS} characters`),
 
     description: z
         .string()
         .min(10, "Description must be at least 10 characters")
-        .max(5000, "Description cannot exceed 5000 characters"),
+        .max(VALIDATION_LIMITS.MAX_PROJECT_DESC_CHARS, `Description cannot exceed ${VALIDATION_LIMITS.MAX_PROJECT_DESC_CHARS} characters`),
 
     industry: z
         .array(z.string())
@@ -21,7 +22,7 @@ export const createProjectSchema = z.object({
 
     tags: z
         .array(z.string())
-        .max(10, "Maximum 10 tags")
+        .max(VALIDATION_LIMITS.MAX_PROJECT_TAGS, `Maximum ${VALIDATION_LIMITS.MAX_PROJECT_TAGS} tags`)
         .default([]),
 });
 

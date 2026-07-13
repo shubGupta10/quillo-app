@@ -41,7 +41,7 @@ export function FeaturesSection() {
               icon={Edit3}
             >
               <div className="w-full bg-background rounded-lg border border-border p-4 shadow-sm mt-4">
-                <div className="text-xs text-muted-foreground mb-2">Today at 2:30 PM</div>
+                <div className="text-[10px] font-bold text-muted-foreground mb-3 uppercase tracking-wider">Just now</div>
                 <div className="text-sm font-medium text-foreground">Fixed the Google OAuth issue. Atlas IP restrictions were blocking the production build...</div>
               </div>
             </FeatureCard>
@@ -85,7 +85,7 @@ export function FeaturesSection() {
                   <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
                   <span className="text-xs font-medium text-foreground">Next reminder scheduled</span>
                 </div>
-                <span className="text-xs text-muted-foreground">Tomorrow, 9:00 AM</span>
+                <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider">Scheduled for Morning</span>
               </div>
             </FeatureCard>
           }

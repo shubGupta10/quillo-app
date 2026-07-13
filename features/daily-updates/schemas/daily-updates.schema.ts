@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { VALIDATION_LIMITS } from "@/lib/constants/limits";
 
 export const createDailyUpdateSchema = z.object({
     projectId: z
@@ -8,7 +9,7 @@ export const createDailyUpdateSchema = z.object({
     content: z
         .string()
         .min(10, "Daily update content must be at least 10 characters long")
-        .max(1000, "Daily update content cannot exceed 1000 characters"),
+        .max(VALIDATION_LIMITS.MAX_LOG_LENGTH_CHARS, `Daily update content cannot exceed ${VALIDATION_LIMITS.MAX_LOG_LENGTH_CHARS} characters`),
 
     attachment: z.array(
         z.object({

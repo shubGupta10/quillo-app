@@ -1,21 +1,22 @@
 import { createUploadthing, type FileRouter } from "uploadthing/next";
 import { UploadThingError } from "uploadthing/server";
+import { VALIDATION_LIMITS } from "@/lib/constants/limits";
 
 const f = createUploadthing();
 
 export const ourFileRouter = {
     dailyUpdateAttachment: f({
         image: {
-            maxFileSize: "8MB",
-            maxFileCount: 5,
+            maxFileSize: VALIDATION_LIMITS.UPLOAD_MAX_IMAGE_SIZE,
+            maxFileCount: VALIDATION_LIMITS.UPLOAD_MAX_FILE_COUNT,
         },
         pdf: {
-            maxFileSize: "16MB",
-            maxFileCount: 5,
+            maxFileSize: VALIDATION_LIMITS.UPLOAD_MAX_PDF_SIZE,
+            maxFileCount: VALIDATION_LIMITS.UPLOAD_MAX_FILE_COUNT,
         },
         text: {
-            maxFileSize: "4MB",
-            maxFileCount: 5,
+            maxFileSize: VALIDATION_LIMITS.UPLOAD_MAX_TEXT_SIZE,
+            maxFileCount: VALIDATION_LIMITS.UPLOAD_MAX_FILE_COUNT,
         },
     })
         .middleware(async () => {

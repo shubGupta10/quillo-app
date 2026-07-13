@@ -21,6 +21,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { createDailyUpdateSchema, CreateDailyUpdateInput } from "../schemas/daily-updates.schema"
 import { createDailyUpdate } from "../actions/create-daily-update"
+import { VALIDATION_LIMITS } from "@/lib/constants/limits"
 
 interface AddUpdateDialogProps {
     projectId: string;
@@ -43,7 +44,7 @@ export function AddUpdateDialog({ projectId }: AddUpdateDialogProps) {
 
     const contentValue = form.watch("content");
     const charCount = contentValue?.length ?? 0;
-    const MAX_CHARS = 1000;
+    const MAX_CHARS = VALIDATION_LIMITS.MAX_LOG_LENGTH_CHARS;
 
     const { startUpload } = useUploadThing("dailyUpdateAttachment", {
         onClientUploadComplete: (res) => {

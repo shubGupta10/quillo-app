@@ -9,6 +9,8 @@ import { getSettings } from "@/features/settings/actions/get-settings";
 import { getSubscriptionStatus } from "@/features/subscriptions/actions/get-subscription-status";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import { USAGE_QUOTAS } from "@/lib/constants/limits";
+import { PlanType } from "@/features/subscriptions/model/subscriptions.interface";
 
 export default async function ProjectDetailsPage({
   params,
@@ -29,7 +31,7 @@ export default async function ProjectDetailsPage({
   const preferences = settingsRes.success && settingsRes.data ? settingsRes.data.preferences : undefined;
   const limitReached = subscriptionStatus ? !subscriptionStatus.allowed : false;
   const generationsUsed = subscriptionStatus?.used ?? 0;
-  const generationsLimit = subscriptionStatus?.limit ?? 20;
+  const generationsLimit = subscriptionStatus?.limit ?? USAGE_QUOTAS.AI_GENERATIONS_PER_MONTH[PlanType.FREE];
 
   if (!project) {
       return (

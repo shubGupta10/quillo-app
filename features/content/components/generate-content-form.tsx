@@ -39,7 +39,7 @@ interface GenerateContentFormProps {
     generationsLimit?: number;
 }
 
-export function GenerateContentForm({ projectId, updates, preferences, limitReached = false, generationsUsed = 0, generationsLimit = 20 }: GenerateContentFormProps) {
+export function GenerateContentForm({ projectId, updates, preferences, limitReached = false, generationsUsed = 0, generationsLimit }: GenerateContentFormProps) {
     const router = useRouter();
     const [isGenerating, setIsGenerating] = useState(false);
     const [isUpdatesModalOpen, setIsUpdatesModalOpen] = useState(false);
