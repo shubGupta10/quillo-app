@@ -57,6 +57,7 @@ export async function saveContent(data: SaveContentInput) {
             contentLength: validatedFields.data.contentLength,
             title: validatedFields.data.title,
             content: validatedFields.data.content,
+            contentProfile: validatedFields.data.contentProfile,
             attachment: extractedAttachments
         });
 

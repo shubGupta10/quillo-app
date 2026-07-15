@@ -25,6 +25,7 @@ import { ai } from "@/lib/ai";
 import { generatedContentResponseSchema } from "../schemas/content-response.schema";
 import { aiRateLimit } from "@/lib/rate-limit";
 import { checkGenerationLimit, incrementGenerationUsage } from "@/features/subscriptions/services/usage.service";
+import { getPreferenceMemory } from "../services/preference-memory.service";
 
 
 export async function generateContent(
@@ -109,11 +110,22 @@ export async function generateContent(
         }).sort({ createdAt: -1 })
             .limit(3)
 
+        const preferenceMemory = await getPreferenceMemory(
+            validatedFields.data.projectId,
+            validatedFields.data.platform
+        );
+
+        // Filter recent content based on the raw text to avoid coupling to MongoDB _ids.
+        const preferenceTexts = new Set(preferenceMemory.map((p: any) => p.content));
+        const filteredRecentContent = recentContent.filter(
+            (c: any) => !preferenceTexts.has(c.content)
+        );
 
         const prompt = buildPrompt({
             project,
             updates,
-            recentContent,
+            recentContent: filteredRecentContent,
+            preferenceMemory,
             platform: validatedFields.data.platform,
             perspective: validatedFields.data.perspective,
             tone: validatedFields.data.tone,

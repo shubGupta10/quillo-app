@@ -36,6 +36,15 @@ export const saveContentSchema = generateContentSchema.extend({
             size: z.number(),
         })
     ).max(VALIDATION_LIMITS.UPLOAD_MAX_FILE_COUNT).optional(),
+    contentProfile: z.object({
+        topics: z.array(z.string()).optional(),
+        technologies: z.array(z.string()).optional(),
+        hookStyle: z.string().optional(),
+        structure: z.string().optional(),
+        contentAngle: z.string().optional(),
+        writingTone: z.string().optional(),
+        detailLevel: z.string().optional(),
+    }).optional()
 });
 
 export type SaveContentInput =

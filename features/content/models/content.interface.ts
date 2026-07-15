@@ -33,6 +33,16 @@ export enum ContentLength {
     LONG = "LONG",
 }
 
+export interface IContentProfile {
+    topics?: string[];
+    technologies?: string[];
+    hookStyle?: string;
+    structure?: string;
+    contentAngle?: string;
+    writingTone?: string;
+    detailLevel?: string;
+}
+
 export interface IContent {
     projectId: ObjectId;
     sourceUpdates: ObjectId[];
@@ -42,6 +52,7 @@ export interface IContent {
     contentLength: ContentLength;
     title?: string;
     content: string;
+    contentProfile?: IContentProfile;
     attachment?: {
         url: string;
         type: string;
