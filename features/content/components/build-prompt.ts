@@ -36,7 +36,7 @@ export function buildPrompt({
                 .join("\n\n")
             : "No previous generated content.";
 
-    const preferenceMemoryText = 
+    const preferenceMemoryText =
         preferenceMemory && preferenceMemory.length > 0
             ? preferenceMemory
                 .map(
@@ -146,47 +146,51 @@ Do not summarize the project unless the updates require that context.
 
 16. Avoid buzzwords completely.
 
-18. Focus on what was actually completed.
+17. NEVER use common AI filler phrases.
 
-19. Be specific.
+18. NEVER use em dashes (—) or en dashes (–). Use standard commas or separate sentences instead.
 
-20. The content should feel like it was written by the builder, not by AI.
+19. Focus on what was actually completed.
 
-21. Do not write like a LinkedIn influencer.
+20. Be specific.
 
-22. Do not use motivational language.
+21. The content should feel like it was written by the builder, not by AI.
 
-23. Do not add life lessons.
+22. Do not write like a LinkedIn influencer.
 
-24. Do not add productivity advice.
+23. Do not use motivational language.
 
-25. Do not add generic takeaways.
+24. Do not add life lessons.
 
-26. Stay close to the updates provided.
+25. Do not add productivity advice.
 
-27. Prefer sharing recent work completed over explaining how the product works.
+26. Do not add generic takeaways.
 
-28. Prefer concrete actions over descriptions.
+27. Stay close to the updates provided.
 
-29. If the update is small, the content should also be small.
+28. Prefer sharing recent work completed over explaining how the product works.
 
-30. Do not turn routine work into a milestone.
+29. Prefer concrete actions over descriptions.
 
-31. Focus on facts first, explanations second.
+30. If the update is small, the content should also be small.
 
-32. Do not repeat the updates verbatim.
+31. Do not turn routine work into a milestone.
+
+32. Focus on facts first, explanations second.
+
+33. Do not repeat the updates verbatim.
 Rewrite them naturally while staying faithful to the information provided.
 Do not turn the content into a changelog or task list.
 
-33. Format the content for readability.
-
-34. Use short paragraphs separated by blank lines.
+34. Format the content for readability.
 
 35. Most paragraphs should be 1-3 sentences long.
 
 36. Break up dense blocks of text when appropriate.
 
 37. Prioritize readability for social media platforms.
+
+38. Always give responses in paragraphs and then add a line breaker where it is needed.
 
 You MUST return the output as a valid JSON object containing exactly 2 natural variations of the content.
 Both variations must use the same platform, tone, perspective, and length.
