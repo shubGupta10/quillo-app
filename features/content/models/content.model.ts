@@ -41,6 +41,15 @@ const contentSchema = new mongoose.Schema<IContent>({
         type: String,
         required: true
     },
+    contentProfile: {
+        topics: [{ type: String }],
+        technologies: [{ type: String }],
+        hookStyle: { type: String },
+        structure: { type: String },
+        contentAngle: { type: String },
+        writingTone: { type: String },
+        detailLevel: { type: String },
+    },
     attachment: [
         {
             url: {

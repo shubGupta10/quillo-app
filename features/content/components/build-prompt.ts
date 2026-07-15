@@ -2,6 +2,7 @@ type BuildPromptParams = {
     project: any;
     updates: any[];
     recentContent: any[];
+    preferenceMemory?: any[];
     platform: string;
     perspective: string;
     tone: string;
@@ -12,6 +13,7 @@ export function buildPrompt({
     project,
     updates,
     recentContent,
+    preferenceMemory,
     platform,
     perspective,
     tone,
@@ -33,6 +35,16 @@ export function buildPrompt({
                 )
                 .join("\n\n")
             : "No previous generated content.";
+
+    const preferenceMemoryText = 
+        preferenceMemory && preferenceMemory.length > 0
+            ? preferenceMemory
+                .map(
+                    (content, index) =>
+                        `Example ${index + 1}:\n- Blueprint: ${JSON.stringify(content.contentProfile)}\n- Final Output: "${content.content}"`
+                )
+                .join("\n\n")
+            : "No previous preference memory.";
 
     return `
 You are helping a builder create content about their work.
@@ -85,6 +97,14 @@ ${updatesText}
 PREVIOUS GENERATED CONTENT
 
 ${recentContentText}
+
+USER STYLE PREFERENCES
+
+The user has previously selected the following generated content for similar updates. 
+Use these as REFERENCE EXAMPLES for how the user prefers their content to be structured, hooked, and written.
+Do not blindly copy them as templates. Learn the user's style and preferences while generating fresh content.
+
+${preferenceMemoryText}
 
 IMPORTANT INSTRUCTIONS
 
@@ -172,17 +192,36 @@ You MUST return the output as a valid JSON object containing exactly 2 natural v
 Both variations must use the same platform, tone, perspective, and length.
 Variation 1 should be more direct and straightforward.
 Variation 2 should use a different structure or angle while staying factual and grounded in the updates.
+Additionally, you MUST generate a contentProfile for each variation explaining its blueprint. The contentProfile should contain topics, technologies, hookStyle, structure, contentAngle, writingTone, and detailLevel.
 
 Use the following structure:
 {
   "variations": [
     {
       "title": "A short, engaging title",
-      "content": "The actual generated content body for variation 1"
+      "content": "The actual generated content body for variation 1",
+      "contentProfile": {
+        "topics": ["topic1"],
+        "technologies": ["tech1"],
+        "hookStyle": "e.g. direct question",
+        "structure": "e.g. problem -> action -> result",
+        "contentAngle": "e.g. technical deep dive",
+        "writingTone": "e.g. conversational but professional",
+        "detailLevel": "e.g. specific implementation details"
+      }
     },
     {
       "title": "A short, engaging title",
-      "content": "The actual generated content body for variation 2"
+      "content": "The actual generated content body for variation 2",
+      "contentProfile": {
+        "topics": ["topic1"],
+        "technologies": ["tech1"],
+        "hookStyle": "e.g. story opening",
+        "structure": "e.g. context -> bullet points",
+        "contentAngle": "e.g. high-level summary",
+        "writingTone": "e.g. casual and excited",
+        "detailLevel": "e.g. high-level overview"
+      }
     }
   ]
 }

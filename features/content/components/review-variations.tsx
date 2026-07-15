@@ -16,7 +16,7 @@ interface ReviewVariationsProps {
 export function ReviewVariations({ projectId }: ReviewVariationsProps) {
     const router = useRouter();
     const [draftData, setDraftData] = useState<{
-        variations: { title: string, content: string }[],
+        variations: { title: string, content: string, contentProfile?: any }[],
         metadata: any
     } | null>(null);
     const [isLoaded, setIsLoaded] = useState(false);
@@ -26,7 +26,6 @@ export function ReviewVariations({ projectId }: ReviewVariationsProps) {
     useEffect(() => {
         const stored = sessionStorage.getItem(`draftContent_${projectId}`);
         if (!stored) {
-            // No draft found (direct URL access or already saved), kick back to project
             router.replace(`/projects/${projectId}`);
             return;
         }
@@ -66,27 +65,23 @@ export function ReviewVariations({ projectId }: ReviewVariationsProps) {
         }
     }
 
-    async function handleSave(variation: {title: string, content: string}, index: number) {
+    async function handleSave(variation: { title: string, content: string, contentProfile?: any }, index: number) {
         if (!draftData) return;
         setSavingIndex(index);
-        
+
         const payload: SaveContentInput = {
             ...draftData.metadata,
             title: variation.title,
             content: variation.content,
+            contentProfile: variation.contentProfile,
         };
 
         try {
             const result = await saveContent(payload);
             if (result.success && result.data) {
                 toast.success("Content saved to library");
-                // Clear the draft from session storage so it doesn't linger
                 sessionStorage.removeItem(`draftContent_${projectId}`);
-                
-                // Refresh router to ensure layout data is fresh
                 router.refresh();
-                
-                // Redirect immediately to the new content details page
                 router.push(`/content/${result.data._id}`);
             } else {
                 toast.error("Failed to save content: " + (result.error || "Unknown error"));
@@ -118,8 +113,8 @@ export function ReviewVariations({ projectId }: ReviewVariationsProps) {
                         Select your preferred option to save it to your library.
                     </p>
                 </div>
-                <Button 
-                    variant="outline" 
+                <Button
+                    variant="outline"
                     onClick={handleRegenerate}
                     disabled={isRegenerating || savingIndex !== null}
                     className="shrink-0"
@@ -134,7 +129,7 @@ export function ReviewVariations({ projectId }: ReviewVariationsProps) {
                     <div key={index} className="space-y-6">
                         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                             <h2 className="text-2xl font-semibold">Option {index + 1}</h2>
-                            <Button 
+                            <Button
                                 size="lg"
                                 onClick={() => handleSave(variation, index)}
                                 disabled={savingIndex !== null}
@@ -143,7 +138,7 @@ export function ReviewVariations({ projectId }: ReviewVariationsProps) {
                                 {savingIndex === index ? "Saving..." : "Save This Version"}
                             </Button>
                         </div>
-                        
+
                         <div className="p-6 sm:p-8 border rounded-lg bg-card shadow-sm space-y-6">
                             {variation.title && variation.title.trim() !== "" && (
                                 <div>
@@ -158,7 +153,7 @@ export function ReviewVariations({ projectId }: ReviewVariationsProps) {
                                 </div>
                             </div>
                         </div>
-                        
+
                         {index === 0 && draftData.variations.length > 1 && (
                             <hr className="my-8 border-border" />
                         )}
