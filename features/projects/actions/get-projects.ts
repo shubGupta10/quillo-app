@@ -35,13 +35,14 @@ export async function getProjects() {
                     from: 'contents',
                     localField: '_id',
                     foreignField: 'projectId',
+                    pipeline: [{ $count: "count" }],
                     as: 'content'
                 }
             },
             {
                 $addFields: {
-                    updatesCount: { $size: "$updates" },
-                    contentCount: { $size: "$content" }
+                    updatesCount: { $ifNull: [{ $arrayElemAt: ["$updates.count", 0] }, 0] },
+                    contentCount: { $ifNull: [{ $arrayElemAt: ["$content.count", 0] }, 0] }
                 }
             },
             {
