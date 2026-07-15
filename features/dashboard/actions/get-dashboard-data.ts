@@ -31,6 +31,9 @@ export async function getDashboardData() {
                     from: "dailyupdates",
                     localField: "_id",
                     foreignField: "projectId",
+                    pipeline: [{
+                        $count: "count"
+                    }],
                     as: "updates"
                 }
             },
