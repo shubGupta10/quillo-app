@@ -4,7 +4,7 @@ export default async function ReviewPage({ params }: { params: Promise<{ project
     const { projectId } = await params;
     
     return (
-        <div className="py-8">
+        <div className="max-w-7xl mx-auto space-y-8">
             <ReviewVariations projectId={projectId} />
         </div>
     );

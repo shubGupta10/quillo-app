@@ -102,7 +102,7 @@ export function ReviewVariations({ projectId }: ReviewVariationsProps) {
     }
 
     return (
-        <div className="space-y-8 max-w-4xl mx-auto">
+        <div className="space-y-8">
             <div className="flex flex-col sm:flex-row sm:items-center gap-4 border-b pb-6">
                 <Button variant="outline" size="icon" onClick={() => router.back()} className="shrink-0">
                     <ArrowLeft className="h-4 w-4" />
