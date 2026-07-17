@@ -50,6 +50,10 @@ const contentSchema = new mongoose.Schema<IContent>({
         writingTone: { type: String },
         detailLevel: { type: String },
     },
+    embedding: {
+        type: [Number],
+        select: false,
+    },
     attachment: [
         {
             url: {

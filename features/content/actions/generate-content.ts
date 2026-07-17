@@ -21,11 +21,11 @@ import Project from "@/features/projects/models/project.model";
 import DailyUpdate from "@/features/daily-updates/models/dailyUpdate.model";
 import Content from "../models/content.model";
 import { buildPrompt } from "../components/build-prompt";
-import { ai } from "@/lib/ai";
 import { generatedContentResponseSchema } from "../schemas/content-response.schema";
 import { aiRateLimit } from "@/lib/rate-limit";
 import { checkGenerationLimit, incrementGenerationUsage } from "@/features/subscriptions/services/usage.service";
 import { getPreferenceMemory } from "../services/preference-memory.service";
+import { ai } from "@/lib/ai";
 
 
 export async function generateContent(
@@ -110,9 +110,20 @@ export async function generateContent(
         }).sort({ createdAt: -1 })
             .limit(3)
 
+
+        const updateTexts = updates.map(u => u.content).join("\n");
+
+        const searchEmbeddingResponse = await ai.models.embedContent({
+            model: "text-embedding-004",
+            contents: updateTexts
+        });
+
+        const searchVector = searchEmbeddingResponse.embeddings?.[0]?.values || [];
+
         const preferenceMemory = await getPreferenceMemory(
             validatedFields.data.projectId,
-            validatedFields.data.platform
+            validatedFields.data.platform,
+            searchVector,
         );
 
         // Filter recent content based on the raw text to avoid coupling to MongoDB _ids.
