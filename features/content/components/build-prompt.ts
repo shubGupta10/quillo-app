@@ -193,6 +193,8 @@ Both variations must use the same platform, tone, perspective, and length.
 Variation 1 should be more direct and straightforward.
 Variation 2 should use a different structure or angle while staying factual and grounded in the updates.
 Additionally, you MUST generate a contentProfile for each variation explaining its blueprint. The contentProfile should contain topics, technologies, hookStyle, structure, contentAngle, writingTone, and detailLevel.
+
+IMPORTANT FORMATTING RULE: You MUST use "\\n\\n" (literal newline characters) inside your "content" string to break the text up into short, readable paragraphs! Do not write one massive block of text.
 `;
 }
 
