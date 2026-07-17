@@ -16,9 +16,6 @@ export async function getPreferenceMemory(projectId: string, platform: Platform,
                     filter: {
                         projectId: new mongoose.Types.ObjectId(projectId),
                         platform: platform,
-                        contentProfile: {
-                            $exists: true
-                        }
                     }
                 }
             },
