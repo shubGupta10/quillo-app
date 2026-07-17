@@ -151,6 +151,7 @@ export async function generateContent(
             contents: prompt,
             config: {
                 responseMimeType: "application/json",
+                responseSchema: generatedContentResponseSchema.toJSONSchema(),
             }
         })
         let generatedText = res.text;
@@ -161,8 +162,6 @@ export async function generateContent(
             };
         }
 
-        // Sanitize just in case it returns markdown JSON blocks
-        generatedText = generatedText.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
 
         const parsedResponse = generatedContentResponseSchema.safeParse(JSON.parse(generatedText));
         if (!parsedResponse.success) {
