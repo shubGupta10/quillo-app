@@ -115,7 +115,10 @@ export async function generateContent(
 
         const searchEmbeddingResponse = await ai.models.embedContent({
             model: "gemini-embedding-2",
-            contents: updateTexts
+            contents: updateTexts,
+            config: {
+                outputDimensionality: 768,
+            }
         });
 
         const searchVector = searchEmbeddingResponse.embeddings?.[0]?.values || [];
