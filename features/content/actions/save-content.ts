@@ -50,7 +50,7 @@ export async function saveContent(data: SaveContentInput) {
         const extractedAttachments = souceUpdatesList.flatMap(update => update.attachment || []);
 
         const embeddingResponse = await ai.models.embedContent({
-            model: "text-embedding-004",
+            model: "gemini-embedding-2",
             contents: validatedFields.data.content,
         })
 
