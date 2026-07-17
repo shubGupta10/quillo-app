@@ -74,9 +74,15 @@ export async function generateContent(
 
         await connectDB();
 
-        const project = await Project.findById(
-            validatedFields.data.projectId
-        );
+        const [project, updates, recentContent] = await Promise.all([
+            Project.findById(validatedFields.data.projectId),
+            DailyUpdate.find({ 
+                _id: { $in: validatedFields.data.sourceUpdates },
+                projectId: validatedFields.data.projectId
+            }),
+            Content.find({ projectId: validatedFields.data.projectId }).sort({ createdAt: -1 }).limit(3)
+        ]);
+
         if (!project) {
             return {
                 success: false,
@@ -91,25 +97,12 @@ export async function generateContent(
             };
         }
 
-        const updates = await DailyUpdate.find({
-            _id: {
-                $in: validatedFields.data.sourceUpdates,
-            },
-            projectId: validatedFields.data.projectId,
-        });
-
         if (updates.length !== validatedFields.data.sourceUpdates.length) {
             return {
                 success: false,
                 error: "Some updates were not found",
             };
         }
-
-        const recentContent = await Content.find({
-            projectId: project._id,
-        }).sort({ createdAt: -1 })
-            .limit(3)
-
 
         const updateTexts = updates.map(u => u.content).join("\n");
 
