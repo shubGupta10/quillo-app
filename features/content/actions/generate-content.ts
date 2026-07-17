@@ -114,7 +114,7 @@ export async function generateContent(
         const updateTexts = updates.map(u => u.content).join("\n");
 
         const searchEmbeddingResponse = await ai.models.embedContent({
-            model: "text-embedding-004",
+            model: "gemini-embedding-2",
             contents: updateTexts
         });
 
