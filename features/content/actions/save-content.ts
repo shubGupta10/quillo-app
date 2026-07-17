@@ -7,6 +7,7 @@ import Content from "../models/content.model";
 import Project from "@/features/projects/models/project.model";
 import { SaveContentInput, saveContentSchema } from "../schemas/content.schema";
 import DailyUpdate from "@/features/daily-updates/models/dailyUpdate.model";
+import { ai } from "@/lib/ai";
 
 export async function saveContent(data: SaveContentInput) {
     try {
@@ -48,6 +49,17 @@ export async function saveContent(data: SaveContentInput) {
 
         const extractedAttachments = souceUpdatesList.flatMap(update => update.attachment || []);
 
+        const embeddingResponse = await ai.models.embedContent({
+            model: "text-embedding-004",
+            contents: validatedFields.data.content,
+        })
+
+        if (!embeddingResponse.embeddings || !embeddingResponse.embeddings[0]?.values) {
+            throw new Error("Failed to generate embedding vector")
+        }
+
+        const embeddingVector = embeddingResponse.embeddings[0].values;
+
         const createdContent = await Content.create({
             projectId: project._id,
             sourceUpdates: validatedFields.data.sourceUpdates,
@@ -58,7 +70,8 @@ export async function saveContent(data: SaveContentInput) {
             title: validatedFields.data.title,
             content: validatedFields.data.content,
             contentProfile: validatedFields.data.contentProfile,
-            attachment: extractedAttachments
+            attachment: extractedAttachments,
+            embedding: embeddingVector
         });
 
         return {

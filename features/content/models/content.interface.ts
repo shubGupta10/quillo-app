@@ -53,6 +53,7 @@ export interface IContent {
     title?: string;
     content: string;
     contentProfile?: IContentProfile;
+    embedding?: number[]
     attachment?: {
         url: string;
         type: string;
