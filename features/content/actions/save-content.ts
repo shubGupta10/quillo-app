@@ -52,6 +52,9 @@ export async function saveContent(data: SaveContentInput) {
         const embeddingResponse = await ai.models.embedContent({
             model: "gemini-embedding-2",
             contents: validatedFields.data.content,
+            config: {
+                outputDimensionality: 768,
+            }
         })
 
         if (!embeddingResponse.embeddings || !embeddingResponse.embeddings[0]?.values) {
