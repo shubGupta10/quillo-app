@@ -176,7 +176,7 @@ export function AddUpdateDialog({ projectId }: AddUpdateDialogProps) {
                         {uploadedFiles.length > 0 ? (
                             <div className="flex flex-col gap-2">
                                 {uploadedFiles.map((file, idx) => (
-                                    <div key={idx} className="flex items-center justify-between p-3 border rounded-md bg-muted/30">
+                                    <div key={idx} className="flex items-center justify-between p-3 border rounded-md bg-muted">
                                         <span className="text-sm truncate">{file.fileName}</span>
                                         <Button 
                                             type="button" 
@@ -196,7 +196,7 @@ export function AddUpdateDialog({ projectId }: AddUpdateDialogProps) {
                             </div>
                         ) : (
                             <div
-                                className="border border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors hover:border-primary/50 hover:bg-muted/30"
+                                className="border border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors hover:border-primary hover:bg-muted"
                                 onDrop={handleDrop}
                                 onDragOver={(e) => e.preventDefault()}
                                 onClick={() => fileInputRef.current?.click()}
@@ -204,6 +204,7 @@ export function AddUpdateDialog({ projectId }: AddUpdateDialogProps) {
                                 <input
                                     ref={fileInputRef}
                                     type="file"
+                                    multiple
                                     accept="image/*,.pdf,.txt"
                                     className="hidden"
                                     onChange={(e) => {
@@ -223,7 +224,7 @@ export function AddUpdateDialog({ projectId }: AddUpdateDialogProps) {
                                         <p className="text-sm text-muted-foreground">
                                             Drop a file here or click to browse
                                         </p>
-                                        <p className="text-xs text-muted-foreground/60">
+                                        <p className="text-xs text-muted-foreground">
                                             Images, PDFs, or text files
                                         </p>
                                     </div>
