@@ -94,7 +94,7 @@ export function AddUpdateDialog({ projectId }: AddUpdateDialogProps) {
             try {
                 const payload = {
                     ...data,
-                    attachment: uploadedFiles
+                    attachment: currentFiles
                 };
                 const result = await createDailyUpdate(payload);
 
