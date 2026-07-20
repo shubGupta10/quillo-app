@@ -3,40 +3,15 @@
 import { auth } from "@/lib/auth";
 import { connectDB } from "@/lib/db";
 import { headers } from "next/headers";
-import Content from "@/features/content/models/content.model";
-import Project from "@/features/projects/models/project.model";
+import { getCachedAllContent } from "../queries/queries";
 
 export async function getAllContent({ page = 1, limit = 6 }) {
     try {
         await connectDB();
+        const session = await auth.api.getSession({ headers: await headers() });
+        if (!session?.user.id) return { success: false, error: "Unauthorized" };
 
-        const session = await auth.api.getSession({
-            headers: await headers()
-        })
-        if (!session?.user.id) {
-            return {
-                success: false,
-                error: "Unauthorized"
-            }
-        }
-
-        const projects = await Project.find({ userId: session.user.id }).lean();
-        const projectIds = projects.map(p => p._id);
-        const skip = (page - 1) * limit as any;
-
-        const [contents, totalContent] = await Promise.all([
-            Content.find({
-                projectId: { $in: projectIds }
-            })
-                .populate("projectId", "name")
-                .sort({ createdAt: -1 })
-                .skip(skip)
-                .limit(limit)
-                .lean(),
-            Content.countDocuments({
-                projectId: { $in: projectIds }
-            })
-        ]);
+        const { contents, totalContent } = await getCachedAllContent(session.user.id, page, limit);
 
         return {
             success: true,
@@ -49,10 +24,6 @@ export async function getAllContent({ page = 1, limit = 6 }) {
             }
         }
     } catch (error) {
-        console.error("Error getting all content:", error);
-        return {
-            success: false,
-            error: "Internal server error"
-        }
+        return { success: false, error: "Internal server error" }
     }
 }

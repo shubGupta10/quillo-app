@@ -3,7 +3,7 @@
 import { auth } from "@/lib/auth"
 import { connectDB } from "@/lib/db"
 import { headers } from "next/headers"
-import Project from "../models/project.model"
+import { getCachedProjectById } from "../queries/queries"
 
 export async function getProject(projectId: string) {
     try {
@@ -25,10 +25,7 @@ export async function getProject(projectId: string) {
         }
 
         await connectDB();
-        const fetchProject = await Project.findOne({
-            _id: projectId,
-            userId: session.user.id
-        }).lean()
+        const fetchProject = await getCachedProjectById(projectId, session.user.id);
 
         if (!fetchProject) {
             return {

@@ -4,8 +4,8 @@ import { auth } from "@/lib/auth";
 import { connectDB } from "@/lib/db";
 import { headers } from "next/headers";
 import Project from "@/features/projects/models/project.model";
-import DailyUpdate from "@/features/daily-updates/models/dailyUpdate.model";
 import Content from "@/features/content/models/content.model";
+import { getCachedDashboardData } from "../queries/queries";
 
 export async function getDashboardData() {
     try {
@@ -19,99 +19,7 @@ export async function getDashboardData() {
         await connectDB();
         const userId = session.user.id;
 
-        //get projects belong to this current user
-        const projects = await Project.aggregate([
-            {
-                $match: {
-                    userId: userId
-                }
-            },
-            {
-                $lookup: {
-                    from: "dailyupdates",
-                    localField: "_id",
-                    foreignField: "projectId",
-                    as: "updates"
-                }
-            },
-            {
-                $lookup: {
-                    from: "contents",
-                    localField: "_id",
-                    foreignField: "projectId",
-                    as: "contents"
-                }
-            },
-            {
-                $facet: {
-                    stats: [
-                        {
-                            $group: {
-                                _id: null,
-                                totalProjects: { $sum: 1 },
-                                totalUpdates: { $sum: { $size: "$updates" } },
-                                totalContent: { $sum: { $size: "$contents" } }
-                            }
-                        }
-                    ],
-
-                    recentProjects: [
-                        {
-                            $sort: { createdAt: -1 },
-                        },
-                        {
-                            $limit: 3
-                        },
-                        {
-                            $project: {
-                                name: 1,
-                                createdAt: 1,
-                                updatedAt: 1,
-                                updatesCount: { $size: "$updates" },
-                                contentCount: { $size: "$contents" }
-                            }
-                        }
-                    ],
-
-                    recentUpdates: [
-                        { $unwind: "$updates" },
-                        {
-                            $sort: {
-                                "updates.createdAt": -1
-                            }
-                        },
-                        { $limit: 5 },
-                        {
-                            $project: {
-                                _id: "$updates._id",
-                                createdAt: "$updates.createdAt",
-                                projectId: {
-                                    _id: "$_id",
-                                    name: "$name"
-                                }
-                            }
-                        }
-                    ],
-
-                    recentContent: [
-                        { $unwind: "$contents" },
-                        { $sort: { "contents.createdAt": -1 } },
-                        { $limit: 5 },
-                        {
-                            $project: {
-                                _id: "$contents._id",
-                                title: "$contents.title",
-                                platform: "$contents.platform",
-                                status: "$contents.status",
-                                createdAt: "$contents.createdAt",
-                                projectId: { _id: "$_id", name: "$name" }
-                            }
-                        }
-                    ]
-                }
-            }
-        ])
-        const result = projects[0];
+        const result = await getCachedDashboardData(userId);
 
         const timeline = [
             ...result.recentProjects.map((p: any) => ({

@@ -6,6 +6,7 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import Content from "../models/content.model";
 import Project from "@/features/projects/models/project.model";
+import { revalidateTag } from "next/cache";
 
 export async function updateContent(contentId: string, data: UpdateContentInput) {
     try {
@@ -58,6 +59,9 @@ export async function updateContent(contentId: string, data: UpdateContentInput)
         const updatedContent = await Content.findByIdAndUpdate(contentId, validatedFields.data, {
             new: true,
         })
+
+        revalidateTag("contents", "default");
+        revalidateTag("dashboard", "default");
 
         return {
             success: true,

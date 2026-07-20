@@ -3,8 +3,8 @@
 import { auth } from "@/lib/auth";
 import { connectDB } from "@/lib/db"
 import { headers } from "next/headers";
-import DailyUpdate from "../models/dailyUpdate.model";
 import Project from "@/features/projects/models/project.model";
+import { getCachedDailyUpdateById } from "../queries/queries";
 
 export async function getDailyUpdate(id: string) {
     try {
@@ -20,7 +20,7 @@ export async function getDailyUpdate(id: string) {
             }
         }
 
-        const update = await DailyUpdate.findById(id).lean();
+        const update = await getCachedDailyUpdateById(id);
 
         if (!update) {
             return {

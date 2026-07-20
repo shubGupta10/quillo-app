@@ -8,6 +8,7 @@ import Project from "@/features/projects/models/project.model";
 import { SaveContentInput, saveContentSchema } from "../schemas/content.schema";
 import DailyUpdate from "@/features/daily-updates/models/dailyUpdate.model";
 import { ai } from "@/lib/ai";
+import { revalidateTag } from "next/cache";
 
 export async function saveContent(data: SaveContentInput) {
     try {
@@ -76,6 +77,9 @@ export async function saveContent(data: SaveContentInput) {
             attachment: extractedAttachments,
             embedding: embeddingVector
         });
+
+        revalidateTag("contents", "default");
+        revalidateTag("dashboard", "default");
 
         return {
             success: true,
