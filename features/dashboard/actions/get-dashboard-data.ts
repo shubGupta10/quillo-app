@@ -66,6 +66,7 @@ export async function getDashboardData() {
                             $project: {
                                 name: 1,
                                 createdAt: 1,
+                                updatedAt: 1,
                                 updatesCount: { $size: "$updates" },
                                 contentCount: { $size: "$contents" }
                             }
