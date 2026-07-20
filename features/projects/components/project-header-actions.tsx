@@ -38,7 +38,7 @@ export function ProjectHeaderActions({ project }: ProjectHeaderActionsProps) {
     return (
         <div className="flex items-center gap-2">
             <EditProjectDialog project={project}>
-                <Button variant="outline" size="sm" className="h-9 cursor-pointer">
+                <Button variant="outline" className="cursor-pointer">
                     <Edit2 className="w-4 h-4 mr-2" />
                     Edit
                 </Button>
@@ -48,8 +48,7 @@ export function ProjectHeaderActions({ project }: ProjectHeaderActionsProps) {
                 <DialogTrigger render={
                     <Button 
                         variant="outline" 
-                        size="sm" 
-                        className="h-9 text-destructive hover:bg-destructive/10 hover:text-destructive border-destructive/20 cursor-pointer"
+                        className="text-destructive hover:bg-destructive/10 hover:text-destructive border-destructive/20 cursor-pointer"
                     >
                         <Trash2 className="w-4 h-4 mr-2" />
                         Delete

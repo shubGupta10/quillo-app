@@ -8,12 +8,7 @@ import { ClientDate } from "@/components/ui/client-date";
 
 export default function SchedulePage() {
     return (
-        <div className="max-w-7xl mx-auto space-y-8">
-            <div className="border-b pb-4">
-                <h1 className="text-3xl font-semibold tracking-tight">Scheduled Posts</h1>
-                <p className="text-sm text-muted-foreground mt-2">Content queued to be automatically published.</p>
-            </div>
-            
+        <div className="space-y-8">
             <Suspense fallback={
                 <div className="flex flex-col items-center justify-center py-20 border rounded-lg bg-card">
                     <Loader2 className="w-8 h-8 text-primary animate-spin" />

@@ -74,16 +74,15 @@ Every page must have breathing room.
 
 Preferred container:
 
-* max-w-7xl
-* mx-auto
+* w-full
 * px-6
-* lg:px-8
+* lg:px-10
 
 Section spacing:
 
-* py-8 minimum
-* py-12 preferred
-* py-16 for major sections
+* py-6 minimum
+* py-8 preferred
+* py-12 for major sections
 
 Card spacing:
 

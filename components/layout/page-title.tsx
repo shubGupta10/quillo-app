@@ -1,7 +1,16 @@
 "use client"
 
 import { usePathname } from "next/navigation"
-import { dashboardNavigation } from "@/constants/navigation"
+import { useBreadcrumbTitle } from "@/lib/stores/breadcrumb-store"
+import Link from "next/link"
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb"
 
 const dynamicTitles: Record<string, string> = {
   "/dashboard": "Dashboard",
@@ -14,13 +23,18 @@ const dynamicTitles: Record<string, string> = {
 
 export function PageTitle() {
   const pathname = usePathname()
+  const customTitle = useBreadcrumbTitle()
 
   // Exact match first
   if (dynamicTitles[pathname]) {
     return (
-      <span className="text-sm font-medium text-foreground">
-        {dynamicTitles[pathname]}
-      </span>
+      <Breadcrumb>
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbPage>{dynamicTitles[pathname]}</BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
     )
   }
 
@@ -30,10 +44,35 @@ export function PageTitle() {
     .sort((a, b) => b[0].length - a[0].length)[0]
 
   if (match) {
+    const parentPath = match[0]
+    const parentName = match[1]
+
+    // If we have a custom title from the store (like a Project Name), show Breadcrumbs
+    if (customTitle) {
+      return (
+        <Breadcrumb>
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink render={<Link href={parentPath} />}>{parentName}</BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>{customTitle}</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+      )
+    }
+
+    // Fallback if no custom title is provided but it's a subpage
     return (
-      <span className="text-sm font-medium text-foreground">
-        {match[1]}
-      </span>
+      <Breadcrumb>
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbPage>{parentName}</BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
     )
   }
 

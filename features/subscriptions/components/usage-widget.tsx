@@ -1,5 +1,6 @@
 import { getSubscriptionStatus } from "../actions/get-subscription-status";
 import { Zap } from "lucide-react";
+import { ClientDate } from "@/components/ui/client-date";
 
 export async function UsageWidget() {
     const status = await getSubscriptionStatus();
@@ -76,7 +77,7 @@ export async function UsageWidget() {
 
             {isExhausted ? (
                 <p className="text-xs text-destructive leading-snug">
-                    Limit reached. Resets {new Date(resetDate).toLocaleDateString()}.
+                    Limit reached. Resets <ClientDate date={resetDate} options={{ year: 'numeric', month: 'numeric', day: 'numeric' }} />.
                 </p>
             ) : (
                 <p className="text-xs text-sidebar-foreground/50 leading-snug">

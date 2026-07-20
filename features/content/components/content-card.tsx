@@ -45,7 +45,10 @@ export function ContentCard({ content }: ContentCardProps) {
     });
 
     return (
-        <div className="flex flex-col py-6 border-b border-border last:border-0 group">
+        <div 
+            onClick={() => router.push(`/content/${content._id}`)}
+            className="flex flex-col py-6 border-b border-border last:border-0 group cursor-pointer"
+        >
             <h3 className="font-semibold text-lg text-foreground mb-1 line-clamp-1" title={content.title}>
                 {content.title || "Untitled Content"}
             </h3>
@@ -68,7 +71,10 @@ export function ContentCard({ content }: ContentCardProps) {
                 {content.content}
             </div>
 
-            <div className="flex items-center justify-end gap-2 mt-auto">
+            <div 
+                className="flex items-center justify-end gap-2 mt-auto"
+                onClick={(e) => e.stopPropagation()}
+            >
                 <Button variant="ghost" size="sm" className="h-8 text-muted-foreground hover:text-foreground font-medium" onClick={handleCopy}>
                     Copy
                 </Button>
@@ -98,12 +104,6 @@ export function ContentCard({ content }: ContentCardProps) {
                         </div>
                     </DialogContent>
                 </Dialog>
-
-                <Link href={`/content/${content._id}`}>
-                    <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
-                        <ArrowRight className="w-4 h-4" />
-                    </Button>
-                </Link>
             </div>
         </div>
     );

@@ -13,7 +13,7 @@ export function NavItems() {
   const { setOpenMobile } = useSidebar();
 
   return (
-    <SidebarMenu>
+    <SidebarMenu className="gap-1">
       {dashboardNavigation.map((item) => {
         const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
         return (

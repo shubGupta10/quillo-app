@@ -7,10 +7,10 @@ import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
 
 interface ProjectHeaderProps {
-    project: IProject & { _id: string}
+    project: IProject & { _id: string }
 }
 
-export function ProjectHeader({ project}: ProjectHeaderProps){
+export function ProjectHeader({ project }: ProjectHeaderProps) {
     const [isExpanded, setIsExpanded] = useState(false)
     return (
         <div className="space-y-8 pb-10 border-b">
@@ -18,16 +18,15 @@ export function ProjectHeader({ project}: ProjectHeaderProps){
                 <div className="space-y-3 max-w-3xl">
                     <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight">{project.name}</h1>
                     <div className="space-y-2">
-                        <p 
-                            className={`text-muted-foreground leading-relaxed transition-all duration-200 ${
-                                isExpanded ? "" : "line-clamp-3"
-                            }`}
+                        <p
+                            className={`text-muted-foreground leading-relaxed transition-all duration-200 ${isExpanded ? "" : "line-clamp-3"
+                                }`}
                         >
                             {project.description}
                         </p>
-                        
+
                         {project.description.length > 150 && (
-                            <button 
+                            <button
                                 onClick={() => setIsExpanded(!isExpanded)}
                                 className="text-sm font-medium text-primary hover:underline transition-colors cursor-pointer inline-block mt-1"
                             >
@@ -36,13 +35,13 @@ export function ProjectHeader({ project}: ProjectHeaderProps){
                         )}
                     </div>
                 </div>
-                
+
                 <div className="flex items-center gap-3 w-full sm:w-auto shrink-0">
                     <AddUpdateDialog projectId={project._id} />
                     <ProjectHeaderActions project={project} />
                 </div>
             </div>
-            
+
             {/* Metadata Tags */}
             <div className="flex flex-wrap gap-x-10 gap-y-6 pt-2">
                 {project.industry && project.industry.length > 0 && (
