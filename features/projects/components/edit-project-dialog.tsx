@@ -1,11 +1,11 @@
 "use client"
 
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { useState } from "react"
@@ -18,6 +18,7 @@ import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { updateProject } from "../actions/update-project"
 import { toast } from "sonner"
+import { useTransition } from "react"
 
 interface EditProjectDialogProps {
     project: any;
@@ -27,6 +28,7 @@ interface EditProjectDialogProps {
 export function EditProjectDialog({ project, children }: EditProjectDialogProps) {
     const router = useRouter();
     const [isOpen, setIsOpen] = useState(false);
+    const [isPending, startTransition] = useTransition();
 
     const form = useForm({
         resolver: zodResolver(updateProjectSchema),
@@ -36,25 +38,30 @@ export function EditProjectDialog({ project, children }: EditProjectDialogProps)
             description: project.description || "",
             industry: project.industry || [],
             audience: project.audience || [],
-            tags: project.tags || [], 
+            tags: project.tags || [],
         }
     });
 
     async function onSubmit(data: UpdateProjectInput) {
-        try {
-            const result = await updateProject(data);
-            
-            if (result.success) {
-                toast.success("Project updated successfully");
-                setIsOpen(false);
-                router.refresh();
-            } else {
-                toast.error(result.error || "Failed to update project");
+        setIsOpen(false);
+        toast.success("Saving changes...");
+
+        startTransition(async () => {
+            try {
+                const result = await updateProject(data);
+
+                if (result.success) {
+                    toast.success("Project updated successfully");
+                    setIsOpen(false);
+                    router.refresh();
+                } else {
+                    toast.error(result.error || "Failed to update project");
+                }
+            } catch (error) {
+                console.error("Failed to update project", error);
+                toast.error("An unexpected error occurred");
             }
-        } catch (error) {
-            console.error("Failed to update project", error);
-            toast.error("An unexpected error occurred");
-        }
+        })
     }
 
     return (
@@ -79,11 +86,11 @@ export function EditProjectDialog({ project, children }: EditProjectDialogProps)
                                     {...form.register("name")}
                                 />
                             </div>
-             
+
                             <div className="space-y-2">
                                 <Label htmlFor="industry" className="text-sm font-medium">Industry (comma separated)</Label>
-                                <Input 
-                                    id="industry" 
+                                <Input
+                                    id="industry"
                                     {...form.register("industry", {
                                         setValueAs: (value: any) => {
                                             if (typeof value === "string") {
@@ -91,14 +98,14 @@ export function EditProjectDialog({ project, children }: EditProjectDialogProps)
                                             }
                                             return Array.isArray(value) ? value : [];
                                         }
-                                    })} 
+                                    })}
                                 />
                             </div>
 
                             <div className="space-y-2">
                                 <Label htmlFor="audience" className="text-sm font-medium">Audience (comma separated)</Label>
-                                <Input 
-                                    id="audience" 
+                                <Input
+                                    id="audience"
                                     {...form.register("audience", {
                                         setValueAs: (value: any) => {
                                             if (typeof value === "string") {
@@ -106,14 +113,14 @@ export function EditProjectDialog({ project, children }: EditProjectDialogProps)
                                             }
                                             return Array.isArray(value) ? value : [];
                                         }
-                                    })} 
+                                    })}
                                 />
                             </div>
 
                             <div className="space-y-2">
                                 <Label htmlFor="tags" className="text-sm font-medium">Tags (comma separated)</Label>
-                                <Input 
-                                    id="tags" 
+                                <Input
+                                    id="tags"
                                     {...form.register("tags", {
                                         setValueAs: (value: any) => {
                                             if (typeof value === "string") {
@@ -121,7 +128,7 @@ export function EditProjectDialog({ project, children }: EditProjectDialogProps)
                                             }
                                             return Array.isArray(value) ? value : [];
                                         }
-                                    })} 
+                                    })}
                                 />
                             </div>
                         </div>
@@ -129,10 +136,10 @@ export function EditProjectDialog({ project, children }: EditProjectDialogProps)
                         {/* Right Column: Description */}
                         <div className="space-y-2">
                             <Label htmlFor="description" className="text-sm font-medium">Description</Label>
-                            <Textarea 
-                                id="description" 
+                            <Textarea
+                                id="description"
                                 className="h-[340px] resize-none overflow-y-auto"
-                                {...form.register("description")} 
+                                {...form.register("description")}
                             />
                         </div>
                     </div>
@@ -141,8 +148,8 @@ export function EditProjectDialog({ project, children }: EditProjectDialogProps)
                         <Button type="button" variant="outline" className="cursor-pointer" onClick={() => setIsOpen(false)}>
                             Cancel
                         </Button>
-                        <Button type="submit" className="cursor-pointer" disabled={form.formState.isSubmitting}>
-                            {form.formState.isSubmitting ? "Saving..." : "Save Changes"}
+                        <Button type="submit" className="cursor-pointer" disabled={form.formState.isSubmitting || isPending}>
+                            {form.formState.isSubmitting || isPending ? "Saving..." : "Save Changes"}
                         </Button>
                     </div>
                 </form>

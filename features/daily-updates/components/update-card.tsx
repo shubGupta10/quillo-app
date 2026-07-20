@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { updateDailyUpdate } from "../actions/update-daily-update";
+import { useTransition } from "react";
 
 interface UpdateCardProps {
     update: IDailyUpdate & { _id: string };
@@ -27,30 +28,48 @@ export function UpdateCard({ update }: UpdateCardProps) {
 
     const [isEditOpen, setIsEditOpen] = useState(false);
     const [editedContent, setEditedContent] = useState(update.content);
+    const [isPending, startTransition] = useTransition();
 
     const handleDelete = async () => {
-        const res = await deleteDailyUpdate(update._id);
-        if (res.success) {
-            toast.success("Daily update deleted");
-            setIsOpen(false);
-            router.refresh();
-        } else {
-            toast.error(res.error || "Failed to delete update");
-        }
+        toast.success("Deleting update...");
+
+        startTransition(async () => {
+            try {
+                const res = await deleteDailyUpdate(update._id);
+                if (res.success) {
+                    toast.success("Daily update deleted");
+                    setIsOpen(false);
+                    router.refresh();
+                } else {
+                    toast.error(res.error || "Failed to delete update");
+                }
+            } catch (error) {
+                toast.error("An unexpected error occurred");
+            }
+        })
+
     };
 
     const handleUpdate = async () => {
-        const res = await updateDailyUpdate({
-            content: editedContent
-        }, update._id);
+        setIsEditOpen(false);
+        toast.success("Saving changes...");
 
-        if (res.success) {
-            toast.success("Daily update updated");
-            setIsEditOpen(false);
-            router.refresh();
-        } else {
-            toast.error(res.error || "Failed to update")
-        }
+        startTransition(async () => {
+            try {
+                const res = await updateDailyUpdate({
+                    content: editedContent
+                }, update._id);
+
+                if (res.success) {
+                    toast.success("Daily update updated");
+                    router.refresh();
+                } else {
+                    toast.error(res.error || "Failed to update")
+                }
+            } catch (error) {
+                toast.error("An unexpected error occurred");
+            }
+        });
     }
 
     const formattedDate = new Date(update.createdAt).toLocaleDateString('en-US', {
@@ -89,7 +108,9 @@ export function UpdateCard({ update }: UpdateCardProps) {
                             </div>
                             <div className="flex justify-end gap-2 mt-4">
                                 <Button variant="outline" onClick={() => setIsEditOpen(false)}>Cancel</Button>
-                                <Button variant="default" onClick={handleUpdate}>Save Changes</Button>
+                                <Button variant="default" disabled={isPending} onClick={handleUpdate}>
+                                    {isPending ? "Saving..." : "Save Changes"}
+                                </Button>
                             </div>
                         </DialogContent>
                     </Dialog>
@@ -113,7 +134,9 @@ export function UpdateCard({ update }: UpdateCardProps) {
                             </div>
                             <div className="flex justify-end gap-2 mt-4">
                                 <Button variant="outline" onClick={() => setIsOpen(false)}>Cancel</Button>
-                                <Button variant="default" onClick={handleDelete}>Delete</Button>
+                                <Button variant="default" disabled={isPending} onClick={handleDelete}>
+                                    {isPending ? "Deleting..." : "Delete"}
+                                </Button>
                             </div>
                         </DialogContent>
                     </Dialog>

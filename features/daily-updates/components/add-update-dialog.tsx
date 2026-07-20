@@ -22,6 +22,7 @@ import { Label } from "@/components/ui/label"
 import { createDailyUpdateSchema, CreateDailyUpdateInput } from "../schemas/daily-updates.schema"
 import { createDailyUpdate } from "../actions/create-daily-update"
 import { VALIDATION_LIMITS } from "@/lib/constants/limits"
+import { useTransition } from "react"
 
 interface AddUpdateDialogProps {
     projectId: string;
@@ -33,6 +34,7 @@ export function AddUpdateDialog({ projectId }: AddUpdateDialogProps) {
     const [uploadedFiles, setUploadedFiles] = useState<any[]>([]);
     const [isUploading, setIsUploading] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const [isPending, startTransition] = useTransition();
 
     const form = useForm<CreateDailyUpdateInput>({
         resolver: zodResolver(createDailyUpdateSchema),
@@ -80,27 +82,37 @@ export function AddUpdateDialog({ projectId }: AddUpdateDialogProps) {
     }, [handleFileSelect]);
 
     async function onSubmit(data: CreateDailyUpdateInput) {
-        try {
-            const payload = {
-                ...data,
-                attachment: uploadedFiles
-            };
-            const result = await createDailyUpdate(payload);
+        setIsOpen(false);
+        form.reset();
 
-            if (result.success) {
-                toast.success("Update logged successfully");
-                setIsOpen(false);
-                form.reset();
-                setUploadedFiles([]);
-                router.refresh();
-            } else {
-                console.error(result.error);
-                toast.error(result.error || "Failed to log update");
+        const currentFiles = [...uploadedFiles];
+        setUploadedFiles([]);
+
+        toast.success("Logging update in background...");
+
+        startTransition(async () => {
+            try {
+                const payload = {
+                    ...data,
+                    attachment: uploadedFiles
+                };
+                const result = await createDailyUpdate(payload);
+
+                if (result.success) {
+                    toast.success("Update logged successfully");
+                    setIsOpen(false);
+                    form.reset();
+                    setUploadedFiles([]);
+                    router.refresh();
+                } else {
+                    console.error(result.error);
+                    toast.error(result.error || "Failed to log update");
+                }
+            } catch (error) {
+                console.error("Failed to log update", error);
+                toast.error("An unexpected error occurred");
             }
-        } catch (error) {
-            console.error("Failed to log update", error);
-            toast.error("An unexpected error occurred");
-        }
+        })
     }
 
     const handleFormSubmit = async (e: React.FormEvent) => {
@@ -121,7 +133,7 @@ export function AddUpdateDialog({ projectId }: AddUpdateDialogProps) {
         <Dialog open={isOpen} onOpenChange={setIsOpen} disablePointerDismissal>
             <DialogTrigger render={<Button className="cursor-pointer">Log Update</Button>} />
 
-            <DialogContent 
+            <DialogContent
                 className="sm:max-w-[550px] p-8"
             >
                 {/* Visually hidden button to catch Base UI's auto-focus and prevent the orange ring */}
@@ -158,13 +170,12 @@ export function AddUpdateDialog({ projectId }: AddUpdateDialogProps) {
                                 )}
                             </div>
                             <span
-                                className={`text-xs tabular-nums ${
-                                    charCount >= MAX_CHARS
-                                        ? "text-destructive font-medium"
-                                        : charCount >= 900
+                                className={`text-xs tabular-nums ${charCount >= MAX_CHARS
+                                    ? "text-destructive font-medium"
+                                    : charCount >= 900
                                         ? "text-amber-500"
                                         : "text-muted-foreground"
-                                }`}
+                                    }`}
                             >
                                 {charCount}/{MAX_CHARS}
                             </span>
@@ -178,11 +189,11 @@ export function AddUpdateDialog({ projectId }: AddUpdateDialogProps) {
                                 {uploadedFiles.map((file, idx) => (
                                     <div key={idx} className="flex items-center justify-between p-3 border rounded-md bg-muted">
                                         <span className="text-sm truncate">{file.fileName}</span>
-                                        <Button 
-                                            type="button" 
-                                            variant="ghost" 
-                                            size="icon" 
-                                            className="h-6 w-6 text-muted-foreground hover:text-destructive cursor-pointer" 
+                                        <Button
+                                            type="button"
+                                            variant="ghost"
+                                            size="icon"
+                                            className="h-6 w-6 text-muted-foreground hover:text-destructive cursor-pointer"
                                             onClick={() => {
                                                 const newAttachments = [...uploadedFiles];
                                                 newAttachments.splice(idx, 1);
@@ -237,8 +248,8 @@ export function AddUpdateDialog({ projectId }: AddUpdateDialogProps) {
                         <Button type="button" variant="outline" className="cursor-pointer" onClick={() => setIsOpen(false)}>
                             Cancel
                         </Button>
-                        <Button type="submit" className="cursor-pointer" disabled={form.formState.isSubmitting || isUploading}>
-                            {form.formState.isSubmitting ? "Logging..." : "Log Update"}
+                        <Button type="submit" className="cursor-pointer" disabled={form.formState.isSubmitting || isUploading || isPending}>
+                            {form.formState.isSubmitting || isPending ? "Logging..." : "Log Update"}
                         </Button>
                     </div>
                 </form>
