@@ -3,7 +3,7 @@
 import { auth } from "@/lib/auth"
 import { connectDB } from "@/lib/db"
 import { headers } from "next/headers"
-import Project from "../models/project.model"
+import { getCachedProjects } from "../queries/queries"
 
 export async function getProjects() {
     try {
@@ -18,35 +18,7 @@ export async function getProjects() {
         }
         await connectDB();
 
-        const projects = await Project.aggregate([
-            { $match: { userId: session.user.id } },
-            { $sort: { updatedAt: -1 } },
-            {
-                $lookup: {
-                    from: 'dailyupdates',
-                    localField: '_id',
-                    foreignField: 'projectId',
-                    as: 'updates'
-                }
-            },
-            {
-                $lookup: {
-                    from: 'contents',
-                    localField: '_id',
-                    foreignField: 'projectId',
-                    as: 'content'
-                }
-            },
-            {
-                $addFields: {
-                    updatesCount: { $size: "$updates" },
-                    contentCount: { $size: "$content" }
-                }
-            },
-            {
-                $project: { updates: 0, content: 0 }
-            }
-        ]);
+        const projects = await getCachedProjects(session.user.id);
 
         return {
             success: true,

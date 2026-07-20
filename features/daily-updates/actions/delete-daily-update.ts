@@ -5,6 +5,7 @@ import { connectDB } from "@/lib/db"
 import { headers } from "next/headers";
 import DailyUpdate from "../models/dailyUpdate.model";
 import Project from "@/features/projects/models/project.model";
+import { revalidateTag } from "next/cache";
 
 export async function deleteDailyUpdate(updateId: string) {
     try {
@@ -44,6 +45,9 @@ export async function deleteDailyUpdate(updateId: string) {
         }
 
         await DailyUpdate.findByIdAndDelete(updateId);
+
+        revalidateTag("daily-updates", "default");
+        revalidateTag("dashboard", "default");
 
         return {
             success: true,

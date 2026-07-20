@@ -4,6 +4,7 @@ import { auth } from "@/lib/auth"
 import { connectDB } from "@/lib/db"
 import { headers } from "next/headers"
 import Project from "../models/project.model"
+import { revalidateTag } from "next/cache"
 
 export async function deleteProject(projectId: string) {
     try {
@@ -41,6 +42,9 @@ export async function deleteProject(projectId: string) {
         await Project.findByIdAndDelete(
             project._id
         );
+
+        revalidateTag("projects", "default");
+        revalidateTag("dashboard", "default");
 
         return {
             success: true,

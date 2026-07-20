@@ -5,6 +5,7 @@ import Project from "../models/project.model";
 import { CreateProjectInput, createProjectSchema } from "../schemas/project.schema";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
+import { revalidateTag } from "next/cache";
 
 export async function createProject(data: CreateProjectInput) {
     try {
@@ -32,6 +33,8 @@ export async function createProject(data: CreateProjectInput) {
             ...validatedFields.data,
             userId: session.user.id
         });
+        revalidateTag("projects", "default");
+        revalidateTag("dashboard", "default");
         return {
             success: true,
             data: JSON.parse(JSON.stringify(project))

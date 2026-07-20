@@ -3,8 +3,8 @@
 import { auth } from "@/lib/auth";
 import { connectDB } from "@/lib/db";
 import { headers } from "next/headers";
-import DailyUpdate from "../models/dailyUpdate.model";
 import Project from "@/features/projects/models/project.model";
+import { getCachedDailyUpdates } from "../queries/queries";
 
 export async function getDailyUpdates(projectId: string, page = 1, limit = 5) {
     try {
@@ -35,14 +35,7 @@ export async function getDailyUpdates(projectId: string, page = 1, limit = 5) {
             };
         }
 
-        const skip = (page - 1) * limit;
-
-        const [updates, totalUpdates] = await Promise.all([
-            DailyUpdate.find({
-                projectId,
-            }).sort({ createdAt: -1 }).skip(skip).limit(limit).lean(),
-            DailyUpdate.countDocuments({ projectId })
-        ]);
+        const { updates, totalUpdates } = await getCachedDailyUpdates(projectId, page, limit);
 
         if (!updates) {
             return {
@@ -59,7 +52,7 @@ export async function getDailyUpdates(projectId: string, page = 1, limit = 5) {
                 pages: Math.ceil(totalUpdates / limit),
                 page,
                 limit,
-                hasMore: skip + updates.length < totalUpdates
+                hasMore: ((page - 1) * limit) + updates.length < totalUpdates
             }
         }
     } catch (error: any) {

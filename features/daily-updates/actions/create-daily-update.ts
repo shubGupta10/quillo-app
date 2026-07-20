@@ -3,6 +3,7 @@
 import { connectDB } from "@/lib/db";
 import DailyUpdate from "../models/dailyUpdate.model";
 import { CreateDailyUpdateInput, createDailyUpdateSchema } from "../schemas/daily-updates.schema";
+import { revalidateTag } from "next/cache";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import Project from "@/features/projects/models/project.model";
@@ -46,15 +47,17 @@ export async function createDailyUpdate(data: CreateDailyUpdateInput) {
             }
         }
 
-        const createdUpdate = await DailyUpdate.create({
-            projectId: validatedFields.data.projectId,
-            content: validatedFields.data.content,
-            attachment: validatedFields.data.attachment,
-        })
+        const newUpdate = await DailyUpdate.create({
+            ...validatedFields.data,
+            projectId: project._id,
+        });
+
+        revalidateTag("daily-updates", "default");
+        revalidateTag("dashboard", "default");
 
         return {
             success: true,
-            data: JSON.parse(JSON.stringify(createdUpdate)),
+            data: JSON.parse(JSON.stringify(newUpdate)),
         };
 
     } catch (error: any) {

@@ -5,6 +5,7 @@ import { connectDB } from "@/lib/db";
 import { headers } from "next/headers";
 import Project from "../models/project.model";
 import { UpdateProjectInput, updateProjectSchema } from "../schemas/project.schema";
+import { revalidateTag } from "next/cache";
 
 export async function updateProject(data: UpdateProjectInput) {
     try {
@@ -44,6 +45,9 @@ export async function updateProject(data: UpdateProjectInput) {
         const updatedProject = await Project.findByIdAndUpdate(existProject._id, updateData, {
             new: true,
         });
+
+        revalidateTag("projects", "default");
+        revalidateTag("dashboard", "default");
 
         return {
             success: true,

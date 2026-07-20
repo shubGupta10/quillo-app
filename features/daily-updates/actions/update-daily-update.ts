@@ -6,6 +6,7 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import DailyUpdate from "../models/dailyUpdate.model";
 import Project from "@/features/projects/models/project.model";
+import { revalidateTag } from "next/cache";
 
 export async function updateDailyUpdate(data: UpdateDailyUpdateInput, updateId: string) {
     try {
@@ -67,6 +68,9 @@ export async function updateDailyUpdate(data: UpdateDailyUpdateInput, updateId: 
                 error: "Failed to update daily update"
             }
         }
+
+        revalidateTag("daily-updates", "default");
+        revalidateTag("dashboard", "default");
 
         return {
             success: true,

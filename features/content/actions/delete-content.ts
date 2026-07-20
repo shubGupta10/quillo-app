@@ -5,6 +5,7 @@ import { auth } from "@/lib/auth";
 import { connectDB } from "@/lib/db"
 import { headers } from "next/headers";
 import Content from "../models/content.model";
+import { revalidateTag } from "next/cache";
 
 export async function deleteContent(contentId: string) {
     try {
@@ -46,6 +47,9 @@ export async function deleteContent(contentId: string) {
         }
 
         await Content.findByIdAndDelete(contentId)
+
+        revalidateTag("contents", "default");
+        revalidateTag("dashboard", "default");
 
         return {
             success: true,
