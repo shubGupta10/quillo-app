@@ -32,7 +32,7 @@ async function DashboardContent() {
   const { stats, timeline, recentProjects, recentContent } = result.data;
 
   return (
-    <div className="max-w-7xl mx-auto space-y-8">
+    <div className="space-y-8">
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <Card>
@@ -109,7 +109,7 @@ async function DashboardContent() {
                     <div className="min-w-0">
                       <p className="font-medium truncate">{project.name}</p>
                       <p className="text-sm text-muted-foreground flex items-center flex-wrap">
-                        {project.updatesCount} updates · {project.contentCount} posts · Updated 
+                        {project.updatesCount} updates · {project.contentCount} posts · Updated
                         {project.updatedAt && !isNaN(new Date(project.updatedAt).getTime()) ? (
                           <ClientDate className="ml-1" date={project.updatedAt} options={{ year: 'numeric', month: 'numeric', day: 'numeric' }} />
                         ) : " Unknown"}
@@ -187,7 +187,7 @@ async function DashboardContent() {
                     <span className="absolute -left-1.5 top-1.5 h-3 w-3 rounded-full border-2 border-background bg-primary" />
                     <p className="text-sm font-medium leading-tight">{item.title}</p>
                     <span className="text-xs text-muted-foreground">
-                      {item.date && !isNaN(new Date(item.date).getTime()) 
+                      {item.date && !isNaN(new Date(item.date).getTime())
                         ? <ClientDate date={item.date} options={{ month: 'numeric', day: 'numeric', year: 'numeric', hour: "2-digit", minute: "2-digit" }} />
                         : "Unknown date"}
                     </span>

@@ -21,7 +21,7 @@ export async function AppSidebar() {
   });
 
   return (
-    <Sidebar>
+    <Sidebar collapsible="icon">
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
@@ -40,7 +40,9 @@ export async function AppSidebar() {
       </SidebarContent>
 
       <SidebarFooter className="border-t border-sidebar-border">
-        <UsageWidget />
+        <div className="group-data-[collapsible=icon]:hidden">
+          <UsageWidget />
+        </div>
         {session?.user ? (
           <NavUser user={{ name: session.user.name ?? "User", email: session.user.email ?? "", avatar: session.user.image ?? "" }} />
         ) : (

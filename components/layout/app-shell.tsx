@@ -9,7 +9,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <AppSidebar />
       <SidebarInset className="flex flex-col">
         <AppHeader />
-        <main className="overflow-x-hidden p-4 lg:p-8 min-h-[calc(100svh-3.5rem)]">
+        <main className="flex-1 overflow-x-hidden w-full px-6 lg:px-10 py-6 lg:py-8 min-h-[calc(100svh-3.5rem)]">
           {children}
         </main>
         <AppFooter />

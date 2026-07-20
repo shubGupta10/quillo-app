@@ -25,13 +25,13 @@ export default async function SettingsPage() {
     const connectedAccounts = JSON.parse(JSON.stringify(accounts));
 
     return (
-        <div className="max-w-7xl mx-auto space-y-8">
+        <div className="space-y-8">
             <div className="space-y-12">
-                
+
                 {/* Connected Accounts */}
                 <section className="space-y-4">
-                    <div className="border-b pb-3">
-                        <h2 className="text-lg font-semibold">Connected Accounts</h2>
+                    <div className="border-b pb-4">
+                        <h2 className="text-xl font-semibold">Connected Accounts</h2>
                         <p className="text-sm text-muted-foreground mt-0.5">Connect your social profiles to enable automatic publishing.</p>
                     </div>
                     <ConnectAccountsSection connectedAccounts={connectedAccounts} />
@@ -39,8 +39,8 @@ export default async function SettingsPage() {
 
                 {/* Content Preferences */}
                 <section className="space-y-4">
-                    <div className="border-b pb-3">
-                        <h2 className="text-lg font-semibold">Content Preferences</h2>
+                    <div className="border-b pb-4">
+                        <h2 className="text-xl font-semibold">Content Preferences</h2>
                         <p className="text-sm text-muted-foreground mt-0.5">Default settings used when generating content.</p>
                     </div>
                     <PreferencesSection preferences={preferences} />

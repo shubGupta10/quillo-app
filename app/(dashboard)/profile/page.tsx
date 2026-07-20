@@ -13,15 +13,15 @@ export default async function ProfilePage() {
     const { name, email, image } = result.data;
 
     return (
-        <div className="max-w-7xl mx-auto space-y-8">
-            
+        <div className="space-y-8">
+
 
 
             <div className="space-y-12">
                 {/* Account */}
                 <section className="space-y-4">
-                    <div className="border-b pb-3">
-                        <h2 className="text-lg font-semibold">Account</h2>
+                    <div className="border-b pb-4">
+                        <h2 className="text-xl font-semibold">Account</h2>
                         <p className="text-sm text-muted-foreground mt-0.5">Your profile information.</p>
                     </div>
                     <AccountSection name={name ?? ""} email={email ?? ""} image={image ?? ""} />
@@ -29,8 +29,8 @@ export default async function ProfilePage() {
 
                 {/* Danger Zone */}
                 <section className="space-y-4">
-                    <div className="border-b border-destructive pb-3">
-                        <h2 className="text-lg font-semibold text-destructive">Danger Zone</h2>
+                    <div className="border-b border-destructive pb-4">
+                        <h2 className="text-xl font-semibold text-destructive">Danger Zone</h2>
                     </div>
                     <DangerSection />
                 </section>

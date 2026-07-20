@@ -1,14 +1,13 @@
 import { getContent } from "@/features/content/actions/get-content";
 import { Badge } from "@/components/ui/badge";
 import { ContentDetailsActions } from "@/features/content/components/content-details-actions";
-import { ArrowLeft } from "lucide-react";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { getOrCreateSubscription } from "@/features/subscriptions/services/usage.service";
 import { PlanType } from "@/features/subscriptions/model/subscriptions.interface";
 import Image from "next/image";
+import { BreadcrumbSetter } from "@/components/layout/breadcrumb-setter";
 
 export default async function ContentDetailsPage({
     params
@@ -34,11 +33,8 @@ export default async function ContentDetailsPage({
     const content = result.data;
 
     return (
-        <div className="max-w-7xl mx-auto space-y-8">
-            <Link href={content.projectId ? `/projects/${content.projectId._id}` : "/content"} className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground">
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to {content.projectId?.name ? `Project: ${content.projectId.name}` : "Content"}
-            </Link>
+        <div className="space-y-8">
+            <BreadcrumbSetter title={content.title || "Untitled Content"} />
 
             <div className="space-y-6 pb-6 border-b">
                 <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
