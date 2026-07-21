@@ -1,6 +1,8 @@
 import { createUploadthing, type FileRouter } from "uploadthing/next";
 import { UploadThingError } from "uploadthing/server";
 import { VALIDATION_LIMITS } from "@/lib/constants/limits";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 
 const f = createUploadthing();
 
@@ -20,13 +22,16 @@ export const ourFileRouter = {
         },
     })
         .middleware(async () => {
-            /**
-             * We'll add Better Auth verification here
-             * after we confirm uploads work.
-             */
+            const session = await auth.api.getSession({
+                headers: await headers()
+            });
+
+            if (!session?.user?.id) {
+                throw new UploadThingError("Unauthorized");
+            }
 
             return {
-                uploadedBy: "user",
+                uploadedBy: session.user.id,
             };
         })
         .onUploadComplete(async ({ file }) => {

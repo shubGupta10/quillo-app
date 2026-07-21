@@ -49,7 +49,7 @@ export async function updateContent(contentId: string, data: UpdateContentInput)
             }
         }
 
-        if (project.userId !== session.user.id) {
+        if (project.userId.toString() !== session.user.id) {
             return {
                 success: false,
                 error: "Unauthorized"

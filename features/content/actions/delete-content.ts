@@ -39,7 +39,7 @@ export async function deleteContent(contentId: string) {
             }
         }
 
-        if (project.userId !== session.user.id) {
+        if (project.userId.toString() !== session.user.id) {
             return {
                 success: false,
                 error: "Unauthorized"
