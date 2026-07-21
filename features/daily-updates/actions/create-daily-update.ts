@@ -7,6 +7,7 @@ import { revalidateTag } from "next/cache";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import Project from "@/features/projects/models/project.model";
+import { checkDailyUpdateLimit } from "@/features/subscriptions/services/usage.service";
 
 export async function createDailyUpdate(data: CreateDailyUpdateInput) {
     try {
@@ -44,6 +45,14 @@ export async function createDailyUpdate(data: CreateDailyUpdateInput) {
             return {
                 success: false,
                 error: "Unauthorized"
+            }
+        }
+
+        const limitCheck = await checkDailyUpdateLimit(session.user.id);
+        if (!limitCheck.allowed) {
+            return {
+                success: false,
+                error: `Daily limit reached. You can only create up to ${limitCheck.limit} updates per day on your current plan.`
             }
         }
 

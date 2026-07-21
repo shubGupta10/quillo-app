@@ -4,6 +4,7 @@ import { FeaturesSection } from "@/components/features-section";
 import { FAQSection } from "@/components/faq-section";
 import { TestimonialsSection } from "@/components/testimonial-v2";
 import { Footer7 } from "@/components/footer-7";
+import { PricingSection } from "@/components/pricing-section";
 
 export default function MarketingPage() {
   return (
@@ -12,6 +13,7 @@ export default function MarketingPage() {
       <IntegrationsSection />
       <FeaturesSection />
       <TestimonialsSection />
+      <PricingSection />
       <FAQSection />
       <Footer7 />
     </div>

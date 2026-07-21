@@ -4,6 +4,7 @@ import { connectDB } from "@/lib/db";
 import Project from "../models/project.model";
 import { CreateProjectInput, createProjectSchema } from "../schemas/project.schema";
 import { auth } from "@/lib/auth";
+import { checkProjectLimit } from "@/features/subscriptions/services/usage.service";
 import { headers } from "next/headers";
 import { revalidateTag } from "next/cache";
 
@@ -25,6 +26,14 @@ export async function createProject(data: CreateProjectInput) {
             return {
                 success: false,
                 error: "Unauthorized"
+            }
+        }
+
+        const limitCheck = await checkProjectLimit(session.user.id);
+        if (!limitCheck.allowed) {
+            return {
+                success: false,
+                error: `Project limit reached. You can only create up to ${limitCheck.limit} projects on your current plan.`
             }
         }
 

@@ -2,6 +2,10 @@ import { connectDB } from "@/lib/db";
 import Subscription from "../model/subscriptions.model";
 import { PlanType } from "../model/subscriptions.interface";
 import { PLAN_LIMITS, PLAN_PERIOD_DAYS } from "../constants/plans";
+import Project from "@/features/projects/models/project.model";
+import { USAGE_QUOTAS } from "@/lib/constants/limits";
+import DailyUpdate from "@/features/daily-updates/models/dailyUpdate.model";
+
 
 /**
  * Fetch or create a subscription record for the given user.
@@ -78,4 +82,43 @@ export async function incrementGenerationUsage(userId: string) {
         { userId },
         { $inc: { generationsUsed: 1 } }
     );
+}
+
+export async function checkProjectLimit(userId: string): Promise<{ allowed: boolean; limit: number; current: number }> {
+    const subscription = await getOrCreateSubscription(userId);
+    const limit = USAGE_QUOTAS.PROJECTS_PER_USER[subscription.planType as PlanType] || 0;
+
+    await connectDB();
+    const current = await Project.countDocuments({ userId });
+
+    return {
+        allowed: current < limit,
+        limit,
+        current
+    };
+}
+
+export async function checkDailyUpdateLimit(userId: string): Promise<{ allowed: boolean; limit: number; current: number }> {
+    const subscription = await getOrCreateSubscription(userId);
+    const limit = USAGE_QUOTAS.DAILY_UPDATES_PER_USER[subscription.planType as PlanType] || 0;
+
+    await connectDB();
+
+    const userProjects = await Project.find({ userId }, '_id');
+    const projectIds = userProjects.map(p => p._id);
+
+    // Check updates created today
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const current = await DailyUpdate.countDocuments({
+        projectId: { $in: projectIds },
+        createdAt: { $gte: today }
+    });
+
+    return {
+        allowed: current < limit,
+        limit,
+        current
+    };
 }

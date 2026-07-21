@@ -2,9 +2,27 @@ import { PlanType } from "@/features/subscriptions/model/subscriptions.interface
 
 export const USAGE_QUOTAS = {
   AI_GENERATIONS_PER_MONTH: {
-    [PlanType.FREE]: 40,
-    [PlanType.BETA_PRO]: 100,
+    [PlanType.FREE]: 20,
+    [PlanType.BETA_PRO]: 40,
     [PlanType.ADMIN]: Number.MAX_SAFE_INTEGER,
+  } as Record<PlanType, number>,
+
+  PROJECTS_PER_USER: {
+    [PlanType.FREE]: 10,
+    [PlanType.BETA_PRO]: 25,
+    [PlanType.ADMIN]: Number.MAX_SAFE_INTEGER,
+  } as Record<PlanType, number>,
+
+  DAILY_UPDATES_PER_USER: {
+    [PlanType.FREE]: 4,
+    [PlanType.BETA_PRO]: 10,
+    [PlanType.ADMIN]: Number.MAX_SAFE_INTEGER,
+  } as Record<PlanType, number>,
+
+  PLAN_PRICING: {
+    [PlanType.FREE]: 0,
+    [PlanType.BETA_PRO]: 5,
+    [PlanType.ADMIN]: 0,
   } as Record<PlanType, number>,
 
   AI_QUOTA_WARNING_THRESHOLD: 0.8,
