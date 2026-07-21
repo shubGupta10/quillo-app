@@ -8,6 +8,7 @@ import { redirect } from "next/navigation";
 import SocialAccount from "../model/socialAccount.model";
 import { connectDB } from "@/lib/db";
 import { revalidatePath } from "next/cache";
+import { checkAllowedPlatforms, checkSocialAccountsLimit } from "@/features/subscriptions/services/usage.service";
 
 export async function connectSocialAccount(platform: Platform) {
     let authUrl = "";
@@ -19,6 +20,16 @@ export async function connectSocialAccount(platform: Platform) {
 
         if (!session?.user) {
             return { success: false, error: "Unauthorized" };
+        }
+
+        const platformAllowed = await checkAllowedPlatforms(session.user.id, platform);
+        if (!platformAllowed) {
+            return { success: false, error: `Connecting to ${platform} requires a Pro subscription.` };
+        }
+
+        const limitCheck = await checkSocialAccountsLimit(session.user.id);
+        if (!limitCheck.allowed) {
+            return { success: false, error: `You can only connect up to ${limitCheck.limit} social accounts on your current plan.` };
         }
 
         // Dynamically get the right publisher (e.g., TwitterProvider)
@@ -48,9 +59,9 @@ export async function disconnectSocialAccount(platform: Platform) {
         }
 
         await connectDB();
-        await SocialAccount.deleteOne({ 
-            userId: session.user.id, 
-            provider: platform.toUpperCase() 
+        await SocialAccount.deleteOne({
+            userId: session.user.id,
+            provider: platform.toUpperCase()
         });
 
         revalidatePath("/settings");

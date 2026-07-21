@@ -18,6 +18,8 @@ export async function getSubscriptionStatus() {
     }
 
     const status = await checkGenerationLimit(session.user.id);
+    const { checkQueuedPostLimit } = await import("../services/usage.service");
+    const queueStatus = await checkQueuedPostLimit(session.user.id);
 
     return {
         used: status.used,
@@ -25,5 +27,7 @@ export async function getSubscriptionStatus() {
         resetDate: status.resetDate.toISOString(),
         planType: status.planType,
         allowed: status.allowed,
+        queueUsed: queueStatus.current,
+        queueLimit: queueStatus.limit,
     };
 }

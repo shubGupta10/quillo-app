@@ -23,6 +23,9 @@ export default async function SettingsPage() {
     await connectDB();
     const accounts = await SocialAccount.find({ userId: session.user.id });
     const connectedAccounts = JSON.parse(JSON.stringify(accounts));
+    
+    const { getOrCreateSubscription } = await import("@/features/subscriptions/services/usage.service");
+    const subscription = await getOrCreateSubscription(session.user.id);
 
     return (
         <div className="space-y-8">
@@ -34,7 +37,7 @@ export default async function SettingsPage() {
                         <h2 className="text-xl font-semibold">Connected Accounts</h2>
                         <p className="text-sm text-muted-foreground mt-0.5">Connect your social profiles to enable automatic publishing.</p>
                     </div>
-                    <ConnectAccountsSection connectedAccounts={connectedAccounts} />
+                    <ConnectAccountsSection connectedAccounts={connectedAccounts} planType={subscription.planType} />
                 </section>
 
                 {/* Content Preferences */}

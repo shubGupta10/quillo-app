@@ -14,7 +14,7 @@ if (process.env.NODE_ENV === "development") {
     };
 
     if (!globalWithMongo._mongoClient) {
-        globalWithMongo._mongoClient = new MongoClient(MONGODB_URI);
+        globalWithMongo._mongoClient = new MongoClient(MONGODB_URI, { retryWrites: false });
     }
     client = globalWithMongo._mongoClient;
 } else {
