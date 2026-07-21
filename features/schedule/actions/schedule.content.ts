@@ -11,7 +11,7 @@ import Project from "@/features/projects/models/project.model";
 import { redis } from "@/lib/redis";
 import { sendEmail } from "@/lib/email/mailer";
 import { getScheduledEmailHtml } from "@/lib/email/templates";
-import { getOrCreateSubscription } from "@/features/subscriptions/services/usage.service";
+import { checkAllowedPlatforms, checkQueuedPostLimit, getOrCreateSubscription } from "@/features/subscriptions/services/usage.service";
 import { PlanType } from "@/features/subscriptions/model/subscriptions.interface";
 
 export async function scheduleContent(contentId: string, scheduledFor: Date) {
@@ -49,13 +49,20 @@ export async function scheduleContent(contentId: string, scheduledFor: Date) {
         if (!contentToSchedule) {
             return { success: false, error: "Content not found" };
         }
-        const subscription = await getOrCreateSubscription(session.user.id);
-        const isPremium = subscription.planType !== PlanType.FREE;
 
-        if (!isPremium && contentToSchedule.platform !== "LINKEDIN") {
+        const platformAllowed = await checkAllowedPlatforms(session.user.id, contentToSchedule.platform);
+        if (!platformAllowed) {
             return {
                 success: false,
-                error: `Automated scheduling for ${contentToSchedule.platform} requires a Premium subscription.`
+                error: `Automated scheduling for ${contentToSchedule.platform} requires a Pro subscription.`
+            };
+        }
+
+        const queueCheck = await checkQueuedPostLimit(session.user.id);
+        if (!queueCheck.allowed) {
+            return {
+                success: false,
+                error: `You have reached your limit of ${queueCheck.limit} scheduled posts. Please upgrade your plan to schedule more.`
             }
         }
 

@@ -27,7 +27,7 @@ const platformIcons: Partial<Record<Platform, any>> = {
     [Platform.LINKEDIN]: LinkedinIcon
 }
 
-export function ConnectAccountsSection({ connectedAccounts}: { connectedAccounts: any[]}){
+export function ConnectAccountsSection({ connectedAccounts, planType}: { connectedAccounts: any[], planType: string}){
     const supportedPlatforms = [Platform.TWITTER, Platform.LINKEDIN];
 
     const handleConnect = async(platform: Platform) => {
@@ -61,6 +61,11 @@ export function ConnectAccountsSection({ connectedAccounts}: { connectedAccounts
                             <div className="min-w-0">
                                 <div className="flex items-center gap-2">
                                     <p className="text-sm font-medium">{platform.charAt(0) + platform.slice(1).toLowerCase()}</p>
+                                    {platform === Platform.TWITTER && planType === "FREE" && (
+                                        <div className="bg-amber-500/10 text-amber-500 border border-amber-500/20 px-2 py-0.5 rounded text-[10px] uppercase font-bold tracking-wider">
+                                            Pro
+                                        </div>
+                                    )}
                                     {isConnected && (
                                         <div className="flex items-center gap-1 text-[10px] uppercase font-bold tracking-wider text-green-600 bg-green-500/10 px-2 py-0.5 rounded-full">
                                             <CheckCircle2 className="w-3 h-3" />
@@ -76,10 +81,16 @@ export function ConnectAccountsSection({ connectedAccounts}: { connectedAccounts
                         <div className="w-full sm:w-auto shrink-0 flex justify-end">
                             <Button 
                                 variant={isConnected ? "outline" : "default"}
-                                onClick={() => isConnected ? handleDisconnect(platform) : handleConnect(platform)}
+                                onClick={() => {
+                                    if (platform === Platform.TWITTER && planType === "FREE") {
+                                        toast.error("Upgrade to Pro to unlock Twitter scheduling!");
+                                        return;
+                                    }
+                                    isConnected ? handleDisconnect(platform) : handleConnect(platform);
+                                }}
                                 className={isConnected ? "w-full sm:w-auto text-destructive hover:bg-destructive/10 border-destructive/20" : "w-full sm:w-auto min-w-[100px]"}
                             >
-                                {isConnected ? "Disconnect" : "Connect"}
+                                {isConnected ? "Disconnect" : (platform === Platform.TWITTER && planType === "FREE" ? "Upgrade" : "Connect")}
                             </Button>
                         </div>
                     </div>

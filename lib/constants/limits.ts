@@ -25,6 +25,24 @@ export const USAGE_QUOTAS = {
     [PlanType.ADMIN]: 0,
   } as Record<PlanType, number>,
 
+  MAX_QUEUED_POSTS: {
+    [PlanType.FREE]: 10,
+    [PlanType.BETA_PRO]: 100,
+    [PlanType.ADMIN]: Number.MAX_SAFE_INTEGER,
+  } as Record<PlanType, number>,
+
+  CONNECTED_SOCIAL_ACCOUNTS: {
+    [PlanType.FREE]: 1,
+    [PlanType.BETA_PRO]: 3,
+    [PlanType.ADMIN]: Number.MAX_SAFE_INTEGER,
+  } as Record<PlanType, number>,
+
+  ALLOWED_SOCIAL_PLATFORMS: {
+    [PlanType.FREE]: ["linkedin"],
+    [PlanType.BETA_PRO]: ["linkedin", "twitter"],
+    [PlanType.ADMIN]: ["linkedin", "twitter"],
+  } as Record<PlanType, string[]>,
+
   AI_QUOTA_WARNING_THRESHOLD: 0.8,
   AI_VARIATIONS_PER_GENERATION: 2,
 

@@ -5,6 +5,9 @@ import { PLAN_LIMITS, PLAN_PERIOD_DAYS } from "../constants/plans";
 import Project from "@/features/projects/models/project.model";
 import { USAGE_QUOTAS } from "@/lib/constants/limits";
 import DailyUpdate from "@/features/daily-updates/models/dailyUpdate.model";
+import Content from "@/features/content/models/content.model";
+import { Status } from "@/features/content/models/content.interface";
+import SocialAccount from "@/features/schedule/model/socialAccount.model";
 
 
 /**
@@ -121,4 +124,47 @@ export async function checkDailyUpdateLimit(userId: string): Promise<{ allowed: 
         limit,
         current
     };
+}
+
+
+export async function checkQueuedPostLimit(userId: string): Promise<{ allowed: boolean; limit: number; current: number }> {
+    const subscription = await getOrCreateSubscription(userId);
+    const limit = USAGE_QUOTAS.MAX_QUEUED_POSTS[subscription.planType as PlanType] || 0;
+
+    await connectDB();
+
+    const userProjects = await Project.find({ userId }, "_id");
+    const projectIds = userProjects.map(p => p._id);
+
+    const current = await Content.countDocuments({
+        projectId: { $in: projectIds },
+        status: Status.SCHEDULED
+    });
+
+    return {
+        allowed: current < limit,
+        limit,
+        current
+    }
+}
+
+export async function checkAllowedPlatforms(userId: string, platform: string): Promise<boolean> {
+    const subscription = await getOrCreateSubscription(userId);
+    const allowedPlatforms = USAGE_QUOTAS.ALLOWED_SOCIAL_PLATFORMS[subscription.planType as PlanType] || [];
+
+    return allowedPlatforms.includes(platform.toLowerCase());
+}
+
+export async function checkSocialAccountsLimit(userId: string): Promise<{ allowed: boolean; limit: number; current: number }> {
+    const subscription = await getOrCreateSubscription(userId);
+    const limit = USAGE_QUOTAS.CONNECTED_SOCIAL_ACCOUNTS[subscription.planType as PlanType] || 0;
+
+    await connectDB();
+    const current = await SocialAccount.countDocuments({ userId });
+
+    return {
+        allowed: current < limit,
+        limit,
+        current
+    }
 }

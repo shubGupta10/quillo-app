@@ -38,52 +38,97 @@ export async function UsageWidget() {
     const isNearLimit = percentage >= 80;
     const isExhausted = remaining <= 0;
 
+    const { queueUsed, queueLimit } = status;
+    const queuePercentage = Math.min((queueUsed / queueLimit) * 100, 100);
+    const queueRemaining = queueLimit - queueUsed;
+    const isQueueNearLimit = queuePercentage >= 80;
+    const isQueueExhausted = queueRemaining <= 0;
+
     const planLabel =
         planType === "BETA_PRO" ? "Beta Pro" : "Free";
 
     return (
-        <div className="px-3 py-3 space-y-2">
-            <div className="flex items-center justify-between text-xs">
-                <span className="flex items-center gap-1.5 text-sidebar-foreground/70 font-medium">
-                    <Zap className="size-3" />
-                    Generations
-                </span>
-                <span
-                    className={`font-semibold tabular-nums ${
-                        isExhausted
-                            ? "text-destructive"
-                            : isNearLimit
-                            ? "text-amber-500"
-                            : "text-sidebar-foreground"
-                    }`}
-                >
-                    {used}/{limit}
-                </span>
+        <div className="px-3 py-3 space-y-4">
+            {/* Generations Limit */}
+            <div className="space-y-2">
+                <div className="flex items-center justify-between text-xs">
+                    <span className="flex items-center gap-1.5 text-sidebar-foreground/70 font-medium">
+                        <Zap className="size-3" />
+                        Generations
+                    </span>
+                    <span
+                        className={`font-semibold tabular-nums ${
+                            isExhausted
+                                ? "text-destructive"
+                                : isNearLimit
+                                ? "text-amber-500"
+                                : "text-sidebar-foreground"
+                        }`}
+                    >
+                        {used}/{limit}
+                    </span>
+                </div>
+
+                <div className="h-1.5 w-full rounded-full bg-sidebar-accent overflow-hidden">
+                    <div
+                        className={`h-full rounded-full transition-all duration-300 ${
+                            isExhausted
+                                ? "bg-destructive"
+                                : isNearLimit
+                                ? "bg-amber-500"
+                                : "bg-primary"
+                        }`}
+                        style={{ width: `${percentage}%` }}
+                    />
+                </div>
             </div>
 
-            {/* Progress bar */}
-            <div className="h-1.5 w-full rounded-full bg-sidebar-accent overflow-hidden">
-                <div
-                    className={`h-full rounded-full transition-all duration-300 ${
-                        isExhausted
-                            ? "bg-destructive"
-                            : isNearLimit
-                            ? "bg-amber-500"
-                            : "bg-primary"
-                    }`}
-                    style={{ width: `${percentage}%` }}
-                />
+            {/* Queue Limit */}
+            <div className="space-y-2">
+                <div className="flex items-center justify-between text-xs">
+                    <span className="flex items-center gap-1.5 text-sidebar-foreground/70 font-medium">
+                        <Zap className="size-3" />
+                        Queued Posts
+                    </span>
+                    <span
+                        className={`font-semibold tabular-nums ${
+                            isQueueExhausted
+                                ? "text-destructive"
+                                : isQueueNearLimit
+                                ? "text-amber-500"
+                                : "text-sidebar-foreground"
+                        }`}
+                    >
+                        {queueUsed}/{queueLimit}
+                    </span>
+                </div>
+
+                <div className="h-1.5 w-full rounded-full bg-sidebar-accent overflow-hidden">
+                    <div
+                        className={`h-full rounded-full transition-all duration-300 ${
+                            isQueueExhausted
+                                ? "bg-destructive"
+                                : isQueueNearLimit
+                                ? "text-amber-500"
+                                : "bg-primary"
+                        }`}
+                        style={{ width: `${queuePercentage}%` }}
+                    />
+                </div>
             </div>
 
-            {isExhausted ? (
-                <p className="text-xs text-destructive leading-snug">
-                    Limit reached. Resets <ClientDate date={resetDate} options={{ year: 'numeric', month: 'numeric', day: 'numeric' }} />.
-                </p>
-            ) : (
-                <p className="text-xs text-sidebar-foreground/50 leading-snug">
-                    {remaining} remaining · {planLabel} plan
-                </p>
-            )}
+            {/* Footer */}
+            <div>
+                {isExhausted ? (
+                    <p className="text-xs text-destructive leading-snug">
+                        Limit reached. Resets <ClientDate date={resetDate} options={{ year: 'numeric', month: 'numeric', day: 'numeric' }} />.
+                    </p>
+                ) : (
+                    <p className="text-xs text-sidebar-foreground/50 leading-snug">
+                        {remaining} remaining · {planLabel} plan
+                    </p>
+                )}
+            </div>
         </div>
     );
 }
