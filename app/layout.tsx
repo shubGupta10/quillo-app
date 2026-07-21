@@ -22,9 +22,35 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "Quillo",
+  metadataBase: new URL("https://quillo-app.vercel.app"),
+  title: {
+    default: "Quillo",
+    template: "%s | Quillo",
+  },
   description: "Turn your daily work into engaging content.",
   manifest: "/manifest.json",
+  keywords: ["content generator", "indie hacker", "daily logs", "build in public", "AI"],
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    siteName: "Quillo",
+    title: "Quillo",
+    description: "Turn your daily work into engaging content.",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Quillo",
+      }
+    ]
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Quillo",
+    description: "Turn your daily work into engaging content.",
+    images: ["/og-image.png"],
+  },
 };
 
 export default function RootLayout({
