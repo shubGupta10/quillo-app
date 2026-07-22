@@ -45,6 +45,14 @@ export function PricingSection() {
               </li>
               <li className="flex gap-x-3">
                 <Check className="h-5 w-5 text-primary flex-shrink-0" />
+                <span><strong className="font-semibold text-foreground">{USAGE_QUOTAS.MAX_QUEUED_POSTS[PlanType.FREE]} Queued Posts</strong> for automated publishing</span>
+              </li>
+              <li className="flex gap-x-3">
+                <Check className="h-5 w-5 text-primary flex-shrink-0" />
+                <span>Publish to <strong className="font-semibold text-foreground">LinkedIn</strong></span>
+              </li>
+              <li className="flex gap-x-3">
+                <Check className="h-5 w-5 text-primary flex-shrink-0" />
                 <span>Up to <strong className="font-semibold text-foreground">{USAGE_QUOTAS.PROJECTS_PER_USER[PlanType.FREE]} projects</strong></span>
               </li>
               <li className="flex gap-x-3">
@@ -83,6 +91,14 @@ export function PricingSection() {
               <li className="flex gap-x-3">
                 <Check className="h-5 w-5 text-muted-foreground/50 flex-shrink-0" />
                 <span><strong className="font-semibold text-muted-foreground">{USAGE_QUOTAS.AI_GENERATIONS_PER_MONTH[PlanType.BETA_PRO]} AI Generations</strong> per month</span>
+              </li>
+              <li className="flex gap-x-3">
+                <Check className="h-5 w-5 text-muted-foreground/50 flex-shrink-0" />
+                <span><strong className="font-semibold text-muted-foreground">{USAGE_QUOTAS.MAX_QUEUED_POSTS[PlanType.BETA_PRO]} Queued Posts</strong> for automated publishing</span>
+              </li>
+              <li className="flex gap-x-3">
+                <Check className="h-5 w-5 text-muted-foreground/50 flex-shrink-0" />
+                <span>Publish to <strong className="font-semibold text-muted-foreground">LinkedIn & X (Twitter)</strong></span>
               </li>
               <li className="flex gap-x-3">
                 <Check className="h-5 w-5 text-muted-foreground/50 flex-shrink-0" />
