@@ -26,6 +26,7 @@ export const getLinkedinPublisher = (): ISocialPublisher => {
             cookieStore.set("linkedin_oauth_state", state, {
                 httpOnly: true,
                 secure: process.env.NODE_ENV === "production",
+                sameSite: "lax",
                 maxAge: 60 * 10,
                 path: "/"
             });
