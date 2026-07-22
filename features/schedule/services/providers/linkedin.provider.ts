@@ -9,9 +9,8 @@ export const getLinkedinPublisher = (): ISocialPublisher => {
     const clientId = process.env.LINKEDIN_CLIENT_ID!;
     const clientSecret = process.env.LINKEDIN_CLIENT_SECRET!
 
-    const callbackUrl = process.env.NEXT_PUBLIC_APP_URL
-        ? `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/callback/linkedin`
-        : "http://localhost:3000/api/auth/callback/linkedin";
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "") || "http://localhost:3000";
+    const callbackUrl = `${baseUrl}/api/auth/callback/linkedin`;
 
 
     return {

@@ -12,8 +12,8 @@ export const getTwitterPublisher = (): ISocialPublisher => {
         clientSecret: process.env.TWITTER_CLIENT_SECRET!,
     })
 
-    const callbackUrl = process.env.NEXT_PUBLIC_APP_URL ? `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/callback/twitter`
-        : "http://localhost:3000/api/auth/callback/twitter";
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "") || "http://localhost:3000";
+    const callbackUrl = `${baseUrl}/api/auth/callback/twitter`;
 
 
     return {

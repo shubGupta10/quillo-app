@@ -3,12 +3,14 @@ import { getPublisher } from "@/features/schedule/services/publisher.factory";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
+import { connectDB } from "@/lib/db";
 
 export async function GET(
     request: NextRequest,
     { params }: { params: Promise<{ provider: string }> }
 ) {
     try {
+        await connectDB();
         const { provider } = await params;
 
         if (provider === "google") {
