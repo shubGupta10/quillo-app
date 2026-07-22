@@ -1,5 +1,5 @@
 export function getWelcomeEmailHtml(name: string) {
-    return `
+  return `
     <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
       <h2>Welcome to Quillo, ${name}! 🎉</h2>
       <p>We're thrilled to have you on board. Start logging your daily work and let's turn it into great content.</p>
@@ -8,16 +8,20 @@ export function getWelcomeEmailHtml(name: string) {
 }
 
 export function getScheduledEmailHtml(postTitle: string, scheduledDate: Date) {
-    return `
+  return `
     <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
       <h2>Your post is scheduled! 📅</h2>
-      <p>Your post "<strong>${postTitle}</strong>" has been scheduled to go out on ${scheduledDate.toLocaleString()}.</p>
+      <p>Your post "<strong>${postTitle}</strong>" has been scheduled to go out on ${new Intl.DateTimeFormat('en-US', {
+    dateStyle: 'full',
+    timeStyle: 'short',
+    timeZone: 'Asia/Kolkata' // Change this to whatever timezone you want to default to
+  }).format(scheduledDate)}.</p>
     </div>
   `;
 }
 
 export function getPublishedEmailHtml(postTitle: string, platform: string) {
-    return `
+  return `
     <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
       <h2>Post Published Successfully! 🚀</h2>
       <p>Great news! Your post "<strong>${postTitle}</strong>" has just been published on ${platform}.</p>

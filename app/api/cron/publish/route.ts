@@ -1,3 +1,4 @@
+import Auth from "@/features/auth/model/auth.model";
 import { Status } from "@/features/content/models/content.interface";
 import Content from "@/features/content/models/content.model";
 import Project from "@/features/projects/models/project.model";
@@ -43,7 +44,7 @@ export async function GET(request: NextRequest) {
                 const success = await publiser.publish(post._id.toString(), userId);
 
                 if (success) {
-                    const userDoc = await mongoose.connection.collection("user").findOne({ _id: userId.toString() });
+                    const userDoc = await Auth.findOne({ authUserId: userId });
 
                     if (userDoc?.email) {
                         await sendEmail({
