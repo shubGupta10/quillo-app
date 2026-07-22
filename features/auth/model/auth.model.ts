@@ -40,6 +40,19 @@ const authSchema = new mongoose.Schema<IAuth>({
             default: 0
         }
     },
+    streak: {
+        currentStreak: {
+            type: Number,
+            default: 0,
+        },
+        longestStreak: {
+            type: Number,
+            default: 0,
+        },
+        lastUpdateDate: {
+            type: Date,
+        }
+    },
     preferences: {
         defaultPlatform: { type: String, default: null },
         defaultPerspective: { type: String, default: null },

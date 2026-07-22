@@ -8,6 +8,7 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import Project from "@/features/projects/models/project.model";
 import { checkDailyUpdateLimit } from "@/features/subscriptions/services/usage.service";
+import Auth from "@/features/auth/model/auth.model";
 
 export async function createDailyUpdate(data: CreateDailyUpdateInput) {
     try {
@@ -56,10 +57,47 @@ export async function createDailyUpdate(data: CreateDailyUpdateInput) {
             }
         }
 
+        const authUser = await Auth.findOne({
+            authUserId: session.user.id
+        })
+        if (!authUser) {
+            return {
+                success: false,
+                error: "User not found",
+            }
+        }
+
         const newUpdate = await DailyUpdate.create({
             ...validatedFields.data,
             projectId: project._id,
         });
+
+        const todayDate = new Date();
+        const lastUpdate = authUser?.streak?.lastUpdateDate;
+
+        //did we already count the today streak?
+        const isSameDay = lastUpdate && todayDate.toDateString() === lastUpdate.toDateString();
+
+        if (!isSameDay) {
+            const yesterday = new Date(todayDate);
+            yesterday.setDate(yesterday.getDate() - 1);
+
+            const isYesterday = lastUpdate && yesterday.toDateString() === lastUpdate.toDateString();
+
+            if (isYesterday) {
+                authUser.streak.currentStreak += 1;
+            } else {
+                authUser.streak.currentStreak = 1;
+            }
+
+            authUser.streak.lastUpdateDate = todayDate;
+
+            if (authUser.streak.currentStreak > authUser.streak.longestStreak) {
+                authUser.streak.longestStreak = authUser.streak.currentStreak;
+            }
+
+            await authUser.save();
+        }
 
         revalidateTag("daily-updates", "default");
         revalidateTag("dashboard", "default");

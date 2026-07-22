@@ -28,6 +28,11 @@ export interface IAuth {
         status: status,
         credits: Number;
     },
+    streak: {
+        currentStreak: Number;
+        longestStreak: Number
+        lastUpdateDate: Date,
+    }
     preferences?: IUserPreferences;
     updatedAt: Date,
     createdAt: Date,

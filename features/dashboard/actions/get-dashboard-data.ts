@@ -3,8 +3,6 @@
 import { auth } from "@/lib/auth";
 import { connectDB } from "@/lib/db";
 import { headers } from "next/headers";
-import Project from "@/features/projects/models/project.model";
-import Content from "@/features/content/models/content.model";
 import { getCachedDashboardData } from "../queries/queries";
 
 export async function getDashboardData() {
@@ -32,10 +30,10 @@ export async function getDashboardData() {
                 title: `Added update to ${u.projectId?.name || "Project"}`,
                 date: u.createdAt
             })),
-            ...result.recentContent.map((c: any) => ({
-                type: "CONTENT",
-                title: `Generated ${c.platform} post for ${c.projectId?.name || "Project"}`,
-                date: c.createdAt
+            ...(result.upcomingScheduleContent || []).map((c: any) => ({
+                type: "SCHEDULE",
+                title: `Scheduled ${c.platform} post for ${c.projectId?.name || "Project"}`,
+                date: c.scheduledAt
             }))
         ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).slice(0, 6);
 
@@ -46,11 +44,15 @@ export async function getDashboardData() {
                     projects: result.stats[0]?.totalProjects || 0,
                     updates: result.stats[0]?.totalUpdates || 0,
                     generatedContent: result.stats[0]?.totalContent || 0,
-                    weeklyPosts: 0
+                    streak: {
+                        current: result.streak.currentStreak,
+                        longest: result.streak.longestStreak,
+                        lastUpdatedDate: result.streak.lastUpdatedDate
+                    }
                 },
                 timeline: JSON.parse(JSON.stringify(timeline)),
-                recentProjects: JSON.parse(JSON.stringify(result.recentProjects)),
-                recentContent: JSON.parse(JSON.stringify(result.recentContent))
+                recentProjects: JSON.parse(JSON.stringify(result.recentProjects || [])),
+                upcomingScheduleContent: JSON.parse(JSON.stringify(result.upcomingScheduleContent || []))
             }
         };
 

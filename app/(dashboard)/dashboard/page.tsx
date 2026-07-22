@@ -3,7 +3,7 @@ import { ProjectDialog } from "@/features/projects/components/project-dailog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Folder, FileText, CheckCircle2, Calendar, ArrowRight, FolderOpen, Loader2 } from "lucide-react";
+import { Folder, FileText, CheckCircle2, Calendar, ArrowRight, FolderOpen, Loader2, Flame } from "lucide-react";
 import { EmptyState } from "@/components/ui/empty-state";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -29,7 +29,8 @@ async function DashboardContent() {
     redirect("/sign-in");
   }
 
-  const { stats, timeline, recentProjects, recentContent } = result.data;
+  const { stats, recentProjects, upcomingScheduleContent } = result.data;
+  const streak = stats.streak;
 
   return (
     <div className="space-y-8">
@@ -64,138 +65,113 @@ async function DashboardContent() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">This Week</CardTitle>
-            <Calendar className="h-4 w-4 text-primary" />
+            <CardTitle className="text-sm font-medium text-muted-foreground">Current Streak</CardTitle>
+            <Flame className="h-4 w-4 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">{stats.weeklyPosts}</div>
+            <div className="text-3xl font-bold">{streak?.current || 0}</div>
+            <p className="text-xs text-muted-foreground mt-1">Longest: {streak?.longest || 0}</p>
           </CardContent>
         </Card>
+
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Left Column */}
-        <div className="lg:col-span-2 space-y-8">
-
-          {/* Recent Projects */}
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold tracking-tight">Recent Projects</h2>
-              <div className="flex items-center gap-3">
-                <Link href="/projects" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                  View all
-                </Link>
-                <ProjectDialog />
-              </div>
-            </div>
-
-            {recentProjects.length === 0 ? (
-              <EmptyState
-                icon={FolderOpen}
-                title="No projects yet"
-                description="Create one to get started."
-                className="min-h-[250px]"
-              >
-                <ProjectDialog />
-              </EmptyState>
-            ) : (
-              <div className="divide-y divide-border border rounded-lg bg-card">
-                {recentProjects.map((project: any) => (
-                  <Link
-                    key={project._id}
-                    href={`/projects/${project._id}`}
-                    className="flex items-center justify-between gap-4 px-4 py-3 hover:bg-muted transition-colors first:rounded-t-lg last:rounded-b-lg"
-                  >
-                    <div className="min-w-0">
-                      <p className="font-medium truncate">{project.name}</p>
-                      <p className="text-sm text-muted-foreground flex items-center flex-wrap">
-                        {project.updatesCount} updates · {project.contentCount} posts · Updated
-                        {project.updatedAt && !isNaN(new Date(project.updatedAt).getTime()) ? (
-                          <ClientDate className="ml-1" date={project.updatedAt} options={{ year: 'numeric', month: 'numeric', day: 'numeric' }} />
-                        ) : " Unknown"}
-                      </p>
-                    </div>
-                    <ArrowRight className="h-4 w-4 text-muted-foreground shrink-0" />
-                  </Link>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Recent Content */}
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold tracking-tight">Recent Content</h2>
-              <Link href="/content" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+      {/* Content Stack */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
+        {/* Recent Projects */}
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-semibold tracking-tight">Recent Projects</h2>
+            <div className="flex items-center gap-3">
+              <Link href="/projects" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                 View all
               </Link>
+              <ProjectDialog />
             </div>
-
-            {recentContent.length === 0 ? (
-              <EmptyState
-                icon={FileText}
-                title="No content yet"
-                description="Generate your first post to see it here."
-                className="min-h-[250px]"
-              >
-                <Link href="/projects">
-                  <Button variant="outline" size="sm">Go To Projects</Button>
-                </Link>
-              </EmptyState>
-            ) : (
-              <div className="divide-y divide-border border rounded-lg bg-card">
-                {recentContent.map((content: any) => {
-                  const title = content.title || "Untitled Content";
-                  return (
-                    <Link
-                      key={content._id}
-                      href={`/content/${content._id}`}
-                      className="flex items-center justify-between gap-4 px-4 py-3 hover:bg-muted transition-colors first:rounded-t-lg last:rounded-b-lg"
-                    >
-                      <div className="min-w-0">
-                        <p className="font-medium truncate">{title}</p>
-                        <div className="flex items-center gap-2 mt-0.5">
-                          <Badge variant="secondary" className="text-[11px] h-5 font-normal">
-                            {content.platform}
-                          </Badge>
-                          <span className="text-xs text-muted-foreground">
-                            {content.createdAt && !isNaN(new Date(content.createdAt).getTime()) ? (
-                              <ClientDate date={content.createdAt} options={{ year: 'numeric', month: 'numeric', day: 'numeric' }} />
-                            ) : "Unknown date"}
-                          </span>
-                        </div>
-                      </div>
-                      <ArrowRight className="h-4 w-4 text-muted-foreground shrink-0" />
-                    </Link>
-                  );
-                })}
-              </div>
-            )}
           </div>
+
+          {recentProjects.length === 0 ? (
+            <EmptyState
+              icon={FolderOpen}
+              title="No projects yet"
+              description="Create one to get started."
+              className="min-h-[250px]"
+            >
+              <ProjectDialog />
+            </EmptyState>
+          ) : (
+            <div className="divide-y divide-border border rounded-lg bg-card shadow-sm">
+              {recentProjects.map((project: any) => (
+                <Link
+                  key={project._id}
+                  href={`/projects/${project._id}`}
+                  className="flex items-center justify-between gap-4 px-6 py-4 hover:bg-muted/50 transition-colors first:rounded-t-lg last:rounded-b-lg"
+                >
+                  <div className="min-w-0 space-y-0.5">
+                    <p className="font-medium text-base truncate">{project.name}</p>
+                    <p className="text-sm text-muted-foreground flex items-center flex-wrap">
+                      {project.updatesCount} updates · {project.contentCount} posts · Updated
+                      {project.updatedAt && !isNaN(new Date(project.updatedAt).getTime()) ? (
+                        <ClientDate className="ml-1" date={project.updatedAt} options={{ year: 'numeric', month: 'numeric', day: 'numeric' }} />
+                      ) : " Unknown"}
+                    </p>
+                  </div>
+                  <ArrowRight className="h-4 w-4 text-muted-foreground shrink-0" />
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
 
-        {/* Right Column: Activity */}
-        <div className="space-y-4">
-          <h2 className="text-xl font-semibold tracking-tight">Recent Activity</h2>
-          <div className="border rounded-lg bg-card p-4">
-            {timeline.length === 0 ? (
-              <p className="text-center text-muted-foreground text-sm py-4">No activity yet.</p>
-            ) : (
-              <div className="relative border-l border-border ml-2 space-y-5">
-                {timeline.map((item: any, i: number) => (
-                  <div key={i} className="relative pl-5">
-                    <span className="absolute -left-1.5 top-1.5 h-3 w-3 rounded-full border-2 border-background bg-primary" />
-                    <p className="text-sm font-medium leading-tight">{item.title}</p>
-                    <span className="text-xs text-muted-foreground">
-                      {item.date && !isNaN(new Date(item.date).getTime())
-                        ? <ClientDate date={item.date} options={{ month: 'numeric', day: 'numeric', year: 'numeric', hour: "2-digit", minute: "2-digit" }} />
-                        : "Unknown date"}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            )}
+        {/* Upcoming Schedule */}
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-semibold tracking-tight">Upcoming Schedule</h2>
+            <Link href="/content" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+              View all
+            </Link>
           </div>
+
+          {(!upcomingScheduleContent || upcomingScheduleContent.length === 0) ? (
+            <EmptyState
+              icon={FileText}
+              title="No upcoming schedule"
+              description="Schedule your first post to see it here."
+              className="min-h-[250px]"
+            >
+              <Link href="/projects">
+                <Button variant="outline" size="sm">Go To Projects</Button>
+              </Link>
+            </EmptyState>
+          ) : (
+            <div className="divide-y divide-border border rounded-lg bg-card shadow-sm">
+              {upcomingScheduleContent.map((content: any) => {
+                const title = content.title || "Untitled Content";
+                return (
+                  <Link
+                    key={content._id}
+                    href={`/content/${content._id}`}
+                    className="flex items-center justify-between gap-4 px-6 py-4 hover:bg-muted/50 transition-colors first:rounded-t-lg last:rounded-b-lg"
+                  >
+                    <div className="min-w-0 flex-1 space-y-1">
+                      <p className="font-medium text-base truncate">{title}</p>
+                      <div className="text-sm text-muted-foreground">
+                        {content.scheduledAt && !isNaN(new Date(content.scheduledAt).getTime()) ? (
+                          <ClientDate date={content.scheduledAt} options={{ year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' }} />
+                        ) : "Unknown date"}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3 shrink-0">
+                      <Badge variant="secondary" className="text-[10px] uppercase tracking-wider font-medium">
+                        {content.platform}
+                      </Badge>
+                      <ArrowRight className="h-4 w-4 text-muted-foreground" />
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          )}
         </div>
       </div>
     </div>
