@@ -86,7 +86,7 @@ async function DashboardContent() {
               <Link href="/projects" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                 View all
               </Link>
-              <ProjectDialog />
+              {/* <ProjectDialog /> */}
             </div>
           </div>
 
@@ -127,7 +127,7 @@ async function DashboardContent() {
         <div className="space-y-6">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-semibold tracking-tight">Upcoming Schedule</h2>
-            <Link href="/content" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+            <Link href="/schedule" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
               View all
             </Link>
           </div>
