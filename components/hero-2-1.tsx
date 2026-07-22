@@ -1,8 +1,12 @@
 "use client";
 
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Play } from "lucide-react";
 import Link from "next/link";
+import { useState } from "react";
+
 const Hero2 = () => {
+  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
+  
   return (
     <div className="relative min-h-screen overflow-hidden bg-background pt-28 md:pt-36">
       <div className="absolute inset-0 z-0 bg-noise opacity-30 pointer-events-none"></div>
@@ -41,12 +45,34 @@ const Hero2 = () => {
             {/* Subtle, static primary glow to direct attention */}
             <div className="absolute -inset-1 rounded-xl bg-primary/20 blur-2xl opacity-50 pointer-events-none" />
 
-            {/* Hero Image */}
-            <img
-              src="/hero-image.png"
-              alt="Dashboard Preview"
-              className="relative w-full h-auto shadow-lg rounded border border-border"
-            />
+            {/* Hero Video Facade */}
+            <div 
+              className="relative w-full aspect-video rounded-xl overflow-hidden shadow-2xl border border-border bg-background/50 group cursor-pointer"
+              onClick={() => setIsVideoPlaying(true)}
+            >
+              {!isVideoPlaying ? (
+                <>
+                  <img
+                    src="/hero-image.png"
+                    alt="Quillo Dashboard Preview"
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.02] opacity-80 group-hover:opacity-100"
+                  />
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/40 group-hover:bg-black/20 transition-colors duration-500">
+                    <div className="flex h-20 w-20 items-center justify-center rounded-full bg-primary/90 text-primary-foreground shadow-xl backdrop-blur-md transition-transform duration-300 group-hover:scale-110">
+                      <Play className="h-8 w-8 ml-2" fill="currentColor" />
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <iframe
+                  src="https://www.youtube.com/embed/EQdzYdryV0g?rel=0&modestbranding=1&autoplay=1"
+                  title="Quillo Product Demo"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  className="absolute top-0 left-0 w-full h-full border-0"
+                />
+              )}
+            </div>
           </div>
         </div>
       </div>
