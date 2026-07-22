@@ -71,8 +71,8 @@ export const BentoGridShowcase = ({
       initial="hidden"
       animate="visible"
       className={cn(
-        // Core grid layout: 1 col on mobile, 3 on desktop
-        "grid w-full grid-cols-1 gap-6 md:grid-cols-3",
+        // Core grid layout: 1 col on mobile, 3 on desktop. Seamless borders.
+        "grid w-full grid-cols-1 md:grid-cols-3 border-l border-t border-border",
         // Defines 3 explicit rows on medium screens and up
         "md:grid-rows-3",
         // Use minmax to ensure cards can grow but have a minimum height

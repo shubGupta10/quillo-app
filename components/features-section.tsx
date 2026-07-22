@@ -3,16 +3,14 @@ import { Edit3, Sparkles, CalendarClock, FolderGit2, LibraryBig, Flame } from "l
 
 function FeatureCard({ title, description, icon: Icon, children, className = "" }: any) {
   return (
-    <div className={`relative flex flex-col h-full bg-card border border-border rounded-2xl overflow-hidden shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 ${className}`}>
-      <div className="relative z-10 p-6 md:p-8 flex-1 flex flex-col bg-card/90 backdrop-blur-[2px]">
-        <div className="flex items-center space-x-3 mb-3">
-          <div className="p-2 bg-primary/10 rounded-lg">
-            <Icon className="w-5 h-5 text-primary" />
-          </div>
-          <h3 className="font-semibold text-foreground text-lg">{title}</h3>
+    <div className={`group relative flex flex-col h-full bg-background border-r border-b border-border hover:bg-muted/30 transition-colors duration-200 overflow-hidden ${className}`}>
+      <div className="relative z-10 p-6 md:p-8 flex-1 flex flex-col">
+        <div className="mb-4 text-muted-foreground">
+          <Icon className="w-5 h-5" strokeWidth={2} />
         </div>
-        <p className="text-muted-foreground text-sm leading-relaxed">{description}</p>
-        <div className="mt-6 flex-1 flex items-end">
+        <h3 className="text-lg font-bold text-foreground mb-2">{title}</h3>
+        <p className="text-sm text-muted-foreground leading-relaxed">{description}</p>
+        <div className="mt-6 flex-1 flex items-end w-full">
           {children}
         </div>
       </div>
