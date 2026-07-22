@@ -1,5 +1,5 @@
 import { BentoGridShowcase } from "@/components/bento-product-features";
-import { Edit3, Sparkles, CalendarClock, FolderGit2, LibraryBig, Lightbulb } from "lucide-react";
+import { Edit3, Sparkles, CalendarClock, FolderGit2, LibraryBig, Flame } from "lucide-react";
 
 function FeatureCard({ title, description, icon: Icon, children, className = "" }: any) {
   return (
@@ -62,9 +62,9 @@ export function FeaturesSection() {
           }
           focus={
             <FeatureCard
-              title="Content Ideas"
-              description="Get multiple post angles and content opportunities from a single daily log."
-              icon={Lightbulb}
+              title="Building Streaks"
+              description="Stay motivated by tracking your consecutive days of shipping and logging updates."
+              icon={Flame}
             />
           }
           productivity={
