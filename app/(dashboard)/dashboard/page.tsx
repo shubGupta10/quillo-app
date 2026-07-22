@@ -29,7 +29,7 @@ async function DashboardContent() {
     redirect("/sign-in");
   }
 
-  const { stats, recentProjects, upcomingScheduleContent } = result.data;
+  const { stats, recentProjects, upcomingScheduleContent, recentContent } = result.data;
   const streak = stats.streak;
 
   return (
@@ -174,6 +174,58 @@ async function DashboardContent() {
           )}
         </div>
       </div>
+
+      {/* Recent Content */}
+      <div className="space-y-6 mt-12">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-semibold tracking-tight">Recent Content</h2>
+          <Link href="/content" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+            View all
+          </Link>
+        </div>
+
+        {(!recentContent || recentContent.length === 0) ? (
+          <EmptyState
+            icon={FileText}
+            title="No recent content"
+            description="Generate some content to see it here."
+            className="min-h-[250px]"
+          >
+            <Link href="/projects">
+              <Button variant="outline" size="sm">Go To Projects</Button>
+            </Link>
+          </EmptyState>
+        ) : (
+          <div className="divide-y divide-border border rounded-lg bg-card shadow-sm">
+            {recentContent.map((content: any) => {
+              const title = content.title || "Untitled Content";
+              return (
+                <Link
+                  key={content._id}
+                  href={`/content/${content._id}`}
+                  className="flex items-center justify-between gap-4 px-6 py-4 hover:bg-muted/50 transition-colors first:rounded-t-lg last:rounded-b-lg"
+                >
+                  <div className="min-w-0 flex-1 space-y-1">
+                    <p className="font-medium text-base truncate">{title}</p>
+                    <div className="text-sm text-muted-foreground">
+                      {content.createdAt && !isNaN(new Date(content.createdAt).getTime()) ? (
+                        <ClientDate date={content.createdAt} options={{ year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' }} />
+                      ) : "Unknown date"}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 shrink-0">
+                    <Badge variant="secondary" className="text-[10px] uppercase tracking-wider font-medium">
+                      {content.platform}
+                    </Badge>
+                    <ArrowRight className="h-4 w-4 text-muted-foreground" />
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
+

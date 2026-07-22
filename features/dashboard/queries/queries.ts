@@ -78,6 +78,23 @@ export const getCachedDashboardData = unstable_cache(
                             }
                         ],
 
+
+                        recentContent: [
+                            { $unwind: "$contents" },
+                            { $sort: { "contents.createdAt": -1 } },
+                            { $limit: 5 },
+                            {
+                                $project: {
+                                    _id: "$contents._id",
+                                    title: "$contents.title",
+                                    platform: "$contents.platform",
+                                    status: "$contents.status",
+                                    createdAt: "$contents.createdAt",
+                                    projectId: { _id: "$_id", name: "$name" }
+                                }
+                            }
+                        ],
+
                         upcomingScheduleContent: [
                             { $unwind: "$contents" },
                             { $match: { "contents.status": "SCHEDULED" } },

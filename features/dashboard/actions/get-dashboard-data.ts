@@ -52,7 +52,8 @@ export async function getDashboardData() {
                 },
                 timeline: JSON.parse(JSON.stringify(timeline)),
                 recentProjects: JSON.parse(JSON.stringify(result.recentProjects || [])),
-                upcomingScheduleContent: JSON.parse(JSON.stringify(result.upcomingScheduleContent || []))
+                upcomingScheduleContent: JSON.parse(JSON.stringify(result.upcomingScheduleContent || [])),
+                recentContent: JSON.parse(JSON.stringify(result.recentContent || []))
             }
         };
 
