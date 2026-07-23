@@ -8,13 +8,22 @@ import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { LogOut } from "lucide-react";
 
+import { useSession } from "@/hooks/use-session";
+
 export function NavItems() {
   const pathname = usePathname();
   const { setOpenMobile } = useSidebar();
+  const { user } = useSession();
+
+  const isAdmin = (user as any)?.role === "admin" || (user as any)?.isAdmin === true;
 
   return (
     <SidebarMenu className="gap-1">
       {dashboardNavigation.map((item) => {
+        if (item.adminOnly && !isAdmin) {
+          return null;
+        }
+
         const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
         return (
           <SidebarMenuItem key={item.href}>
