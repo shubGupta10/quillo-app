@@ -42,6 +42,11 @@ export async function getAnalytics() {
             return { success: false, error: "Unauthorized" };
         }
 
+        const adminEmail = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
+        if (adminEmail && session.user.email?.toLowerCase() !== adminEmail.toLowerCase()) {
+            return { success: false, error: "Unauthorized: Admin access required." };
+        }
+
         await connectDB();
 
         const thirtyDaysAgo = new Date();

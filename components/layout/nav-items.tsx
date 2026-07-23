@@ -15,7 +15,10 @@ export function NavItems() {
   const { setOpenMobile } = useSidebar();
   const { user } = useSession();
 
-  const isAdmin = (user as any)?.role === "admin" || (user as any)?.isAdmin === true;
+  const adminEmail = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
+  const isAdmin = Boolean(
+    user?.email && adminEmail && user.email.toLowerCase() === adminEmail.toLowerCase()
+  );
 
   return (
     <SidebarMenu className="gap-1">

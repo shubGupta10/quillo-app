@@ -20,7 +20,8 @@ export async function ModifyLastSeen(userId: string) {
         await connectDB();
         await Auth.updateOne(
             { authUserId: userId },
-            { $set: { lastSeenAt: new Date() } }
+            { $set: { lastSeenAt: new Date() } },
+            { upsert: true }
         );
     } catch (error) {
         console.error("Failed to update lastSeenAt:", error);
