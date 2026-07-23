@@ -1,10 +1,11 @@
-import { LayoutDashboard, FolderKanban, FileText, Settings, Star, CreditCard, User, Calendar } from "lucide-react";
+import { LayoutDashboard, FolderKanban, FileText, Settings, Star, CreditCard, User, Calendar, BarChart3 } from "lucide-react";
 
 export interface NavItem {
   title: string;
   href: string;
   icon?: any;
   disabled?: boolean;
+  adminOnly?: boolean;
 }
 
 export const dashboardNavigation: NavItem[] = [
@@ -27,6 +28,12 @@ export const dashboardNavigation: NavItem[] = [
     title: "Schedule",
     href: "/schedule",
     icon: Calendar,
+  },
+  {
+    title: "Analytics",
+    href: "/analytics",
+    icon: BarChart3,
+    adminOnly: true,
   },
   {
     title: "Profile",

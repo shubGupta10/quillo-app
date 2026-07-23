@@ -53,6 +53,10 @@ const authSchema = new mongoose.Schema<IAuth>({
             type: Date,
         }
     },
+    lastSeenAt: {
+        type: Date,
+        required: false
+    },
     preferences: {
         defaultPlatform: { type: String, default: null },
         defaultPerspective: { type: String, default: null },
@@ -68,6 +72,8 @@ const authSchema = new mongoose.Schema<IAuth>({
         default: Date.now
     }
 })
+
+authSchema.index({ lastSeenAt: -1 })
 
 const Auth = mongoose.models.auth || mongoose.model('auth', authSchema);
 

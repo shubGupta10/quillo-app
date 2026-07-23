@@ -33,6 +33,7 @@ export interface IAuth {
         longestStreak: Number
         lastUpdateDate: Date,
     }
+    lastSeenAt?: Date
     preferences?: IUserPreferences;
     updatedAt: Date,
     createdAt: Date,
