@@ -1,6 +1,4 @@
-"use client"
-
-import { useState } from "react";
+import { memo, useState, useTransition } from "react";
 import { IDailyUpdate } from "../models/dailyUpdate.interface";
 import { Button } from "@/components/ui/button";
 import { Trash2, Paperclip, Edit2 } from "lucide-react";
@@ -16,13 +14,12 @@ import {
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { updateDailyUpdate } from "../actions/update-daily-update";
-import { useTransition } from "react";
 
 interface UpdateCardProps {
     update: IDailyUpdate & { _id: string };
 }
 
-export function UpdateCard({ update }: UpdateCardProps) {
+export const UpdateCard = memo(function UpdateCard({ update }: UpdateCardProps) {
     const router = useRouter();
     const [isOpen, setIsOpen] = useState(false);
 
@@ -167,4 +164,4 @@ export function UpdateCard({ update }: UpdateCardProps) {
             )}
         </div>
     );
-}
+});

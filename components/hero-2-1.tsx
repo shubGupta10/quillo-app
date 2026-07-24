@@ -4,6 +4,8 @@ import { ArrowRight, Play } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
+import Image from "next/image";
+
 const Hero2 = () => {
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
   
@@ -52,10 +54,13 @@ const Hero2 = () => {
             >
               {!isVideoPlaying ? (
                 <>
-                  <img
+                  <Image
                     src="/hero-image.png"
                     alt="Quillo Dashboard Preview"
-                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.02] opacity-80 group-hover:opacity-100"
+                    fill
+                    priority
+                    sizes="(max-width: 1200px) 100vw, 1200px"
+                    className="object-cover transition-transform duration-700 group-hover:scale-[1.02] opacity-80 group-hover:opacity-100"
                   />
                   <div className="absolute inset-0 flex items-center justify-center bg-black/40 group-hover:bg-black/20 transition-colors duration-500">
                     <div className="flex h-20 w-20 items-center justify-center rounded-full bg-primary/90 text-primary-foreground shadow-xl backdrop-blur-md transition-transform duration-300 group-hover:scale-110">

@@ -1,7 +1,7 @@
+import { memo } from "react";
 import Link from "next/link";
 import { IProject } from "../models/project.interface";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle2, FileText } from "lucide-react";
 
 interface ProjectCardProps {
     project: IProject & { _id: string; updatesCount?: number; contentCount?: number };
@@ -22,7 +22,7 @@ function getRelativeTime(date: Date) {
     }
 }
 
-export function ProjectCard({ project }: ProjectCardProps) {
+export const ProjectCard = memo(function ProjectCard({ project }: ProjectCardProps) {
     const updates = project.updatesCount || 0;
     const posts = project.contentCount || 0;
     
@@ -58,4 +58,4 @@ export function ProjectCard({ project }: ProjectCardProps) {
             )}
         </Link>
     );
-}
+});

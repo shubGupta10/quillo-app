@@ -1,34 +1,31 @@
 "use client"
 
-import { useEffect, useState } from "react";
-
 interface ClientDateProps {
     date: string | Date;
     className?: string;
     options?: Intl.DateTimeFormatOptions;
 }
 
+const defaultOptions: Intl.DateTimeFormatOptions = {
+    month: 'short', 
+    day: 'numeric', 
+    hour: 'numeric', 
+    minute: '2-digit'
+};
+
 export function ClientDate({ date, className, options }: ClientDateProps) {
-    const [mounted, setMounted] = useState(false);
+    const d = new Date(date);
+    const isValid = !isNaN(d.getTime());
 
-    useEffect(() => {
-        setMounted(true);
-    }, []);
-
-    if (!mounted) {
-        return <span className={`opacity-0 ${className || ""}`}>Loading...</span>;
+    if (!isValid) {
+        return <span className={className}>—</span>;
     }
 
-    const defaultOptions: Intl.DateTimeFormatOptions = {
-        month: 'short', 
-        day: 'numeric', 
-        hour: 'numeric', 
-        minute: '2-digit'
-    };
+    const formattedDate = d.toLocaleString('en-US', options || defaultOptions);
 
     return (
-        <span className={className}>
-            {new Date(date).toLocaleString(undefined, options || defaultOptions)}
-        </span>
+        <time dateTime={d.toISOString()} suppressHydrationWarning className={className}>
+            {formattedDate}
+        </time>
     );
 }
