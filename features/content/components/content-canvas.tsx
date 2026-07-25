@@ -33,6 +33,7 @@ import { Platform, Perspective, Tone, ContentLength } from "../models/content.in
 import { IUserPreferences } from "@/features/auth/model/auth.interface"
 import { Loader2, RefreshCcw } from "lucide-react"
 import { ClientDate } from "@/components/ui/client-date"
+import { FeedbackDialog } from "@/features/feedback/components/feedback-dialog"
 
 interface ContentCanvasProps {
     projectId: string;
@@ -55,6 +56,7 @@ export function ContentCanvas({ projectId, updates, preferences, limitReached = 
         metadata: GenerateContentInput
     } | null>(null);
     const [savingIndex, setSavingIndex] = useState<number | null>(null);
+    const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
 
     const form = useForm<GenerateContentInput>({
         resolver: zodResolver(generateContentSchema),
@@ -133,8 +135,8 @@ export function ContentCanvas({ projectId, updates, preferences, limitReached = 
             const result = await saveContent(payload);
             if (result.success && result.data) {
                 toast.success("Content saved to library");
+                router.push(`/content/${result.data._id}?share=true`);
                 router.refresh();
-                router.push(`/content/${result.data._id}`);
             } else {
                 toast.error("Failed to save content: " + (result.error || "Unknown error"));
                 setSavingIndex(null);
@@ -374,7 +376,6 @@ export function ContentCanvas({ projectId, updates, preferences, limitReached = 
                         </Button>
                     )}
                 </div>
-
                 <div className="p-6 lg:p-10 flex-1 flex flex-col bg-muted/10">
                     {isGenerating && !draftData ? (
                         <div className="flex-1 flex flex-col items-center justify-center text-muted-foreground space-y-4 animate-in fade-in duration-500">

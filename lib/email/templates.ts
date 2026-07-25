@@ -28,3 +28,25 @@ export function getPublishedEmailHtml(postTitle: string, platform: string) {
     </div>
   `;
 }
+
+export function getFeedbackNotificationEmailHtml(
+  userName: string,
+  userEmail: string,
+  category: string,
+  rating: number,
+  message: string
+) {
+  const stars = "★".repeat(rating) + "☆".repeat(5 - rating);
+  return `
+    <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
+      <h2>New Feedback Received 💬</h2>
+      <p><strong>From:</strong> ${userName} (${userEmail})</p>
+      <p><strong>Rating:</strong> ${stars} (${rating}/5)</p>
+      <p><strong>Category:</strong> ${category}</p>
+      <p><strong>Message:</strong></p>
+      <blockquote style="background: #f4f4f5; padding: 12px; border-left: 4px solid #f59e0b; margin: 8px 0; border-radius: 4px;">
+        ${message}
+      </blockquote>
+    </div>
+  `;
+}

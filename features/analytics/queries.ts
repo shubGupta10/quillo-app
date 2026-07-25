@@ -4,6 +4,7 @@ import { connectDB } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import Auth from "@/features/auth/model/auth.model";
+import Feedback, { FeedbackCategory } from "@/features/feedback/models/feedback.model";
 
 export interface ActivityFeedItem {
     type: "USER_JOINED" | "PROJECT_CREATED" | "DAILY_UPDATE_LOGGED" | "CONTENT_GENERATED";
@@ -22,6 +23,16 @@ export interface AnalyticsUserItem {
     status: "ACTIVE" | "INACTIVE";
 }
 
+export interface AnalyticsFeedbackItem {
+    id: string;
+    email: string;
+    userName: string;
+    category: FeedbackCategory;
+    rating: number;
+    message: string;
+    createdAt: Date;
+}
+
 export interface AnalyticsData {
     metrics: {
         totalUsers: number;
@@ -30,6 +41,11 @@ export interface AnalyticsData {
     };
     users: AnalyticsUserItem[];
     activityFeed: ActivityFeedItem[];
+    feedbacks: AnalyticsFeedbackItem[];
+    feedbackStats: {
+        totalFeedbacks: number;
+        averageRating: number;
+    };
 }
 
 export async function getAnalytics() {
@@ -52,7 +68,6 @@ export async function getAnalytics() {
         const thirtyDaysAgo = new Date();
         thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-        // 100% Pure Single Aggregation Pipeline
         const [result] = await Auth.aggregate([
             {
                 $facet: {
@@ -229,6 +244,22 @@ export async function getAnalytics() {
             })
         );
 
+        const rawFeedbacks = await Feedback.find({}).sort({ createdAt: -1 }).lean();
+
+        const formattedFeedbacks: AnalyticsFeedbackItem[] = rawFeedbacks.map((fb: any) => ({
+            id: fb._id?.toString() || "",
+            email: fb.email,
+            userName: fb.userName || "User",
+            category: fb.category as FeedbackCategory,
+            rating: fb.rating,
+            message: fb.message,
+            createdAt: fb.createdAt,
+        }));
+
+        const totalFeedbacks = formattedFeedbacks.length;
+        const totalRatingSum = formattedFeedbacks.reduce((acc, curr) => acc + curr.rating, 0);
+        const averageRating = totalFeedbacks > 0 ? Number((totalRatingSum / totalFeedbacks).toFixed(1)) : 0;
+
         const rawData: AnalyticsData = {
             metrics: {
                 totalUsers,
@@ -237,6 +268,11 @@ export async function getAnalytics() {
             },
             users: formattedUsers,
             activityFeed: formattedFeed,
+            feedbacks: formattedFeedbacks,
+            feedbackStats: {
+                totalFeedbacks,
+                averageRating,
+            },
         };
 
         return {

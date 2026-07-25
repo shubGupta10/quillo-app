@@ -9,6 +9,7 @@ import { generateContent } from "../actions/generate-content"
 import { SaveContentInput } from "../schemas/content.schema"
 import { toast } from "sonner"
 
+
 interface ReviewVariationsProps {
     projectId: string;
 }
@@ -22,6 +23,7 @@ export function ReviewVariations({ projectId }: ReviewVariationsProps) {
     const [isLoaded, setIsLoaded] = useState(false);
     const [savingIndex, setSavingIndex] = useState<number | null>(null);
     const [isRegenerating, setIsRegenerating] = useState(false);
+    const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
 
     useEffect(() => {
         const stored = sessionStorage.getItem(`draftContent_${projectId}`);
@@ -81,8 +83,8 @@ export function ReviewVariations({ projectId }: ReviewVariationsProps) {
             if (result.success && result.data) {
                 toast.success("Content saved to library");
                 sessionStorage.removeItem(`draftContent_${projectId}`);
+                router.push(`/content/${result.data._id}?share=true`);
                 router.refresh();
-                router.push(`/content/${result.data._id}`);
             } else {
                 toast.error("Failed to save content: " + (result.error || "Unknown error"));
                 setSavingIndex(null);

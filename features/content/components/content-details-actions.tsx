@@ -1,11 +1,11 @@
 "use client"
 
-import { useState } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Edit2, Copy, Trash2, CalendarClock, Info, Lock } from "lucide-react";
+import { Edit2, Copy, Trash2, CalendarClock, Info, Lock, Share2 } from "lucide-react";
 import { EditContentDialog } from "./edit-content-dialog";
+import { ShareContentModal } from "./share-content-modal";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useMemo } from "react";
 import { deleteContent } from "../actions/delete-content";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -33,6 +33,19 @@ export function ContentDetailsActions({ content, isPremium = false }: ContentDet
     const [selectedDate, setSelectedDate] = useState("");
     const [selectedTime, setSelectedTime] = useState("");
     const [isScheduling, setIsScheduling] = useState(false);
+    const [isShareOpen, setIsShareOpen] = useState(false);
+
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            const params = new URLSearchParams(window.location.search);
+            if (params.get("share") === "true") {
+                const timer = setTimeout(() => {
+                    setIsShareOpen(true);
+                }, 1000);
+                return () => clearTimeout(timer);
+            }
+        }
+    }, []);
 
     const timeOptions = useMemo(() => {
         const options = [];
@@ -201,6 +214,11 @@ export function ContentDetailsActions({ content, isPremium = false }: ContentDet
                 </Dialog>
             )}
 
+            <Button variant="outline" size="sm" className="h-9 cursor-pointer" onClick={() => setIsShareOpen(true)}>
+                <Share2 className="w-4 h-4 mr-2" />
+                Share
+            </Button>
+
             <Button variant="outline" size="sm" className="h-9" onClick={handleCopy}>
                 <Copy className="w-4 h-4 mr-2" />
                 Copy
@@ -237,6 +255,15 @@ export function ContentDetailsActions({ content, isPremium = false }: ContentDet
                     </div>
                 </DialogContent>
             </Dialog>
+
+            <ShareContentModal
+                isOpen={isShareOpen}
+                onClose={() => setIsShareOpen(false)}
+                title={content.title}
+                content={content.content}
+                platform={content.platform}
+                onSchedule={() => setIsScheduleDialogOpen(true)}
+            />
         </div>
     );
 }

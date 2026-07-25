@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Users, UserCheck, UserX, Activity, FolderPlus, CheckCircle2, FileText, UserPlus } from "lucide-react";
+import { Users, UserCheck, UserX, Activity, FolderPlus, CheckCircle2, FileText, UserPlus, MessageSquare, Star } from "lucide-react";
 import { ClientDate } from "@/components/ui/client-date";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -13,7 +13,7 @@ interface AnalyticsDashboardProps {
 }
 
 export function AnalyticsDashboard({ data }: AnalyticsDashboardProps) {
-  const { metrics, users, activityFeed } = data;
+  const { metrics, users, activityFeed, feedbacks = [], feedbackStats = { totalFeedbacks: 0, averageRating: 0 } } = data;
 
   return (
     <div className="space-y-8">
@@ -65,16 +65,20 @@ export function AnalyticsDashboard({ data }: AnalyticsDashboardProps) {
         </Card>
       </div>
 
-      {/* Tabs System for Users & Live Activity Feed */}
+      {/* Tabs System for Users, Live Activity Feed & User Feedback */}
       <Tabs defaultValue="users" className="w-full space-y-6">
         <TabsList>
-          <TabsTrigger value="users" className="gap-2">
+          <TabsTrigger value="users" className="gap-2 cursor-pointer">
             <Users className="h-4 w-4" />
             <span>Users ({users.length})</span>
           </TabsTrigger>
-          <TabsTrigger value="activity" className="gap-2">
+          <TabsTrigger value="activity" className="gap-2 cursor-pointer">
             <Activity className="h-4 w-4" />
             <span>Live Activity Feed ({activityFeed.length})</span>
+          </TabsTrigger>
+          <TabsTrigger value="feedback" className="gap-2 cursor-pointer">
+            <MessageSquare className="h-4 w-4 text-amber-500" />
+            <span>User Feedback ({feedbacks.length})</span>
           </TabsTrigger>
         </TabsList>
 
@@ -217,6 +221,127 @@ export function AnalyticsDashboard({ data }: AnalyticsDashboardProps) {
                         {item.description}
                       </p>
                     </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </TabsContent>
+
+        {/* User Feedback Tab */}
+        <TabsContent value="feedback" className="space-y-6 outline-none">
+          {/* Summary Stat Sub-cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="border rounded-lg p-5 bg-card flex items-center justify-between">
+              <div>
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  Total Feedbacks
+                </p>
+                <p className="text-3xl font-bold mt-1">{feedbackStats.totalFeedbacks}</p>
+              </div>
+              <div className="p-3 bg-amber-500/10 rounded-full text-amber-500">
+                <MessageSquare className="h-6 w-6" />
+              </div>
+            </div>
+
+            <div className="border rounded-lg p-5 bg-card flex items-center justify-between">
+              <div>
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  Average Rating
+                </p>
+                <div className="flex items-center gap-2 mt-1">
+                  <span className="text-3xl font-bold">{feedbackStats.averageRating}</span>
+                  <span className="text-sm text-muted-foreground">/ 5.0</span>
+                </div>
+              </div>
+              <div className="flex items-center gap-1">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <Star
+                    key={star}
+                    className={`h-5 w-5 ${
+                      star <= Math.round(feedbackStats.averageRating)
+                        ? "fill-amber-500 text-amber-500"
+                        : "text-muted-foreground/30"
+                    }`}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Feedback List */}
+          {feedbacks.length === 0 ? (
+            <div className="text-center py-20 border rounded-lg bg-card space-y-3">
+              <MessageSquare className="w-10 h-10 mx-auto text-muted-foreground opacity-30" />
+              <p className="text-sm font-medium">No feedback submitted yet</p>
+              <p className="text-sm text-muted-foreground">
+                User submitted feedback will appear here.
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {feedbacks.map((item) => {
+                const initials = item.userName
+                  ? item.userName
+                      .split(" ")
+                      .map((n) => n[0])
+                      .join("")
+                      .toUpperCase()
+                      .slice(0, 2)
+                  : "U";
+
+                // Category badge style mapping
+                let badgeVariant: "default" | "secondary" | "outline" | "destructive" = "secondary";
+                if (item.category === "BUG") badgeVariant = "destructive";
+                if (item.category === "FEATURE") badgeVariant = "default";
+
+                return (
+                  <div
+                    key={item.id}
+                    className="border rounded-lg p-6 bg-card space-y-4 hover:border-border/80 transition-colors"
+                  >
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-border/50">
+                      <div className="flex items-center gap-3">
+                        <Avatar className="h-9 w-9">
+                          <AvatarFallback className="text-xs bg-primary/10 text-primary font-semibold">
+                            {initials}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <p className="font-semibold text-sm leading-tight">
+                            {item.userName}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {item.email}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-3">
+                        <Badge variant={badgeVariant} className="text-[11px] uppercase tracking-wider">
+                          {item.category.replace("_", " ")}
+                        </Badge>
+                        <div className="flex items-center gap-1">
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <Star
+                              key={star}
+                              className={`h-4 w-4 ${
+                                star <= item.rating
+                                  ? "fill-amber-500 text-amber-500"
+                                  : "text-muted-foreground/30"
+                              }`}
+                            />
+                          ))}
+                        </div>
+                        <span className="text-xs text-muted-foreground whitespace-nowrap">
+                          <ClientDate date={item.createdAt} />
+                        </span>
+                      </div>
+                    </div>
+
+                    <p className="text-sm text-foreground/90 leading-relaxed whitespace-pre-wrap">
+                      "{item.message}"
+                    </p>
                   </div>
                 );
               })}
