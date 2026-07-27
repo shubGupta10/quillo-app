@@ -10,13 +10,11 @@ import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { ClientDate } from "@/components/ui/client-date";
 
+import DashboardLoading from "./loading";
+
 export default function DashboardPage() {
   return (
-    <Suspense fallback={
-      <div className="flex flex-col items-center justify-center flex-1 h-full min-h-[60vh]">
-        <Loader2 className="w-8 h-8 text-primary animate-spin" />
-      </div>
-    }>
+    <Suspense fallback={<DashboardLoading />}>
       <DashboardContent />
     </Suspense>
   );

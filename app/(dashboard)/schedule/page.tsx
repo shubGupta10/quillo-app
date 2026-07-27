@@ -1,19 +1,16 @@
 import { getScheduledContent } from "@/features/schedule/actions/get-scheduled-content";
 import { Badge } from "@/components/ui/badge";
-import { CalendarClock, AlertCircle, Loader2 } from "lucide-react";
+import { CalendarClock, AlertCircle } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { ClientDate } from "@/components/ui/client-date";
+import ScheduleLoading from "./loading";
 
 export default function SchedulePage() {
     return (
         <div className="space-y-8">
-            <Suspense fallback={
-                <div className="flex flex-col items-center justify-center py-20 border rounded-lg bg-card">
-                    <Loader2 className="w-8 h-8 text-primary animate-spin" />
-                </div>
-            }>
+            <Suspense fallback={<ScheduleLoading />}>
                 <ScheduleContent />
             </Suspense>
         </div>

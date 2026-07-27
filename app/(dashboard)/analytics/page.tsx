@@ -1,19 +1,14 @@
 import { getAnalytics } from "@/features/analytics/queries";
 import { AnalyticsDashboard } from "@/features/analytics/components/analytics-dashboard";
-import { AlertCircle, Loader2 } from "lucide-react";
+import { AlertCircle } from "lucide-react";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
+import AnalyticsLoading from "./loading";
 
 export default function AnalyticsPage() {
   return (
     <div className="space-y-8">
-      <Suspense
-        fallback={
-          <div className="flex flex-col items-center justify-center py-20 border rounded-lg bg-card">
-            <Loader2 className="w-8 h-8 text-primary animate-spin" />
-          </div>
-        }
-      >
+      <Suspense fallback={<AnalyticsLoading />}>
         <AnalyticsContent />
       </Suspense>
     </div>
