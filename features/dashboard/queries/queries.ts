@@ -1,6 +1,8 @@
 import { unstable_cache } from "next/cache";
 import Project from "@/features/projects/models/project.model";
 import Auth from "@/features/auth/model/auth.model";
+import DailyUpdate from "@/features/daily-updates/models/dailyUpdate.model";
+import { calculateStreak } from "@/lib/streak-engine";
 
 export const getCachedDashboardData = unstable_cache(
     async (userId: string) => {
@@ -117,11 +119,21 @@ export const getCachedDashboardData = unstable_cache(
             Auth.findOne({ authUserId: userId }).lean()
         ]);
 
+        const userProjects = await Project.find({ userId }).select("_id").lean();
+        const projectIds = userProjects.map((p: any) => p._id);
+        const allUpdates = await DailyUpdate.find({ projectId: { $in: projectIds } }).select("createdAt").lean();
+        const updateDates = allUpdates.map((u: any) => u.createdAt);
+        const computedStreak = calculateStreak(updateDates);
+
         const dashboardData = projects[0] || { stats: [], recentProjects: [], recentUpdates: [], recentContent: [] };
 
         return {
             ...dashboardData,
-            streak: authUser?.streak || { currentStreak: 0, longestStreak: 0 }
+            streak: {
+                currentStreak: computedStreak.currentStreak,
+                longestStreak: Math.max(computedStreak.longestStreak, authUser?.streak?.longestStreak || 0),
+                lastUpdateDate: computedStreak.lastUpdateDate || authUser?.streak?.lastUpdateDate
+            }
         };
     },
     ["dashboard-data"],

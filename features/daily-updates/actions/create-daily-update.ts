@@ -9,6 +9,7 @@ import { headers } from "next/headers";
 import Project from "@/features/projects/models/project.model";
 import { checkDailyUpdateLimit } from "@/features/subscriptions/services/usage.service";
 import Auth from "@/features/auth/model/auth.model";
+import { calculateStreak } from "@/lib/streak-engine";
 
 export async function createDailyUpdate(data: CreateDailyUpdateInput) {
     try {
@@ -72,32 +73,18 @@ export async function createDailyUpdate(data: CreateDailyUpdateInput) {
             projectId: project._id,
         });
 
-        const todayDate = new Date();
-        const lastUpdate = authUser?.streak?.lastUpdateDate;
+        const userProjects = await Project.find({ userId: session.user.id }).select("_id").lean();
+        const projectIds = userProjects.map((p: any) => p._id);
+        const allUpdates = await DailyUpdate.find({ projectId: { $in: projectIds } }).select("createdAt").lean();
+        const updateDates = allUpdates.map((u: any) => u.createdAt);
+        const computedStreak = calculateStreak(updateDates);
 
-        //did we already count the today streak?
-        const isSameDay = lastUpdate && todayDate.toDateString() === lastUpdate.toDateString();
-
-        if (!isSameDay) {
-            const yesterday = new Date(todayDate);
-            yesterday.setDate(yesterday.getDate() - 1);
-
-            const isYesterday = lastUpdate && yesterday.toDateString() === lastUpdate.toDateString();
-
-            if (isYesterday) {
-                authUser.streak.currentStreak += 1;
-            } else {
-                authUser.streak.currentStreak = 1;
-            }
-
-            authUser.streak.lastUpdateDate = todayDate;
-
-            if (authUser.streak.currentStreak > authUser.streak.longestStreak) {
-                authUser.streak.longestStreak = authUser.streak.currentStreak;
-            }
-
-            await authUser.save();
+        authUser.streak.currentStreak = computedStreak.currentStreak;
+        authUser.streak.lastUpdateDate = computedStreak.lastUpdateDate || new Date();
+        if (computedStreak.longestStreak > (authUser.streak.longestStreak || 0)) {
+            authUser.streak.longestStreak = computedStreak.longestStreak;
         }
+        await authUser.save();
 
         revalidateTag("daily-updates", "default");
         revalidateTag("dashboard", "default");

@@ -67,16 +67,16 @@ export function AnalyticsDashboard({ data }: AnalyticsDashboardProps) {
 
       {/* Tabs System for Users, Live Activity Feed & User Feedback */}
       <Tabs defaultValue="users" className="w-full space-y-6">
-        <TabsList>
-          <TabsTrigger value="users" className="gap-2 cursor-pointer">
+        <TabsList className="w-full h-auto p-1 flex items-center justify-start overflow-x-auto whitespace-nowrap max-w-full">
+          <TabsTrigger value="users" className="gap-2 cursor-pointer shrink-0">
             <Users className="h-4 w-4" />
             <span>Users ({users.length})</span>
           </TabsTrigger>
-          <TabsTrigger value="activity" className="gap-2 cursor-pointer">
+          <TabsTrigger value="activity" className="gap-2 cursor-pointer shrink-0">
             <Activity className="h-4 w-4" />
             <span>Live Activity Feed ({activityFeed.length})</span>
           </TabsTrigger>
-          <TabsTrigger value="feedback" className="gap-2 cursor-pointer">
+          <TabsTrigger value="feedback" className="gap-2 cursor-pointer shrink-0">
             <MessageSquare className="h-4 w-4 text-amber-500" />
             <span>User Feedback ({feedbacks.length})</span>
           </TabsTrigger>
@@ -95,13 +95,13 @@ export function AnalyticsDashboard({ data }: AnalyticsDashboardProps) {
           ) : (
             <div className="border rounded-lg bg-card overflow-hidden">
               <div className="overflow-x-auto">
-                <table className="w-full text-sm text-left">
+                <table className="w-full min-w-[550px] text-sm text-left">
                   <thead className="bg-muted/50 text-xs text-muted-foreground uppercase border-b border-border">
                     <tr>
-                      <th className="px-6 py-3 font-medium">User</th>
-                      <th className="px-6 py-3 font-medium">Joined</th>
-                      <th className="px-6 py-3 font-medium">Last Seen</th>
-                      <th className="px-6 py-3 font-medium text-right">
+                      <th className="px-4 sm:px-6 py-3 font-medium">User</th>
+                      <th className="px-4 sm:px-6 py-3 font-medium">Joined</th>
+                      <th className="px-4 sm:px-6 py-3 font-medium">Last Seen</th>
+                      <th className="px-4 sm:px-6 py-3 font-medium text-right">
                         Status
                       </th>
                     </tr>
@@ -122,9 +122,9 @@ export function AnalyticsDashboard({ data }: AnalyticsDashboardProps) {
                           key={u.id}
                           className="hover:bg-accent/50 transition-colors"
                         >
-                          <td className="px-6 py-4">
+                          <td className="px-4 sm:px-6 py-4">
                             <div className="flex items-center gap-3">
-                              <Avatar className="h-8 w-8">
+                              <Avatar className="h-8 w-8 shrink-0">
                                 <AvatarImage src={u.image} alt={u.fullName} />
                                 <AvatarFallback className="text-xs bg-primary/10 text-primary font-semibold">
                                   {initials}
@@ -140,7 +140,7 @@ export function AnalyticsDashboard({ data }: AnalyticsDashboardProps) {
                               </div>
                             </div>
                           </td>
-                          <td className="px-6 py-4 text-xs text-muted-foreground whitespace-nowrap">
+                          <td className="px-4 sm:px-6 py-4 text-xs text-muted-foreground whitespace-nowrap">
                             <ClientDate
                               date={u.joinedAt}
                               options={{
@@ -150,14 +150,14 @@ export function AnalyticsDashboard({ data }: AnalyticsDashboardProps) {
                               }}
                             />
                           </td>
-                          <td className="px-6 py-4 text-xs text-muted-foreground whitespace-nowrap">
+                          <td className="px-4 sm:px-6 py-4 text-xs text-muted-foreground whitespace-nowrap">
                             {u.lastSeenAt ? (
                               <ClientDate date={u.lastSeenAt} />
                             ) : (
                               "Never"
                             )}
                           </td>
-                          <td className="px-6 py-4 text-right whitespace-nowrap">
+                          <td className="px-4 sm:px-6 py-4 text-right whitespace-nowrap">
                             {u.status === "ACTIVE" ? (
                               <Badge
                                 variant="default"

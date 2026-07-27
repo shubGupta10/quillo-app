@@ -126,18 +126,18 @@ export function ContentDetailsActions({ content, isPremium = false }: ContentDet
     };
 
     return (
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2 max-w-full">
 
             {content.status !== "PUBLISHED" && content.platform !== "REDDIT" && (
                 <Dialog open={isScheduleDialogOpen} onOpenChange={setIsScheduleDialogOpen}>
                     <DialogTrigger render={
-                        <Button variant="default" size="sm" className="h-9">
+                        <Button variant="default" size="sm" className="h-9 px-3 cursor-pointer" title={content.status === "SCHEDULED" ? "Reschedule" : "Schedule"}>
                             {(!isPremium && content.platform !== "LINKEDIN") ? (
-                                <Lock className="w-4 h-4 mr-2" />
+                                <Lock className="w-4 h-4 sm:mr-2" />
                             ) : (
-                                <CalendarClock className="w-4 h-4 mr-2" />
+                                <CalendarClock className="w-4 h-4 sm:mr-2" />
                             )}
-                            {content.status === "SCHEDULED" ? "Reschedule" : "Schedule"}
+                            <span className="hidden sm:inline">{content.status === "SCHEDULED" ? "Reschedule" : "Schedule"}</span>
                         </Button>
                     } />
 
@@ -214,20 +214,20 @@ export function ContentDetailsActions({ content, isPremium = false }: ContentDet
                 </Dialog>
             )}
 
-            <Button variant="outline" size="sm" className="h-9 cursor-pointer" onClick={() => setIsShareOpen(true)}>
-                <Share2 className="w-4 h-4 mr-2" />
-                Share
+            <Button variant="outline" size="sm" className="h-9 px-3 cursor-pointer" title="Share" onClick={() => setIsShareOpen(true)}>
+                <Share2 className="w-4 h-4 sm:mr-2" />
+                <span className="hidden sm:inline">Share</span>
             </Button>
 
-            <Button variant="outline" size="sm" className="h-9" onClick={handleCopy}>
-                <Copy className="w-4 h-4 mr-2" />
-                Copy
+            <Button variant="outline" size="sm" className="h-9 px-3 cursor-pointer" title="Copy" onClick={handleCopy}>
+                <Copy className="w-4 h-4 sm:mr-2" />
+                <span className="hidden sm:inline">Copy</span>
             </Button>
 
             <EditContentDialog content={content}>
-                <Button variant="outline" size="sm" className="h-9">
-                    <Edit2 className="w-4 h-4 mr-2" />
-                    Edit
+                <Button variant="outline" size="sm" className="h-9 px-3 cursor-pointer" title="Edit">
+                    <Edit2 className="w-4 h-4 sm:mr-2" />
+                    <span className="hidden sm:inline">Edit</span>
                 </Button>
             </EditContentDialog>
 
@@ -236,10 +236,11 @@ export function ContentDetailsActions({ content, isPremium = false }: ContentDet
                     <Button
                         variant="outline"
                         size="sm"
-                        className="h-9 text-destructive hover:bg-destructive/10 hover:text-destructive border-destructive/20"
+                        title="Delete"
+                        className="h-9 px-3 cursor-pointer text-destructive hover:bg-destructive/10 hover:text-destructive border-destructive/20"
                     >
-                        <Trash2 className="w-4 h-4 mr-2" />
-                        Delete
+                        <Trash2 className="w-4 h-4 sm:mr-2" />
+                        <span className="hidden sm:inline">Delete</span>
                     </Button>
                 } />
                 <DialogContent>

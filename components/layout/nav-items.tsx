@@ -52,7 +52,6 @@ export function NavItems() {
           <SidebarMenuButton
             tooltip="Feedback"
             onClick={() => {
-              setOpenMobile(false);
               setFeedbackOpen(true);
             }}
             className="cursor-pointer"
