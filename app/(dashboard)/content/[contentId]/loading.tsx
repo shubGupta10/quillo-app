@@ -9,12 +9,12 @@ export default function ContentDetailsLoading() {
           <Skeleton className="h-9 w-3/4 max-w-lg rounded-md" />
 
           {/* Action buttons row */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2">
             <Skeleton className="h-9 w-24 rounded-md" />
-            <Skeleton className="h-9 w-20 rounded-md" />
-            <Skeleton className="h-9 w-20 rounded-md" />
-            <Skeleton className="h-9 w-20 rounded-md" />
-            <Skeleton className="h-9 w-20 rounded-md" />
+            <Skeleton className="h-9 w-9 sm:w-20 rounded-md" />
+            <Skeleton className="h-9 w-9 sm:w-20 rounded-md" />
+            <Skeleton className="h-9 w-9 sm:w-20 rounded-md" />
+            <Skeleton className="h-9 w-9 sm:w-20 rounded-md" />
           </div>
         </div>
 

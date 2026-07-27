@@ -9,7 +9,24 @@ import { PlanType } from "@/features/subscriptions/model/subscriptions.interface
 import Image from "next/image";
 import { BreadcrumbSetter } from "@/components/layout/breadcrumb-setter";
 
-export default async function ContentDetailsPage({
+import { Suspense } from "react";
+import ContentDetailsLoading from "./loading";
+
+export default function ContentDetailsPage({
+    params
+}: {
+    params: Promise<{ contentId: string }>
+}) {
+    return (
+        <div className="space-y-8">
+            <Suspense fallback={<ContentDetailsLoading />}>
+                <ContentDetailsContent params={params} />
+            </Suspense>
+        </div>
+    );
+}
+
+async function ContentDetailsContent({
     params
 }: {
     params: Promise<{ contentId: string }>
@@ -33,7 +50,7 @@ export default async function ContentDetailsPage({
     const content = result.data;
 
     return (
-        <div className="space-y-8">
+        <>
             <BreadcrumbSetter title={content.title || "Untitled Content"} />
 
             <div className="space-y-6 pb-6 border-b">
@@ -98,6 +115,6 @@ export default async function ContentDetailsPage({
                     </div>
                 </div>
             )}
-        </div>
+        </>
     );
 }
