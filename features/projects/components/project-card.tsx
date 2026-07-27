@@ -29,7 +29,7 @@ export const ProjectCard = memo(function ProjectCard({ project }: ProjectCardPro
     return (
         <Link 
             href={`/projects/${project._id}`}
-            className="group flex flex-col p-6 border rounded-lg bg-card hover:border-primary/50 hover:shadow-sm transition-all h-full"
+            className="group flex flex-col p-6 lg:p-8 border rounded-lg bg-card hover:border-primary hover:shadow-sm transition-all h-full"
         >
             <div className="space-y-1 mb-4">
                 <h3 className="text-xl font-semibold tracking-tight group-hover:text-primary transition-colors">
@@ -40,7 +40,7 @@ export const ProjectCard = memo(function ProjectCard({ project }: ProjectCardPro
                 </p>
             </div>
             
-            <div className="mt-auto pt-4 space-y-1 border-t border-border/50">
+            <div className="mt-auto pt-4 space-y-1 border-t border-border">
                 <p className="text-sm font-medium text-foreground flex items-center gap-2">
                     {updates} {updates === 1 ? 'update' : 'updates'} <span className="text-muted-foreground">&bull;</span> {posts} {posts === 1 ? 'post' : 'posts'}
                 </p>

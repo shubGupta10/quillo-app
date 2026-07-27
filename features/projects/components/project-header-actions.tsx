@@ -48,7 +48,7 @@ export function ProjectHeaderActions({ project }: ProjectHeaderActionsProps) {
                 <DialogTrigger render={
                     <Button 
                         variant="outline" 
-                        className="text-destructive hover:bg-destructive/10 hover:text-destructive border-destructive/20 cursor-pointer"
+                        className="text-destructive hover:bg-destructive hover:text-destructive-foreground border-destructive cursor-pointer"
                     >
                         <Trash2 className="w-4 h-4 mr-2" />
                         Delete

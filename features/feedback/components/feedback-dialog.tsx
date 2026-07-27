@@ -154,7 +154,7 @@ export function FeedbackDialog({
                       className={`h-6 w-6 transition-colors ${
                         activeStar
                           ? "fill-primary text-primary"
-                          : "text-muted-foreground/30 hover:text-primary/60"
+                          : "text-muted-foreground hover:text-primary"
                       }`}
                     />
                   </button>
@@ -205,7 +205,7 @@ export function FeedbackDialog({
           </div>
 
           {/* Action Buttons */}
-          <div className="flex justify-end gap-3 pt-4 border-t border-border/50">
+          <div className="flex justify-end gap-3 pt-4 border-t border-border">
             <Button
               type="button"
               variant="outline"

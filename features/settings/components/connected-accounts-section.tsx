@@ -61,13 +61,13 @@ export function ConnectAccountsSection({ connectedAccounts, planType}: { connect
                             <div className="min-w-0">
                                 <div className="flex items-center gap-2">
                                     <p className="text-sm font-medium">{platform.charAt(0) + platform.slice(1).toLowerCase()}</p>
-                                    {platform === Platform.TWITTER && planType === "FREE" && (
-                                        <div className="bg-amber-500/10 text-amber-500 border border-amber-500/20 px-2 py-0.5 rounded text-[10px] uppercase font-bold tracking-wider">
+                                     {platform === Platform.TWITTER && planType === "FREE" && (
+                                        <div className="bg-accent text-amber-500 border border-amber-500 px-2 py-0.5 rounded text-[10px] uppercase font-bold tracking-wider">
                                             Pro
                                         </div>
                                     )}
                                     {isConnected && (
-                                        <div className="flex items-center gap-1 text-[10px] uppercase font-bold tracking-wider text-green-600 bg-green-500/10 px-2 py-0.5 rounded-full">
+                                        <div className="flex items-center gap-1 text-[10px] uppercase font-bold tracking-wider text-emerald-600 bg-accent px-2 py-0.5 rounded-full">
                                             <CheckCircle2 className="w-3 h-3" />
                                             Connected
                                         </div>
@@ -88,7 +88,7 @@ export function ConnectAccountsSection({ connectedAccounts, planType}: { connect
                                     }
                                     isConnected ? handleDisconnect(platform) : handleConnect(platform);
                                 }}
-                                className={isConnected ? "w-full sm:w-auto text-destructive hover:bg-destructive/10 border-destructive/20" : "w-full sm:w-auto min-w-[100px]"}
+                                className={isConnected ? "w-full sm:w-auto text-destructive hover:bg-destructive hover:text-destructive-foreground border-destructive" : "w-full sm:w-auto min-w-[100px]"}
                             >
                                 {isConnected ? "Disconnect" : (platform === Platform.TWITTER && planType === "FREE" ? "Upgrade" : "Connect")}
                             </Button>

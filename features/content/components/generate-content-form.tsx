@@ -98,7 +98,7 @@ export function GenerateContentForm({ projectId, updates, preferences, limitReac
                 <h3 className="text-lg font-semibold tracking-tight">1. Select Updates to Include</h3>
                 <div className="space-y-3">
                     {updates.slice(0, 3).map((update) => (
-                        <div key={update._id} className="flex items-start space-x-3 p-3 border rounded-md hover:bg-muted/50 transition-colors">
+                        <div key={update._id} className="flex items-start space-x-3 p-3 border rounded-md hover:bg-accent transition-colors">
                             <Checkbox 
                                 id={`inline-${update._id}`} 
                                 checked={form.watch("sourceUpdates").includes(update._id)}
@@ -137,7 +137,7 @@ export function GenerateContentForm({ projectId, updates, preferences, limitReac
                                 </DialogHeader>
                                 <div className="space-y-3 mt-4">
                                     {updates.map((update) => (
-                                        <div key={update._id} className="flex items-start space-x-3 p-4 border rounded-md hover:bg-muted/50 transition-colors">
+                                        <div key={update._id} className="flex items-start space-x-3 p-4 border rounded-md hover:bg-accent transition-colors">
                                             <Checkbox 
                                                 id={`modal-${update._id}`} 
                                                 checked={form.watch("sourceUpdates").includes(update._id)}
@@ -252,7 +252,7 @@ export function GenerateContentForm({ projectId, updates, preferences, limitReac
 
             <div className="pt-4 border-t space-y-3">
                 {limitReached && (
-                    <div className="flex items-start gap-2 rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2.5">
+                    <div className="flex items-start gap-2 rounded-md border border-destructive bg-destructive text-destructive-foreground px-3 py-2.5">
                         <span className="text-destructive text-xs leading-relaxed">
                             You&apos;ve used all <strong>{generationsLimit}</strong> generations for this month.
                             Your quota resets at the start of your next billing period.

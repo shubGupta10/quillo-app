@@ -178,7 +178,7 @@ export function ContentDetailsActions({ content, isPremium = false }: ContentDet
                             </div>
 
                             {content.status !== "PUBLISHED" && (
-                                <div className="bg-muted/50 border rounded-lg p-4 mt-4 space-y-3">
+                                <div className="bg-muted border rounded-lg p-4 mt-4 space-y-3">
                                     <div className="flex items-center gap-2 text-sm font-medium text-foreground">
                                         <Info className="w-4 h-4 text-muted-foreground" />
                                         <span>Recommended Times</span>
@@ -237,7 +237,7 @@ export function ContentDetailsActions({ content, isPremium = false }: ContentDet
                         variant="outline"
                         size="sm"
                         title="Delete"
-                        className="h-9 px-3 cursor-pointer text-destructive hover:bg-destructive/10 hover:text-destructive border-destructive/20"
+                        className="h-9 px-3 cursor-pointer text-destructive hover:bg-destructive hover:text-destructive-foreground border-destructive"
                     >
                         <Trash2 className="w-4 h-4 sm:mr-2" />
                         <span className="hidden sm:inline">Delete</span>

@@ -96,7 +96,7 @@ export function AnalyticsDashboard({ data }: AnalyticsDashboardProps) {
             <div className="border rounded-lg bg-card overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full min-w-[550px] text-sm text-left">
-                  <thead className="bg-muted/50 text-xs text-muted-foreground uppercase border-b border-border">
+                  <thead className="bg-muted text-xs text-muted-foreground uppercase border-b border-border">
                     <tr>
                       <th className="px-4 sm:px-6 py-3 font-medium">User</th>
                       <th className="px-4 sm:px-6 py-3 font-medium">Joined</th>
@@ -120,13 +120,13 @@ export function AnalyticsDashboard({ data }: AnalyticsDashboardProps) {
                       return (
                         <tr
                           key={u.id}
-                          className="hover:bg-accent/50 transition-colors"
+                          className="hover:bg-accent transition-colors"
                         >
                           <td className="px-4 sm:px-6 py-4">
                             <div className="flex items-center gap-3">
                               <Avatar className="h-8 w-8 shrink-0">
                                 <AvatarImage src={u.image} alt={u.fullName} />
-                                <AvatarFallback className="text-xs bg-primary/10 text-primary font-semibold">
+                                <AvatarFallback className="text-xs bg-muted text-primary font-semibold">
                                   {initials}
                                 </AvatarFallback>
                               </Avatar>
@@ -203,7 +203,7 @@ export function AnalyticsDashboard({ data }: AnalyticsDashboardProps) {
                 return (
                   <div
                     key={idx}
-                    className="flex items-start gap-4 p-4 hover:bg-accent/50 transition-colors"
+                    className="flex items-start gap-4 p-4 hover:bg-accent transition-colors"
                   >
                     <div className="mt-0.5 rounded-md p-2 bg-muted text-primary shrink-0">
                       <Icon className="h-4 w-4" />
@@ -239,7 +239,7 @@ export function AnalyticsDashboard({ data }: AnalyticsDashboardProps) {
                 </p>
                 <p className="text-3xl font-bold mt-1">{feedbackStats.totalFeedbacks}</p>
               </div>
-              <div className="p-3 bg-amber-500/10 rounded-full text-amber-500">
+              <div className="p-3 bg-accent rounded-full text-amber-500">
                 <MessageSquare className="h-6 w-6" />
               </div>
             </div>
@@ -261,7 +261,7 @@ export function AnalyticsDashboard({ data }: AnalyticsDashboardProps) {
                     className={`h-5 w-5 ${
                       star <= Math.round(feedbackStats.averageRating)
                         ? "fill-amber-500 text-amber-500"
-                        : "text-muted-foreground/30"
+                        : "text-muted-foreground"
                     }`}
                   />
                 ))}
@@ -298,12 +298,12 @@ export function AnalyticsDashboard({ data }: AnalyticsDashboardProps) {
                 return (
                   <div
                     key={item.id}
-                    className="border rounded-lg p-6 bg-card space-y-4 hover:border-border/80 transition-colors"
+                    className="border rounded-lg p-6 bg-card space-y-4 hover:border-border transition-colors"
                   >
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-border/50">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-border">
                       <div className="flex items-center gap-3">
                         <Avatar className="h-9 w-9">
-                          <AvatarFallback className="text-xs bg-primary/10 text-primary font-semibold">
+                          <AvatarFallback className="text-xs bg-muted text-primary font-semibold">
                             {initials}
                           </AvatarFallback>
                         </Avatar>
@@ -328,7 +328,7 @@ export function AnalyticsDashboard({ data }: AnalyticsDashboardProps) {
                               className={`h-4 w-4 ${
                                 star <= item.rating
                                   ? "fill-amber-500 text-amber-500"
-                                  : "text-muted-foreground/30"
+                                  : "text-muted-foreground"
                               }`}
                             />
                           ))}
@@ -339,7 +339,7 @@ export function AnalyticsDashboard({ data }: AnalyticsDashboardProps) {
                       </div>
                     </div>
 
-                    <p className="text-sm text-foreground/90 leading-relaxed whitespace-pre-wrap">
+                    <p className="text-sm text-foreground leading-relaxed whitespace-pre-wrap">
                       "{item.message}"
                     </p>
                   </div>

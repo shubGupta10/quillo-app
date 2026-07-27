@@ -15,7 +15,7 @@ export async function UsageWidget() {
         return (
             <div className="px-3 py-3 space-y-2">
                 <div className="flex items-center justify-between text-xs">
-                    <span className="flex items-center gap-1.5 text-sidebar-foreground/70 font-medium">
+                    <span className="flex items-center gap-1.5 text-sidebar-foreground font-medium">
                         <Zap className="size-3" />
                         Generations
                     </span>
@@ -26,7 +26,7 @@ export async function UsageWidget() {
                 <div className="h-1.5 w-full rounded-full bg-primary overflow-hidden">
                     <div className="h-full w-full rounded-full bg-primary" />
                 </div>
-                <p className="text-xs text-sidebar-foreground/50 leading-snug">
+                <p className="text-xs text-muted-foreground leading-snug">
                     Admin · Unlimited
                 </p>
             </div>
@@ -52,7 +52,7 @@ export async function UsageWidget() {
             {/* Generations Limit */}
             <div className="space-y-2">
                 <div className="flex items-center justify-between text-xs">
-                    <span className="flex items-center gap-1.5 text-sidebar-foreground/70 font-medium">
+                    <span className="flex items-center gap-1.5 text-sidebar-foreground font-medium">
                         <Zap className="size-3" />
                         Generations
                     </span>
@@ -86,7 +86,7 @@ export async function UsageWidget() {
             {/* Queue Limit */}
             <div className="space-y-2">
                 <div className="flex items-center justify-between text-xs">
-                    <span className="flex items-center gap-1.5 text-sidebar-foreground/70 font-medium">
+                    <span className="flex items-center gap-1.5 text-sidebar-foreground font-medium">
                         <Zap className="size-3" />
                         Queued Posts
                     </span>
@@ -124,7 +124,7 @@ export async function UsageWidget() {
                         Limit reached. Resets <ClientDate date={resetDate} options={{ year: 'numeric', month: 'numeric', day: 'numeric' }} />.
                     </p>
                 ) : (
-                    <p className="text-xs text-sidebar-foreground/50 leading-snug">
+                    <p className="text-xs text-muted-foreground leading-snug">
                         {remaining} remaining · {planLabel} plan
                     </p>
                 )}

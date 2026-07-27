@@ -32,7 +32,7 @@ export function ProjectNav({ projectName, activeTab, onTabChange }: ProjectNavPr
     ];
 
     return (
-        <div className="shrink-0 sticky top-0 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b -mx-6 px-6 lg:-mx-10 lg:px-10 -mt-6 lg:-mt-8">
+        <div className="shrink-0 sticky top-0 z-10 bg-background border-b -mx-6 px-6 lg:-mx-10 lg:px-10 -mt-6 lg:-mt-8">
             <div className="flex items-end pt-1 lg:pt-2">
                 <Link 
                     href="/projects" 
@@ -54,7 +54,7 @@ export function ProjectNav({ projectName, activeTab, onTabChange }: ProjectNavPr
                                     "flex items-center gap-2 pb-3 text-base font-medium border-b-[3px] transition-colors whitespace-nowrap cursor-pointer",
                                     isActive 
                                         ? "border-primary text-foreground" 
-                                        : "border-transparent text-muted-foreground hover:text-foreground hover:border-muted-foreground/30"
+                                        : "border-transparent text-muted-foreground hover:text-foreground hover:border-muted-foreground"
                                 )}
                             >
                                 <Icon className="w-5 h-5" />

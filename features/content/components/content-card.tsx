@@ -56,7 +56,7 @@ export function ContentCard({ content }: ContentCardProps) {
             <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground mb-3">
                 {content.projectId?.name && (
                     <>
-                        <span className="font-medium text-foreground/80">{content.projectId.name}</span>
+                        <span className="font-medium text-foreground">{content.projectId.name}</span>
                         <span>&bull;</span>
                     </>
                 )}

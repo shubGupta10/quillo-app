@@ -169,7 +169,7 @@ export function ContentCanvas({ projectId, updates, preferences, limitReached = 
 
                 <form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
                     {/* 1. Source Updates */}
-                    <div className="space-y-6 p-8 lg:p-10 border rounded-lg bg-card shadow-sm flex flex-col">
+                    <div className="space-y-6 p-6 lg:p-8 border rounded-lg bg-card shadow-sm flex flex-col">
                         <div className="flex items-center justify-between">
                             <h3 className="text-base font-semibold tracking-tight">Source Updates</h3>
                             {updates.length > 3 && (
@@ -184,7 +184,7 @@ export function ContentCanvas({ projectId, updates, preferences, limitReached = 
                                         </DialogHeader>
                                         <div className="space-y-3 mt-4">
                                             {updates.map((update) => (
-                                                <label key={update._id} htmlFor={`modal-${update._id}`} className="flex items-start space-x-3 p-4 border rounded-md hover:bg-muted/50 transition-colors cursor-pointer has-[[data-state=checked]]:border-primary has-[[data-state=checked]]:bg-primary/5">
+                                                <label key={update._id} htmlFor={`modal-${update._id}`} className="flex items-start space-x-3 p-4 border rounded-md hover:bg-muted transition-colors cursor-pointer has-[[data-state=checked]]:border-primary has-[[data-state=checked]]:bg-accent">
                                                     <Checkbox
                                                         id={`modal-${update._id}`}
                                                         checked={form.watch("sourceUpdates").includes(update._id)}
@@ -223,7 +223,7 @@ export function ContentCanvas({ projectId, updates, preferences, limitReached = 
                                 <label
                                     key={update._id}
                                     htmlFor={`inline-${update._id}`}
-                                    className="relative flex flex-col p-4 border rounded-lg hover:border-primary/50 cursor-pointer bg-background transition-all has-[[data-state=checked]]:border-primary has-[[data-state=checked]]:ring-1 has-[[data-state=checked]]:ring-primary has-[[data-state=checked]]:bg-primary/5"
+                                    className="relative flex flex-col p-4 border rounded-lg hover:border-primary cursor-pointer bg-background transition-all has-[[data-state=checked]]:border-primary has-[[data-state=checked]]:ring-1 has-[[data-state=checked]]:ring-primary has-[[data-state=checked]]:bg-accent"
                                 >
                                     <div className="flex items-start justify-between mb-2">
                                         <span className="text-xs font-medium text-muted-foreground">
@@ -256,7 +256,7 @@ export function ContentCanvas({ projectId, updates, preferences, limitReached = 
                     </div>
 
                     {/* Right: Configuration & Generate */}
-                    <div className="p-8 lg:p-10 border rounded-2xl bg-card shadow-sm flex flex-col">
+                    <div className="p-6 lg:p-8 border rounded-2xl bg-card shadow-sm flex flex-col">
                         <div className="space-y-8">
                             <h3 className="text-base font-semibold tracking-tight">Configuration</h3>
 
@@ -341,7 +341,7 @@ export function ContentCanvas({ projectId, updates, preferences, limitReached = 
 
                         <div className="pt-8 space-y-4">
                             {limitReached && (
-                                <div className="flex items-start gap-2 rounded-md border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+                                <div className="flex items-start gap-2 rounded-md border border-destructive bg-destructive text-destructive-foreground px-4 py-3 text-sm">
                                     You&apos;ve used all <strong>{generationsLimit}</strong> generations for this month.
                                 </div>
                             )}
@@ -359,7 +359,7 @@ export function ContentCanvas({ projectId, updates, preferences, limitReached = 
 
             {/* Bottom View: Canvas / Preview */}
             <div ref={canvasRef} className="bg-card border rounded-lg overflow-hidden min-h-[600px] lg:min-h-[calc(100vh-8rem)] flex flex-col scroll-mt-24 shadow-sm">
-                <div className="border-b bg-muted/30 px-6 py-4 flex items-center justify-between">
+                <div className="border-b bg-muted px-6 py-4 flex items-center justify-between">
                     <div>
                         <h2 className="font-medium">Canvas</h2>
                         <p className="text-xs text-muted-foreground mt-0.5">Preview and refine your generated content</p>
@@ -375,7 +375,7 @@ export function ContentCanvas({ projectId, updates, preferences, limitReached = 
                         </Button>
                     )}
                 </div>
-                <div className="p-6 lg:p-10 flex-1 flex flex-col bg-muted/10">
+                <div className="p-6 lg:p-10 flex-1 flex flex-col bg-muted">
                     {isGenerating && !draftData ? (
                         <div className="flex-1 flex flex-col items-center justify-center text-muted-foreground space-y-4 animate-in fade-in duration-500">
                             <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -383,7 +383,7 @@ export function ContentCanvas({ projectId, updates, preferences, limitReached = 
                         </div>
                     ) : !draftData ? (
                         <div className="flex-1 flex flex-col items-center justify-center text-center space-y-2">
-                            <div className="w-16 h-16 rounded-full bg-muted/50 flex items-center justify-center mb-2">
+                            <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mb-2">
                                 <span className="text-2xl">✨</span>
                             </div>
                             <h3 className="font-medium text-lg">Ready to create</h3>

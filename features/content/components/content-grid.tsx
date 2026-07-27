@@ -104,7 +104,7 @@ export function ContentGrid({ contents }: ContentGridProps) {
                     ))}
                 </div>
             ) : (
-                <div className="py-20 text-center border rounded-lg bg-card/50 border-dashed flex flex-col items-center">
+                <div className="py-20 text-center border rounded-lg bg-card border-dashed flex flex-col items-center">
                     <h3 className="text-lg font-medium">No content found</h3>
                     <p className="text-muted-foreground mt-1 mb-6">Try adjusting your filters or search query.</p>
                     <Link href="/projects">

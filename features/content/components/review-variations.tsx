@@ -140,7 +140,7 @@ export function ReviewVariations({ projectId }: ReviewVariationsProps) {
                             </Button>
                         </div>
 
-                        <div className="p-6 sm:p-8 border rounded-lg bg-card shadow-sm space-y-6">
+                        <div className="p-6 lg:p-8 border rounded-lg bg-card shadow-sm space-y-6">
                             {variation.title && variation.title.trim() !== "" && (
                                 <div>
                                     <h3 className="text-sm font-medium text-muted-foreground mb-2">Title</h3>

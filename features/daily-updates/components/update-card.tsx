@@ -151,7 +151,7 @@ export const UpdateCard = memo(function UpdateCard({ update }: UpdateCardProps) 
                                 href={att.url}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="flex items-center gap-2 px-3 py-2 border rounded-md bg-muted/20 hover:bg-muted/50 transition-colors text-sm w-fit"
+                                className="flex items-center gap-2 px-3 py-2 border rounded-md bg-muted hover:bg-accent transition-colors text-sm w-fit"
                             >
                                 <Paperclip className="h-4 w-4 text-muted-foreground" />
                                 <span className="text-blue-500 hover:underline">

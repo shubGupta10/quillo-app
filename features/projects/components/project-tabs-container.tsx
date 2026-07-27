@@ -62,7 +62,7 @@ export function ProjectTabsContainer({
                     <ProjectHeader project={project} />
 
                     {/* Future settings forms like Edit Project, Danger Zone, etc. can go here */}
-                    <div className="bg-muted/30 border rounded-xl p-12 text-center text-muted-foreground max-w-2xl mx-auto mt-8">
+                    <div className="bg-muted border rounded-xl p-12 text-center text-muted-foreground max-w-2xl mx-auto mt-8">
                         <h3 className="font-medium text-foreground mb-2">Project Configuration</h3>
                         <p className="text-sm">Additional settings for your project will appear here.</p>
                     </div>

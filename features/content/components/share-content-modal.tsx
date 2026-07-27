@@ -65,7 +65,7 @@ export function ShareContentModal({
                 </DialogHeader>
 
                 {/* Content Preview Box */}
-                <div className="p-6 border rounded-lg bg-muted/30 max-h-[220px] overflow-y-auto space-y-2">
+                <div className="p-6 border rounded-lg bg-muted max-h-[220px] overflow-y-auto space-y-2">
                     {title && <p className="font-semibold text-foreground text-base">{title}</p>}
                     <p className="whitespace-pre-wrap text-sm text-muted-foreground leading-relaxed">{content}</p>
                 </div>
