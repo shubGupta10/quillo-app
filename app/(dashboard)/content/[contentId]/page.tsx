@@ -93,7 +93,7 @@ async function ContentDetailsContent({
                         {content.attachment.map((file: any, idx: number) => (
                             <div key={idx} className="border rounded-lg overflow-hidden bg-card shadow-sm">
                                 {file.type?.startsWith("image") ? (
-                                    <a href={file.url} target="_blank" rel="noopener noreferrer">
+                                    <a href={file.url} target="_blank" rel="noopener noreferrer" className="block relative h-48 bg-muted">
                                         <Image
                                             src={file.url}
                                             alt={file.fileName || "Attachment"}
