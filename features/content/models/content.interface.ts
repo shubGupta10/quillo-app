@@ -59,6 +59,7 @@ export interface IContent {
         type: string;
         fileName: string;
         size: number;
+        key?: string;
     }[];
     status: Status;
     providerPostId?: string

@@ -116,7 +116,7 @@ export const getLinkedinPublisher = (): ISocialPublisher => {
                 const personUrn = `urn:li:person:${account.providerUserId}`;
                 let imageUrn = null;
 
-                if (content.attachment && content.attachment.length > 0) {
+                if (content.attachment && content.attachment.length > 0 && content.attachment[0].type?.startsWith("image")) {
                     console.log("Image found! Uploading to LinkedIn...");
 
                     const initRes = await fetch("https://api.linkedin.com/rest/images?action=initializeUpload", {

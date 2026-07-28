@@ -20,6 +20,10 @@ export const ourFileRouter = {
             maxFileSize: VALIDATION_LIMITS.UPLOAD_MAX_TEXT_SIZE,
             maxFileCount: VALIDATION_LIMITS.UPLOAD_MAX_FILE_COUNT,
         },
+        video: {
+            maxFileSize: VALIDATION_LIMITS.UPLOAD_MAX_VIDEO_SIZE,
+            maxFileCount: 1
+        }
     })
         .middleware(async () => {
             const session = await auth.api.getSession({
@@ -43,6 +47,7 @@ export const ourFileRouter = {
                 fileName: file.name,
                 size: file.size,
                 type: file.type,
+                key: file.key,
             };
         }),
 } satisfies FileRouter;

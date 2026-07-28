@@ -33,6 +33,7 @@ export function AddUpdateDialog({ projectId }: AddUpdateDialogProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [uploadedFiles, setUploadedFiles] = useState<any[]>([]);
     const [isUploading, setIsUploading] = useState(false);
+    const [uploadProgress, setIsUploadProgress] = useState<number>(0);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [isPending, startTransition] = useTransition();
 
@@ -49,6 +50,9 @@ export function AddUpdateDialog({ projectId }: AddUpdateDialogProps) {
     const MAX_CHARS = VALIDATION_LIMITS.MAX_LOG_LENGTH_CHARS;
 
     const { startUpload } = useUploadThing("dailyUpdateAttachment", {
+        onUploadProgress: (progress) => {
+            setIsUploadProgress(progress)
+        },
         onClientUploadComplete: (res) => {
             if (res && res.length > 0) {
                 const newFiles = res.map(file => ({
@@ -56,24 +60,34 @@ export function AddUpdateDialog({ projectId }: AddUpdateDialogProps) {
                     type: file.serverData.type,
                     fileName: file.serverData.fileName,
                     size: file.serverData.size,
+                    key: file.serverData.key,
                 }));
                 setUploadedFiles(prev => [...prev, ...newFiles]);
                 toast.success("File uploaded successfully");
             }
             setIsUploading(false);
+            setIsUploadProgress(0);
         },
         onUploadError: (error) => {
             console.error("Upload error:", error);
             toast.error(`Upload failed: ${error.message}`);
             setIsUploading(false);
+            setIsUploadProgress(0);
         },
     });
 
     const handleFileSelect = useCallback(async (files: File[]) => {
         if (!files.length) return;
+        const videoFiles = files.filter(f => f.type.startsWith("video/"));
+        const existingVideos = uploadedFiles.filter(f => f.type?.startsWith("video/"));
+        if (videoFiles.length + existingVideos.length > 1) {
+            toast.error("You can only upload 1 video per update");
+            return;
+        }
         setIsUploading(true);
+        setIsUploadProgress(0);
         await startUpload(files);
-    }, [startUpload]);
+    }, [startUpload, uploadedFiles]);
 
     const handleDrop = useCallback((e: React.DragEvent) => {
         e.preventDefault();
@@ -216,7 +230,7 @@ export function AddUpdateDialog({ projectId }: AddUpdateDialogProps) {
                                     ref={fileInputRef}
                                     type="file"
                                     multiple
-                                    accept="image/*,.pdf,.txt"
+                                    accept="image/*,.pdf,.txt,video/*"
                                     className="hidden"
                                     onChange={(e) => {
                                         const files = Array.from(e.target.files || []);
@@ -227,7 +241,7 @@ export function AddUpdateDialog({ projectId }: AddUpdateDialogProps) {
                                 {isUploading ? (
                                     <div className="flex flex-col items-center gap-2 py-2">
                                         <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-                                        <p className="text-sm text-muted-foreground">Uploading...</p>
+                                        <p className="text-sm text-muted-foreground">Uploading... {uploadProgress > 0 ? `${uploadProgress}%` : ""}</p>
                                     </div>
                                 ) : (
                                     <div className="flex flex-col items-center gap-2 py-2">
@@ -236,7 +250,7 @@ export function AddUpdateDialog({ projectId }: AddUpdateDialogProps) {
                                             Drop a file here or click to browse
                                         </p>
                                         <p className="text-xs text-muted-foreground">
-                                            Images, PDFs, or text files
+                                            Images, PDFs, or text or video files (up to 64MB)
                                         </p>
                                     </div>
                                 )}

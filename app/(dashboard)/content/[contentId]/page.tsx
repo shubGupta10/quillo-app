@@ -92,6 +92,7 @@ async function ContentDetailsContent({
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                         {content.attachment.map((file: any, idx: number) => (
                             <div key={idx} className="border rounded-lg overflow-hidden bg-card shadow-sm">
+
                                 {file.type?.startsWith("image") ? (
                                     <a href={file.url} target="_blank" rel="noopener noreferrer" className="block relative h-48 bg-muted">
                                         <Image
@@ -102,10 +103,19 @@ async function ContentDetailsContent({
                                             className="w-full h-48 object-cover"
                                         />
                                     </a>
-                                ) : (
-                                    <div className="h-48 flex items-center justify-center bg-muted">
-                                        <span className="text-muted-foreground text-sm">File preview not available</span>
+                                ) : file.type?.startsWith("video") || /\.(mp4|webm|mov|mkv)$/i.test(file.url) ? (
+                                    <div className="h-48 bg-muted flex items-center justify-center">
+                                        <video
+                                            src={file.url}
+                                            controls
+                                            preload="metadata"
+                                            className="w-full h-48 object-contain"
+                                        />
                                     </div>
+                                ) : (
+                                    <a href={file.url} target="_blank" rel="noopener noreferrer" className="h-48 flex flex-col items-center justify-center bg-muted hover:bg-accent transition-colors gap-2">
+                                        <span className="text-muted-foreground text-sm">View Document</span>
+                                    </a>
                                 )}
                                 <div className="p-3">
                                     <p className="text-sm truncate text-muted-foreground">{file.fileName}</p>

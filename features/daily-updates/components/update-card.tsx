@@ -1,7 +1,7 @@
 import { memo, useState, useTransition } from "react";
 import { IDailyUpdate } from "../models/dailyUpdate.interface";
 import { Button } from "@/components/ui/button";
-import { Trash2, Paperclip, Edit2 } from "lucide-react";
+import { Trash2, Paperclip, Edit2, Video } from "lucide-react";
 import { deleteDailyUpdate } from "../actions/delete-daily-update";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -75,6 +75,10 @@ export const UpdateCard = memo(function UpdateCard({ update }: UpdateCardProps) 
         year: 'numeric'
     });
 
+    const isVideo = (type: string, url: string) => {
+        return type?.startsWith("video/") || /\.(mp4|webm|mov|mkv)$/i.test(url);
+    };
+
     return (
         <div className="p-6 border rounded-lg bg-card space-y-4 group">
             <div className="flex justify-between items-start text-sm text-muted-foreground">
@@ -143,9 +147,26 @@ export const UpdateCard = memo(function UpdateCard({ update }: UpdateCardProps) 
             <p className="whitespace-pre-wrap">{update.content}</p>
 
             {update.attachment && update.attachment.length > 0 && (
-                <div className="pt-4 mt-2 border-t">
-                    <div className="flex flex-wrap gap-2">
-                        {update.attachment.map((att, idx) => (
+                <div className="pt-4 mt-2 border-t space-y-3">
+                    {update.attachment.map((att, idx) => {
+                        if (isVideo(att.type, att.url)) {
+                            return (
+                                <div key={idx} className="space-y-1">
+                                    <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
+                                        <Video className="h-3.5 w-3.5 text-amber-500" />
+                                        <span className="truncate">{att.fileName}</span>
+                                    </div>
+                                    <video
+                                        src={att.url}
+                                        controls
+                                        preload="metadata"
+                                        className="w-full max-h-[360px] rounded-md border bg-black/40"
+                                    />
+                                </div>
+                            );
+                        }
+
+                        return (
                             <a
                                 key={idx}
                                 href={att.url}
@@ -155,11 +176,11 @@ export const UpdateCard = memo(function UpdateCard({ update }: UpdateCardProps) 
                             >
                                 <Paperclip className="h-4 w-4 text-muted-foreground" />
                                 <span className="text-blue-500 hover:underline">
-                                    Show image
+                                    {att.fileName || "View attachment"}
                                 </span>
                             </a>
-                        ))}
-                    </div>
+                        );
+                    })}
                 </div>
             )}
         </div>

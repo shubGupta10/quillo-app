@@ -8,6 +8,7 @@ export interface IDailyUpdate {
         type: string;
         fileName: string;
         size: number;
+        key?: string;
     }[];
     updatedAt: Date;
     createdAt: Date;
