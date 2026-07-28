@@ -17,6 +17,7 @@ export const createDailyUpdateSchema = z.object({
             type: z.string(),
             fileName: z.string(),
             size: z.number(),
+            key: z.string().optional(),
         })
     ).optional(),
 });

@@ -61,7 +61,7 @@ export function PricingSection() {
               </li>
               <li className="flex gap-x-3">
                 <Check className="h-5 w-5 text-primary flex-shrink-0" />
-                <span>Up to <strong className="font-semibold text-foreground">{VALIDATION_LIMITS.UPLOAD_MAX_FILE_COUNT} file uploads</strong> ({VALIDATION_LIMITS.UPLOAD_MAX_PDF_SIZE} max)</span>
+                <span>Up to <strong className="font-semibold text-foreground">{VALIDATION_LIMITS.UPLOAD_MAX_FILE_COUNT} file uploads</strong> ({VALIDATION_LIMITS.UPLOAD_MAX_VIDEO_SIZE} max)</span>
               </li>
             </ul>
           </CardContent>
@@ -110,7 +110,7 @@ export function PricingSection() {
               </li>
               <li className="flex gap-x-3">
                 <Check className="h-5 w-5 text-muted-foreground/50 flex-shrink-0" />
-                <span>Up to <strong className="font-semibold text-muted-foreground">{VALIDATION_LIMITS.UPLOAD_MAX_FILE_COUNT} file uploads</strong> ({VALIDATION_LIMITS.UPLOAD_MAX_PDF_SIZE} max)</span>
+                <span>Up to <strong className="font-semibold text-muted-foreground">{VALIDATION_LIMITS.UPLOAD_MAX_FILE_COUNT} file uploads</strong> ({VALIDATION_LIMITS.UPLOAD_MAX_VIDEO_SIZE_PRO} max)</span>
               </li>
             </ul>
           </CardContent>

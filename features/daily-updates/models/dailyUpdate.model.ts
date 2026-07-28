@@ -29,6 +29,9 @@ const dailyUpdateSchema = new mongoose.Schema<IDailyUpdate>({
                 type: Number,
                 required: true,
             },
+            key: {
+                type: String,
+            }
         },
     ],
     updatedAt: {

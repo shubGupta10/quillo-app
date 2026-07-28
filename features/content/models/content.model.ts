@@ -72,6 +72,9 @@ const contentSchema = new mongoose.Schema<IContent>({
                 type: Number,
                 required: true,
             },
+            key: {
+                type: String,
+            }
         },
     ],
     status: {

@@ -66,6 +66,8 @@ export const VALIDATION_LIMITS = {
   UPLOAD_MAX_IMAGE_SIZE: "8MB" as const,
   UPLOAD_MAX_PDF_SIZE: "16MB" as const,
   UPLOAD_MAX_TEXT_SIZE: "4MB" as const,
+  UPLOAD_MAX_VIDEO_SIZE: "64MB" as const,
+  UPLOAD_MAX_VIDEO_SIZE_PRO: "150MB" as const,
 } as const;
 
 export const INFRA_RATE_LIMITS = {
