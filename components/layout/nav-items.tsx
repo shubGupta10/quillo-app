@@ -7,7 +7,6 @@ import { dashboardNavigation } from "@/constants/navigation";
 import { SidebarMenu, SidebarMenuItem, SidebarMenuButton, useSidebar } from "@/components/ui/sidebar";
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
-import { FaXTwitter } from "react-icons/fa6";
 import { LogOut, MessageSquare } from "lucide-react";
 
 import { useSession } from "@/hooks/use-session";
@@ -59,16 +58,6 @@ export function NavItems() {
           >
             <MessageSquare className="size-4" />
             <span>Feedback</span>
-          </SidebarMenuButton>
-        </SidebarMenuItem>
-        
-        <SidebarMenuItem>
-          <SidebarMenuButton
-            tooltip="X (formerly Twitter)"
-            render={<a href="https://x.com/buildwithshub" target="_blank" rel="noopener noreferrer" />}
-          >
-            <FaXTwitter className="size-4" />
-            <span>X (formerly Twitter)</span>
           </SidebarMenuButton>
         </SidebarMenuItem>
       </SidebarMenu>

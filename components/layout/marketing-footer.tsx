@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Command } from "lucide-react";
+import { FaXTwitter } from "react-icons/fa6";
 
 
 export function MarketingFooter() {
@@ -14,12 +15,15 @@ export function MarketingFooter() {
           The ultimate content generation platform for builders, makers, and creators. Turn your daily progress into engaging social content effortlessly.
         </p>
         <div className="mt-6 flex space-x-4">
-          <Link href="#" className="text-muted-foreground hover:text-foreground">
-            <span className="sr-only">Twitter</span>
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
-              <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z" />
-            </svg>
-          </Link>
+          <a
+            href="https://x.com/buildwithshub"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <FaXTwitter className="h-4 w-4" />
+            <span>Follow for updates</span>
+          </a>
           <Link href="#" className="text-muted-foreground hover:text-foreground">
             <span className="sr-only">GitHub</span>
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">

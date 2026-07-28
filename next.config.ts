@@ -12,6 +12,7 @@ const nextConfig: NextConfig = {
   experimental: {
     optimizePackageImports: [
       "lucide-react",
+      "react-icons",
       "framer-motion",
       "motion",
       "better-auth",
