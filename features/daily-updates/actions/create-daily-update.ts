@@ -3,7 +3,7 @@
 import { connectDB } from "@/lib/db";
 import DailyUpdate from "../models/dailyUpdate.model";
 import { CreateDailyUpdateInput, createDailyUpdateSchema } from "../schemas/daily-updates.schema";
-import { revalidateTag } from "next/cache";
+import { revalidateTag, revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import Project from "@/features/projects/models/project.model";
@@ -73,19 +73,34 @@ export async function createDailyUpdate(data: CreateDailyUpdateInput) {
             projectId: project._id,
         });
 
+        // Mark onboarding step 1 as done (only if not already)
+        if (!project.onboarding?.loggedUpdate) {
+            await Project.updateOne(
+                { _id: project._id },
+                { $set: { "onboarding.loggedUpdate": true } }
+            );
+        }
+
         const userProjects = await Project.find({ userId: session.user.id }).select("_id").lean();
         const projectIds = userProjects.map((p: any) => p._id);
         const allUpdates = await DailyUpdate.find({ projectId: { $in: projectIds } }).select("createdAt").lean();
         const updateDates = allUpdates.map((u: any) => u.createdAt);
         const computedStreak = calculateStreak(updateDates);
 
-        authUser.streak.currentStreak = computedStreak.currentStreak;
-        authUser.streak.lastUpdateDate = computedStreak.lastUpdateDate || new Date();
-        if (computedStreak.longestStreak > (authUser.streak.longestStreak || 0)) {
-            authUser.streak.longestStreak = computedStreak.longestStreak;
-        }
-        await authUser.save();
+        await Auth.updateOne(
+            { _id: authUser._id },
+            {
+                $set: {
+                    "streak.currentStreak": computedStreak.currentStreak,
+                    "streak.lastUpdateDate": computedStreak.lastUpdateDate || new Date(),
+                    ...(computedStreak.longestStreak > (authUser.streak?.longestStreak || 0)
+                        ? { "streak.longestStreak": computedStreak.longestStreak }
+                        : {})
+                }
+            }
+        );
 
+        revalidatePath(`/projects/${validatedFields.data.projectId}`);
         revalidateTag("daily-updates", "default");
         revalidateTag("dashboard", "default");
 

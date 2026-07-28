@@ -167,6 +167,14 @@ export async function generateContent(
         // Increment only after a confirmed successful generation
         await incrementGenerationUsage(session.user.id);
 
+        // Mark onboarding step 2 as done (only if not already)
+        if (!project.onboarding?.generatedContent) {
+            await Project.updateOne(
+                { _id: project._id },
+                { $set: { "onboarding.generatedContent": true } }
+            );
+        }
+
         return {
             success: true,
             data: parsedResponse.data.variations,

@@ -8,7 +8,7 @@ import Project from "@/features/projects/models/project.model";
 import { SaveContentInput, saveContentSchema } from "../schemas/content.schema";
 import DailyUpdate from "@/features/daily-updates/models/dailyUpdate.model";
 import { ai } from "@/lib/ai";
-import { revalidateTag } from "next/cache";
+import { revalidateTag, revalidatePath } from "next/cache";
 
 export async function saveContent(data: SaveContentInput) {
     try {
@@ -78,8 +78,17 @@ export async function saveContent(data: SaveContentInput) {
             embedding: embeddingVector
         });
 
+        revalidatePath(`/projects/${validatedFields.data.projectId}`);
         revalidateTag("contents", "default");
         revalidateTag("dashboard", "default");
+
+        // Mark onboarding step 3 as done (only if not already)
+        if (!project.onboarding?.savedContent) {
+            await Project.updateOne(
+                { _id: project._id },
+                { $set: { "onboarding.savedContent": true } }
+            );
+        }
 
         return {
             success: true,

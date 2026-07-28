@@ -5,6 +5,12 @@ export enum projectStatus {
     INACTIVE = 'INACTIVE',
 }
 
+export interface IProjectOnboarding {
+    loggedUpdate: boolean;
+    generatedContent: boolean;
+    savedContent: boolean;
+}
+
 export interface IProject {
     userId: string,
     name: string;
@@ -13,6 +19,7 @@ export interface IProject {
     audience: [string];
     industry: [string];
     tags: [string];
+    onboarding?: IProjectOnboarding;
     updatedAt: Date;
     createdAt: Date;
 }

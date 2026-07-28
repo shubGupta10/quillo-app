@@ -13,7 +13,7 @@ export const auth = betterAuth({
     baseURL: process.env.BETTER_AUTH_URL,
     secret: process.env.BETTER_AUTH_SECRET,
 
-    database: mongodbAdapter(db, { client }),
+    database: mongodbAdapter(db),
 
     socialProviders: {
         google: {
@@ -26,11 +26,15 @@ export const auth = betterAuth({
         user: {
             create: {
                 after: async (user) => {
-                    await sendEmail({
-                        to: user.email as string,
-                        subject: "Welcome to Quillo!",
-                        html: getWelcomeEmailHtml(user.name as string)
-                    })
+                    try {
+                        await sendEmail({
+                            to: user.email as string,
+                            subject: "Welcome to Quillo!",
+                            html: getWelcomeEmailHtml(user.name as string)
+                        })
+                    } catch (error) {
+                        console.error("Failed to send welcome email:", error);
+                    }
                 }
             }
         }

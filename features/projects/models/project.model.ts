@@ -32,6 +32,11 @@ const projectSchema = new mongoose.Schema<IProject>({
         type: [String],
         required: true
     },
+    onboarding: {
+        loggedUpdate: { type: Boolean, default: false },
+        generatedContent: { type: Boolean, default: false },
+        savedContent: { type: Boolean, default: false },
+    },
     updatedAt: {
         type: Date,
         default: Date.now
