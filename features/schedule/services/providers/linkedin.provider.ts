@@ -176,6 +176,7 @@ export const getLinkedinPublisher = (): ISocialPublisher => {
                             }
                             const initData = await initRes.json();
                             const uploadUrl = initData.value.uploadInstructions[0].uploadUrl;
+                            const uploadToken = initData.value.uploadToken;
                             mediaUrn = initData.value.video;
 
                             const uploadRes = await fetch(uploadUrl, {
@@ -191,6 +192,11 @@ export const getLinkedinPublisher = (): ISocialPublisher => {
                                 throw new Error(`Failed to upload video file to LinkedIn: ${err}`);
                             }
 
+                            // Capture ETag for finalizing
+                            const rawEtag = uploadRes.headers.get("etag") || uploadRes.headers.get("ETag") || "";
+                            // Strip quotes if S3/Azure returned them
+                            const cleanEtag = rawEtag.replace(/^"|"$/g, "");
+
                             const finalizeRes = await fetch("https://api.linkedin.com/rest/videos?action=finalizeUpload", {
                                 method: "POST",
                                 headers: {
@@ -200,7 +206,11 @@ export const getLinkedinPublisher = (): ISocialPublisher => {
                                     "X-Restli-Protocol-Version": "2.0.0"
                                 },
                                 body: JSON.stringify({
-                                    finalizeUploadRequest: { video: mediaUrn }
+                                    finalizeUploadRequest: { 
+                                        video: mediaUrn,
+                                        uploadToken: uploadToken,
+                                        uploadedPartIds: [cleanEtag || rawEtag]
+                                    }
                                 })
                             });
 
