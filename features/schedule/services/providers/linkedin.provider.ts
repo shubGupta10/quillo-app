@@ -114,39 +114,105 @@ export const getLinkedinPublisher = (): ISocialPublisher => {
 
                 console.log(`Publishing content ${contentId} to LinkedIn...`);
                 const personUrn = `urn:li:person:${account.providerUserId}`;
-                let imageUrn = null;
+                let mediaUrn = null;
 
-                if (content.attachment && content.attachment.length > 0 && content.attachment[0].type?.startsWith("image")) {
-                    console.log("Image found! Uploading to LinkedIn...");
+                if (content.attachment && content.attachment.length > 0) {
+                    const attachment = content.attachment[0];
+                    const isImage = attachment.type?.startsWith("image");
+                    const isVideo = attachment.type?.startsWith("video");
 
-                    const initRes = await fetch("https://api.linkedin.com/rest/images?action=initializeUpload", {
-                        method: "POST",
-                        headers: {
-                            "Authorization": `Bearer ${decryptedAccess}`,
-                            "Content-Type": "application/json",
-                            "LinkedIn-Version": "202605",
-                            "X-Restli-Protocol-Version": "2.0.0"
-                        },
-                        body: JSON.stringify({
-                            initializeUploadRequest: { owner: personUrn }
-                        })
-                    });
+                    if (isImage || isVideo) {
+                        console.log(`${isImage ? 'Image' : 'Video'} found! Fetching and uploading to LinkedIn...`);
+                        
+                        const mediaFetch = await fetch(attachment.url);
+                        const mediaBuffer = await mediaFetch.arrayBuffer();
 
-                    if (!initRes.ok) throw new Error("Failed to initialize LinkedIn image upload");
-                    const initData = await initRes.json();
-                    const uploadUrl = initData.value.uploadUrl;
-                    imageUrn = initData.value.image;
+                        if (isImage) {
+                            const initRes = await fetch("https://api.linkedin.com/rest/images?action=initializeUpload", {
+                                method: "POST",
+                                headers: {
+                                    "Authorization": `Bearer ${decryptedAccess}`,
+                                    "Content-Type": "application/json",
+                                    "LinkedIn-Version": "202605",
+                                    "X-Restli-Protocol-Version": "2.0.0"
+                                },
+                                body: JSON.stringify({
+                                    initializeUploadRequest: { owner: personUrn }
+                                })
+                            });
 
-                    const imageFetch = await fetch(content.attachment[0].url);
-                    const imageBuffer = await imageFetch.arrayBuffer();
+                            if (!initRes.ok) throw new Error("Failed to initialize LinkedIn image upload");
+                            const initData = await initRes.json();
+                            const uploadUrl = initData.value.uploadUrl;
+                            mediaUrn = initData.value.image;
 
-                    const uploadRes = await fetch(uploadUrl, {
-                        method: "PUT",
-                        headers: { "Authorization": `Bearer ${decryptedAccess}` },
-                        body: imageBuffer
-                    });
+                            const uploadRes = await fetch(uploadUrl, {
+                                method: "PUT",
+                                headers: { "Authorization": `Bearer ${decryptedAccess}` },
+                                body: mediaBuffer
+                            });
 
-                    if (!uploadRes.ok) throw new Error("Failed to upload image file to LinkedIn");
+                            if (!uploadRes.ok) throw new Error("Failed to upload image file to LinkedIn");
+                        } else if (isVideo) {
+                            const initRes = await fetch("https://api.linkedin.com/rest/videos?action=initializeUpload", {
+                                method: "POST",
+                                headers: {
+                                    "Authorization": `Bearer ${decryptedAccess}`,
+                                    "Content-Type": "application/json",
+                                    "LinkedIn-Version": "202605",
+                                    "X-Restli-Protocol-Version": "2.0.0"
+                                },
+                                body: JSON.stringify({
+                                    initializeUploadRequest: { 
+                                        owner: personUrn,
+                                        fileSizeBytes: mediaBuffer.byteLength
+                                    }
+                                })
+                            });
+
+                            if (!initRes.ok) {
+                                const err = await initRes.text();
+                                throw new Error(`Failed to initialize LinkedIn video upload: ${err}`);
+                            }
+                            const initData = await initRes.json();
+                            const uploadUrl = initData.value.uploadInstructions[0].uploadUrl;
+                            mediaUrn = initData.value.video;
+
+                            const uploadRes = await fetch(uploadUrl, {
+                                method: "PUT",
+                                headers: { 
+                                    "Content-Type": "application/octet-stream"
+                                },
+                                body: mediaBuffer
+                            });
+
+                            if (!uploadRes.ok) {
+                                const err = await uploadRes.text();
+                                throw new Error(`Failed to upload video file to LinkedIn: ${err}`);
+                            }
+
+                            const finalizeRes = await fetch("https://api.linkedin.com/rest/videos?action=finalizeUpload", {
+                                method: "POST",
+                                headers: {
+                                    "Authorization": `Bearer ${decryptedAccess}`,
+                                    "Content-Type": "application/json",
+                                    "LinkedIn-Version": "202605",
+                                    "X-Restli-Protocol-Version": "2.0.0"
+                                },
+                                body: JSON.stringify({
+                                    finalizeUploadRequest: { video: mediaUrn }
+                                })
+                            });
+
+                            if (!finalizeRes.ok) {
+                                const err = await finalizeRes.text();
+                                throw new Error(`Failed to finalize LinkedIn video upload: ${err}`);
+                            }
+
+                            // Wait a short time to allow processing to begin before posting
+                            await new Promise(resolve => setTimeout(resolve, 3000));
+                        }
+                    }
                 }
 
                 const payload: any = {
@@ -162,9 +228,9 @@ export const getLinkedinPublisher = (): ISocialPublisher => {
                     isReshareDisabledByAuthor: false
                 };
 
-                if (imageUrn) {
+                if (mediaUrn) {
                     payload.content = {
-                        media: { id: imageUrn }
+                        media: { id: mediaUrn }
                     };
                 }
 
