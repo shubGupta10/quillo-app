@@ -95,7 +95,7 @@ export function NavUser({
                 </DropdownMenuItem>
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
-              <ThemeToggle />
+              {/* <ThemeToggle /> */}
               <DropdownMenuItem onClick={handleLogout} className="text-destructive focus:text-destructive cursor-pointer">
                 <LogOutIcon className="mr-2 h-4 w-4" />
                 Log out
