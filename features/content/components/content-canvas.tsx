@@ -135,8 +135,13 @@ export function ContentCanvas({ projectId, updates, preferences, limitReached = 
             const result = await saveContent(payload);
             setSavingIndex(null);
             if (result.success && result.data) {
-                toast.success("Content saved to library");
-                router.push(`/content/${result.data._id}?share=true`);
+                toast.success("Content saved to library", {
+                    action: {
+                        label: "View →",
+                        onClick: () => router.push(`/content/${result.data._id}?share=true`),
+                    },
+                });
+                router.refresh();
             } else {
                 toast.error("Failed to save content: " + (result.error || "Unknown error"));
             }

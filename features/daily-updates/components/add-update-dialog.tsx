@@ -147,118 +147,127 @@ export function AddUpdateDialog({ projectId }: AddUpdateDialogProps) {
         <Dialog open={isOpen} onOpenChange={setIsOpen} disablePointerDismissal>
             <DialogTrigger render={<Button className="cursor-pointer">Log Update</Button>} />
 
-            <DialogContent
-                className="sm:max-w-[550px] p-8"
-            >
+            <DialogContent className="sm:max-w-2xl md:max-w-4xl p-6 md:p-8 max-h-[90vh] overflow-y-auto">
                 {/* Visually hidden button to catch Base UI's auto-focus and prevent the orange ring */}
                 <button type="button" className="sr-only" />
                 <DialogHeader>
-                    <DialogTitle>Log Daily Update</DialogTitle>
+                    <DialogTitle className="text-xl font-semibold">Log Daily Update</DialogTitle>
                     <DialogDescription>
                         What did you work on today? This will be used to generate your content.
                     </DialogDescription>
                 </DialogHeader>
 
-                <form onSubmit={handleFormSubmit} className="space-y-4">
-                    <div className="space-y-2">
-                        <Label htmlFor="content">Update</Label>
-                        <Textarea
-                            id="content"
-                            placeholder="e.g. Added a new feature to the landing page..."
-                            className="h-[250px] resize-none overflow-y-auto"
-                            maxLength={MAX_CHARS}
-                            {...form.register("content")}
-                            onKeyDown={(e) => {
-                                if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
-                                    e.preventDefault();
-                                    handleFormSubmit(e as any);
-                                }
-                            }}
-                        />
-                        <div className="flex items-center justify-between">
-                            <div>
-                                {form.formState.errors.content && (
-                                    <p className="text-sm text-destructive">
-                                        {form.formState.errors.content.message}
-                                    </p>
-                                )}
+                <form onSubmit={handleFormSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+                    {/* Left Column: Text Log */}
+                    <div className="space-y-2 flex flex-col justify-between">
+                        <div className="space-y-2">
+                            <Label htmlFor="content">Update</Label>
+                            <Textarea
+                                id="content"
+                                placeholder="e.g. Added a new feature to the landing page..."
+                                className="h-[180px] md:h-[200px] resize-none overflow-y-auto"
+                                maxLength={MAX_CHARS}
+                                {...form.register("content")}
+                                onKeyDown={(e) => {
+                                    if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+                                        e.preventDefault();
+                                        handleFormSubmit(e as any);
+                                    }
+                                }}
+                            />
+                            <div className="flex items-center justify-between">
+                                <div>
+                                    {form.formState.errors.content && (
+                                        <p className="text-sm text-destructive">
+                                            {form.formState.errors.content.message}
+                                        </p>
+                                    )}
+                                </div>
+                                <span
+                                    className={`text-xs tabular-nums ${charCount >= MAX_CHARS
+                                        ? "text-destructive font-medium"
+                                        : charCount >= 900
+                                            ? "text-amber-500"
+                                            : "text-muted-foreground"
+                                        }`}
+                                >
+                                    {charCount}/{MAX_CHARS}
+                                </span>
                             </div>
-                            <span
-                                className={`text-xs tabular-nums ${charCount >= MAX_CHARS
-                                    ? "text-destructive font-medium"
-                                    : charCount >= 900
-                                        ? "text-amber-500"
-                                        : "text-muted-foreground"
-                                    }`}
-                            >
-                                {charCount}/{MAX_CHARS}
-                            </span>
+                        </div>
+
+                        <p className="text-xs text-muted-foreground pt-1">
+                            💡 Write or paste what you worked on today (rough notes, shipped features, or bug fixes). AI uses your text log to generate posts.
+                        </p>
+                    </div>
+
+                    {/* Right Column: Attachments */}
+                    <div className="space-y-2 flex flex-col">
+                        <Label>Attachment (Optional)</Label>
+                        <div className="flex-1 flex flex-col justify-center">
+                            {uploadedFiles.length > 0 ? (
+                                <div className="flex flex-col gap-2 max-h-[220px] overflow-y-auto pr-1">
+                                    {uploadedFiles.map((file, idx) => (
+                                        <div key={idx} className="flex items-center justify-between p-3 border rounded-md bg-muted">
+                                            <span className="text-sm truncate">{file.fileName}</span>
+                                            <Button
+                                                type="button"
+                                                variant="ghost"
+                                                size="icon"
+                                                className="h-6 w-6 text-muted-foreground hover:text-destructive cursor-pointer shrink-0"
+                                                onClick={() => {
+                                                    const newAttachments = [...uploadedFiles];
+                                                    newAttachments.splice(idx, 1);
+                                                    setUploadedFiles(newAttachments);
+                                                }}
+                                            >
+                                                <X className="h-4 w-4" />
+                                            </Button>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <div
+                                    className="border border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors hover:border-primary hover:bg-muted flex-1 flex flex-col justify-center items-center min-h-[180px]"
+                                    onDrop={handleDrop}
+                                    onDragOver={(e) => e.preventDefault()}
+                                    onClick={() => fileInputRef.current?.click()}
+                                >
+                                    <input
+                                        ref={fileInputRef}
+                                        type="file"
+                                        multiple
+                                        accept="image/*,.pdf,.txt,video/*"
+                                        className="hidden"
+                                        onChange={(e) => {
+                                            const files = Array.from(e.target.files || []);
+                                            handleFileSelect(files);
+                                            e.target.value = "";
+                                        }}
+                                    />
+                                    {isUploading ? (
+                                        <div className="flex flex-col items-center gap-2 py-2">
+                                            <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                                            <p className="text-sm text-muted-foreground">Uploading... {uploadProgress > 0 ? `${uploadProgress}%` : ""}</p>
+                                        </div>
+                                    ) : (
+                                        <div className="flex flex-col items-center gap-2 py-2">
+                                            <Upload className="h-6 w-6 text-muted-foreground" />
+                                            <p className="text-sm text-muted-foreground">
+                                                Drop a file here or click to browse
+                                            </p>
+                                            <p className="text-xs text-muted-foreground">
+                                                Images, PDFs, text, or video files (up to 64MB)
+                                            </p>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
                         </div>
                     </div>
 
-                    <div className="space-y-2">
-                        <Label>Attachment (Optional)</Label>
-                        {uploadedFiles.length > 0 ? (
-                            <div className="flex flex-col gap-2">
-                                {uploadedFiles.map((file, idx) => (
-                                    <div key={idx} className="flex items-center justify-between p-3 border rounded-md bg-muted">
-                                        <span className="text-sm truncate">{file.fileName}</span>
-                                        <Button
-                                            type="button"
-                                            variant="ghost"
-                                            size="icon"
-                                            className="h-6 w-6 text-muted-foreground hover:text-destructive cursor-pointer"
-                                            onClick={() => {
-                                                const newAttachments = [...uploadedFiles];
-                                                newAttachments.splice(idx, 1);
-                                                setUploadedFiles(newAttachments);
-                                            }}
-                                        >
-                                            <X className="h-4 w-4" />
-                                        </Button>
-                                    </div>
-                                ))}
-                            </div>
-                        ) : (
-                            <div
-                                className="border border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors hover:border-primary hover:bg-muted"
-                                onDrop={handleDrop}
-                                onDragOver={(e) => e.preventDefault()}
-                                onClick={() => fileInputRef.current?.click()}
-                            >
-                                <input
-                                    ref={fileInputRef}
-                                    type="file"
-                                    multiple
-                                    accept="image/*,.pdf,.txt,video/*"
-                                    className="hidden"
-                                    onChange={(e) => {
-                                        const files = Array.from(e.target.files || []);
-                                        handleFileSelect(files);
-                                        e.target.value = "";
-                                    }}
-                                />
-                                {isUploading ? (
-                                    <div className="flex flex-col items-center gap-2 py-2">
-                                        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-                                        <p className="text-sm text-muted-foreground">Uploading... {uploadProgress > 0 ? `${uploadProgress}%` : ""}</p>
-                                    </div>
-                                ) : (
-                                    <div className="flex flex-col items-center gap-2 py-2">
-                                        <Upload className="h-6 w-6 text-muted-foreground" />
-                                        <p className="text-sm text-muted-foreground">
-                                            Drop a file here or click to browse
-                                        </p>
-                                        <p className="text-xs text-muted-foreground">
-                                            Images, PDFs, or text or video files (up to 64MB)
-                                        </p>
-                                    </div>
-                                )}
-                            </div>
-                        )}
-                    </div>
-
-                    <div className="pt-4 flex justify-end gap-2">
+                    {/* Bottom Action Footer */}
+                    <div className="md:col-span-2 pt-4 flex justify-end gap-2 border-t">
                         <Button type="button" variant="outline" className="cursor-pointer" onClick={() => setIsOpen(false)}>
                             Cancel
                         </Button>
