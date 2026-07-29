@@ -129,13 +129,13 @@ Do not summarize the project unless the updates require that context.
 
 10. Do not assume motivations or technical decisions unless they are explicitly mentioned.
 
-11. Write like a real practitioner or creator sharing progress with a peer, not like a company writing a press release.
+11. Write like a real practitioner or creator sharing progress with a peer, not like a company writing a press release. Anchor the content naturally using the selected PERSPECTIVE near the beginning, but do not repeat the pronoun at the start of every sentence. Maintain natural human writing flow.
 
-12. Rewrite any buzzwords, corporate jargon, or hype found in the source updates into plain, everyday language.
+12. Write as recent hands-on work completed. Use natural human discovery verbs rather than corporate changelog or press release verbs. Rewrite any buzzwords or hype into plain, everyday language.
 
-13. Do not invent emotions, reflections, lessons, excitement, satisfaction, or philosophical thoughts. Do not add subjective commentary or value judgments about the process (e.g. "incredibly valuable", "essential", "invaluable", "best part of building in public", "significant help"). State only the actions taken or what happened.
+13. Do not invent corporate hype, buzzwords, or fake marketing excitement. Avoid corporate value judgments and vague jargon. Allow subtle, authentic human expressions if natural to the context.
 
-14. Avoid generic AI introductions or reflective filler such as "There's something satisfying about...", "Building software is...", "In today's fast-paced world...", "I've been enjoying...", or "There's a lot of satisfaction in...". Start directly with the action or work instead.
+14. Avoid meta-activity intros and status-report filler that describe the act of working rather than the work itself. Open naturally with the actual context or action.
 
 15. Use simple English.
 
@@ -196,7 +196,7 @@ Do not turn the content into a changelog or task list.
 
 You MUST return the output as a valid JSON object containing exactly 2 natural variations of the content.
 Both variations must use the same platform, tone, perspective, and length.
-Both Variation 1 and Variation 2 must be direct, straightforward, factual, and grounded in the updates. Variation 2 should simply provide an alternative phrasing or sentence structure while remaining equally direct and clean.
+Both Variation 1 and Variation 2 must be grounded in the updates. Variation 1 should focus on the action completed. Variation 2 should focus on the situation or risk encountered followed by the solution, while both remaining equally natural, grounded, and clean.
 Additionally, you MUST generate a contentProfile for each variation explaining its blueprint. The contentProfile should contain topics, technologies, hookStyle, structure, contentAngle, writingTone, and detailLevel.
 
 IMPORTANT FORMATTING RULE: You MUST use "\\n\\n" (literal newline characters) inside your "content" string to break the text up into short, readable paragraphs! Do not write one massive block of text.
@@ -225,11 +225,11 @@ LINKEDIN RULES
             return `
 TWITTER RULES
 
-- Write specifically for X/Twitter.
-- Use concise language.
-- Start with a strong opening.
-- Use spacing naturally.
-- Prefer multiple short paragraphs over one large paragraph.
+- Write conversationally for X/Twitter like a real practitioner sharing progress with followers.
+- Open naturally with the work or context without artificial hype hooks.
+- Use natural spacing with short paragraphs (1-2 sentences) separated by blank lines.
+- Avoid robotic single-line summaries or punchy bullet points.
+- Sound authentic and transparent.
 - Make the post easy to scan on mobile devices.
 
 If Content Length is SHORT:
