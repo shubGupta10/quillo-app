@@ -9,6 +9,7 @@ import { SaveContentInput, saveContentSchema } from "../schemas/content.schema";
 import DailyUpdate from "@/features/daily-updates/models/dailyUpdate.model";
 import { ai } from "@/lib/ai";
 import { revalidateTag, revalidatePath } from "next/cache";
+import { after } from "next/server";
 
 export async function saveContent(data: SaveContentInput) {
     try {
@@ -50,20 +51,6 @@ export async function saveContent(data: SaveContentInput) {
 
         const extractedAttachments = souceUpdatesList.flatMap(update => update.attachment || []);
 
-        const embeddingResponse = await ai.models.embedContent({
-            model: "gemini-embedding-2",
-            contents: validatedFields.data.content,
-            config: {
-                outputDimensionality: 768,
-            }
-        })
-
-        if (!embeddingResponse.embeddings || !embeddingResponse.embeddings[0]?.values) {
-            throw new Error("Failed to generate embedding vector")
-        }
-
-        const embeddingVector = embeddingResponse.embeddings[0].values;
-
         const createdContent = await Content.create({
             projectId: project._id,
             sourceUpdates: validatedFields.data.sourceUpdates,
@@ -75,16 +62,42 @@ export async function saveContent(data: SaveContentInput) {
             content: validatedFields.data.content,
             contentProfile: validatedFields.data.contentProfile,
             attachment: extractedAttachments,
-            embedding: embeddingVector
+            embedding: []
         });
 
-        // Mark onboarding step 3 as done (only if not already)
-        if (!project.onboarding?.savedContent) {
-            await Project.updateOne(
-                { _id: project._id },
-                { $set: { "onboarding.savedContent": true } }
-            );
-        }
+        after(async () => {
+            try {
+                const embeddingResponse = await ai.models.embedContent({
+                    model: "gemini-embedding-2",
+                    contents: validatedFields.data.content,
+                    config: {
+                        outputDimensionality: 768,
+                    }
+                })
+
+                if (!embeddingResponse.embeddings || !embeddingResponse.embeddings[0]?.values) {
+                    throw new Error("Failed to generate embedding vector")
+                }
+
+                const embeddingVector = embeddingResponse.embeddings[0].values;
+
+                if (embeddingVector && embeddingVector.length > 0) {
+                    await Content.updateOne(
+                        { _id: createdContent._id },
+                        { $set: { embedding: embeddingVector } }
+                    )
+                }
+
+                if (!project.onboarding?.savedContent) {
+                    await Project.updateOne(
+                        { _id: project._id },
+                        { $set: { "onboarding.savedContent": true } }
+                    );
+                }
+            } catch (error) {
+                console.error("Background saveContent task error:", error);
+            }
+        })
 
         revalidatePath(`/projects/${validatedFields.data.projectId}`);
         revalidateTag("contents", "default");

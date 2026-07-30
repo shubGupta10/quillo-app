@@ -192,15 +192,20 @@ export async function generateContent(
             };
         }
 
-        await incrementGenerationUsage(session.user.id);
+        after(async () => {
+            try {
+                await incrementGenerationUsage(session.user.id);
 
-        // Mark onboarding step 2 as done (only if not already)
-        if (!project.onboarding?.generatedContent) {
-            await Project.updateOne(
-                { _id: project._id },
-                { $set: { "onboarding.generatedContent": true } }
-            );
-        }
+                if (!project.onboarding?.generatedContent) {
+                    await Project.updateOne(
+                        { _id: project._id },
+                        { $set: { "onboarding.generatedContent": true } }
+                    );
+                }
+            } catch (error) {
+                console.error("Background generateContent task error:", error);
+            }
+        });
 
         return {
             success: true,
