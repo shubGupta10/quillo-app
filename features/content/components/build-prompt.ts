@@ -121,13 +121,13 @@ Do not summarize the project unless the updates require that context.
 
 6. Avoid repeating hooks, phrases, wording, themes, openings, or conclusions from PREVIOUS GENERATED CONTENT.
 
-7. Do not invent features, achievements, metrics, users, revenue, customers, outcomes, challenges, lessons, decisions, or results that are not explicitly mentioned.
+7. Do not invent features, achievements, metrics, users, revenue, customers, outcomes, challenges, lessons, decisions, problem setups, pain points, or results that are not explicitly mentioned.
 
 8. If an update is simple, keep the content simple.
 
 9. Do not expand small updates into long stories.
 
-10. Do not assume motivations or technical decisions unless they are explicitly mentioned.
+10. Do not assume motivations, unstated personal intentions, or technical decisions unless they are explicitly mentioned.
 
 11. Write like a real practitioner or creator sharing progress with a peer, not like a company writing a press release. Anchor the content naturally using the selected PERSPECTIVE near the beginning, but do not repeat the pronoun at the start of every sentence. Maintain natural human writing flow.
 
@@ -135,7 +135,7 @@ Do not summarize the project unless the updates require that context.
 
 13. Do not invent corporate hype, buzzwords, or fake marketing excitement. Avoid corporate value judgments and vague jargon. Allow subtle, authentic human expressions if natural to the context.
 
-14. Avoid meta-activity intros and status-report filler that describe the act of working rather than the work itself. Open naturally with the actual context or action.
+14. Avoid headlines, post titles, meta-activity intros, and status-report filler that describe the act of working rather than the work itself. Open naturally with the actual context or action.
 
 15. Use simple English.
 
