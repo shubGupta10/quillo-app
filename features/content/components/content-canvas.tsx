@@ -29,11 +29,11 @@ import { generateContent } from "../actions/generate-content"
 import { saveContent } from "../actions/save-content"
 import { IDailyUpdate } from "@/features/daily-updates/models/dailyUpdate.interface"
 import { Platform, Perspective, Tone, ContentLength } from "../models/content.interface"
+import { GenerationErrorModal } from "./generation-error-modal"
 
 import { IUserPreferences } from "@/features/auth/model/auth.interface"
 import { Loader2, RefreshCcw } from "lucide-react"
 import { ClientDate } from "@/components/ui/client-date"
-import { FeedbackDialog } from "@/features/feedback/components/feedback-dialog"
 
 interface ContentCanvasProps {
     projectId: string;
@@ -70,6 +70,11 @@ export function ContentCanvas({ projectId, updates, preferences, limitReached = 
         },
     });
 
+    const [errorModal, setErrorModal] = useState<{ isOpen: boolean; message: string; onRetry?: () => void }>({
+        isOpen: false,
+        message: "",
+    });
+
     async function onSubmit(data: GenerateContentInput) {
         setIsGenerating(true);
         // Clear previous variations when generating new ones
@@ -88,11 +93,21 @@ export function ContentCanvas({ projectId, updates, preferences, limitReached = 
                 });
                 toast.success("Content generated successfully", { id: toastId });
             } else {
-                toast.error(result.message || result.error || "Failed to generate content", { id: toastId });
+                toast.dismiss(toastId);
+                setErrorModal({
+                    isOpen: true,
+                    message: result.message || result.error || "Failed to generate content",
+                    onRetry: () => onSubmit(data),
+                });
             }
-        } catch (error) {
+        } catch (error: any) {
             console.error("Failed to generate content", error);
-            toast.error("Failed to generate content.", { id: toastId });
+            toast.dismiss(toastId);
+            setErrorModal({
+                isOpen: true,
+                message: error?.message || "Failed to generate content.",
+                onRetry: () => onSubmit(data),
+            });
         } finally {
             setIsGenerating(false);
         }
@@ -111,10 +126,20 @@ export function ContentCanvas({ projectId, updates, preferences, limitReached = 
                 });
                 toast.success("Content regenerated successfully", { id: toastId });
             } else {
-                toast.error(result.message || result.error || "Failed to regenerate content", { id: toastId });
+                toast.dismiss(toastId);
+                setErrorModal({
+                    isOpen: true,
+                    message: result.message || result.error || "Failed to regenerate content",
+                    onRetry: () => handleRegenerate(),
+                });
             }
-        } catch (error) {
-            toast.error("Failed to regenerate content.", { id: toastId });
+        } catch (error: any) {
+            toast.dismiss(toastId);
+            setErrorModal({
+                isOpen: true,
+                message: error?.message || "Failed to regenerate content.",
+                onRetry: () => handleRegenerate(),
+            });
         } finally {
             setIsGenerating(false);
         }
@@ -422,6 +447,13 @@ export function ContentCanvas({ projectId, updates, preferences, limitReached = 
                     )}
                 </div>
             </div>
+
+            <GenerationErrorModal
+                isOpen={errorModal.isOpen}
+                onClose={() => setErrorModal({ isOpen: false, message: "" })}
+                errorMessage={errorModal.message}
+                onRetry={errorModal.onRetry}
+            />
         </div>
     )
 }

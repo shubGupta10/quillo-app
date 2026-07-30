@@ -78,10 +78,6 @@ export async function saveContent(data: SaveContentInput) {
             embedding: embeddingVector
         });
 
-        revalidatePath(`/projects/${validatedFields.data.projectId}`);
-        revalidateTag("contents", "default");
-        revalidateTag("dashboard", "default");
-
         // Mark onboarding step 3 as done (only if not already)
         if (!project.onboarding?.savedContent) {
             await Project.updateOne(
@@ -89,6 +85,10 @@ export async function saveContent(data: SaveContentInput) {
                 { $set: { "onboarding.savedContent": true } }
             );
         }
+
+        revalidatePath(`/projects/${validatedFields.data.projectId}`);
+        revalidateTag("contents", "default");
+        revalidateTag("dashboard", "default");
 
         return {
             success: true,

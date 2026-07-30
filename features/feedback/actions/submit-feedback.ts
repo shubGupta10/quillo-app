@@ -6,7 +6,7 @@ import { headers } from "next/headers";
 import Feedback, { FeedbackCategory } from "../models/feedback.model";
 import { z } from "zod";
 import mongoose from "mongoose";
-import { sendEmail } from "@/lib/email/mailer";
+import { InformAdmin, sendEmail } from "@/lib/email/mailer";
 import { getFeedbackNotificationEmailHtml } from "@/lib/email/templates";
 
 const submitFeedbackSchema = z.object({
@@ -52,24 +52,16 @@ export async function submitFeedback(input: SubmitFeedbackInput) {
             message: validated.data.message,
         });
 
-        const adminEmail = process.env.NEXT_PUBLIC_ADMIN_EMAIL || process.env.ADMIN_EMAIL;
-        if (adminEmail) {
-            try {
-                await sendEmail({
-                    to: adminEmail,
-                    subject: `[New Feedback] ${validated.data.category} - ${userName}`,
-                    html: getFeedbackNotificationEmailHtml(
-                        userName,
-                        session.user.email,
-                        validated.data.category,
-                        validated.data.rating,
-                        validated.data.message
-                    ),
-                });
-            } catch (emailErr) {
-                console.error("Failed to send admin feedback email notification:", emailErr);
-            }
-        }
+        await InformAdmin({
+            subject: `[New Feedback] ${validated.data.category} - ${userName}`,
+            html: getFeedbackNotificationEmailHtml(
+                userName,
+                session.user.email,
+                validated.data.category,
+                validated.data.rating,
+                validated.data.message
+            )
+        })
 
         return {
             success: true,

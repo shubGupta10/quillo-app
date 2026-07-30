@@ -33,10 +33,10 @@ export function ProjectTabsContainer({
     generationsUsed,
     generationsLimit
 }: ProjectTabsContainerProps) {
-    const onboarding: IProjectOnboarding = project.onboarding ?? {
-        loggedUpdate: false,
-        generatedContent: false,
-        savedContent: false,
+    const onboarding: IProjectOnboarding = {
+        loggedUpdate: Boolean(project.onboarding?.loggedUpdate || updates.length > 0 || generateUpdates.length > 0),
+        generatedContent: Boolean(project.onboarding?.generatedContent),
+        savedContent: Boolean(project.onboarding?.savedContent),
     };
     const allStepsDone = onboarding.loggedUpdate && onboarding.generatedContent && onboarding.savedContent;
     

@@ -16,6 +16,7 @@
 import { auth } from "@/lib/auth";
 import { GenerateContentInput, generateContentSchema } from "../schemas/content.schema";
 import { headers } from "next/headers";
+import { after } from "next/server";
 import { connectDB } from "@/lib/db";
 import Project from "@/features/projects/models/project.model";
 import DailyUpdate from "@/features/daily-updates/models/dailyUpdate.model";
@@ -26,6 +27,7 @@ import { aiRateLimit } from "@/lib/rate-limit";
 import { checkGenerationLimit, incrementGenerationUsage } from "@/features/subscriptions/services/usage.service";
 import { getPreferenceMemory } from "../services/preference-memory.service";
 import { ai } from "@/lib/ai";
+import { InformAdmin } from "@/lib/email/mailer";
 
 
 export async function generateContent(
@@ -76,7 +78,7 @@ export async function generateContent(
 
         const [project, updates, recentContent] = await Promise.all([
             Project.findById(validatedFields.data.projectId),
-            DailyUpdate.find({ 
+            DailyUpdate.find({
                 _id: { $in: validatedFields.data.sourceUpdates },
                 projectId: validatedFields.data.projectId
             }),
@@ -149,22 +151,47 @@ export async function generateContent(
         })
         let generatedText = res.text;
         if (!generatedText) {
+            after(async () => {
+                await InformAdmin({
+                    subject: `[AI Error] Empty Response - ${validatedFields.data.platform}`,
+                    html: `
+                        <h3>Content Generation Empty Response Alert</h3>
+                        <p><strong>User ID:</strong> ${session.user.id}</p>
+                        <p><strong>User Email:</strong> ${session.user.email || "Unknown"}</p>
+                        <p><strong>Project ID:</strong> ${validatedFields.data.projectId}</p>
+                        <p><strong>Platform:</strong> ${validatedFields.data.platform}</p>
+                        <p><strong>Error:</strong> Gemini returned an empty text response.</p>
+                    `,
+                });
+            });
             return {
                 success: false,
-                error: "Failed to generate content",
+                error: "Gemini returned an empty response. Our team has been notified.",
             };
         }
-
 
         const parsedResponse = generatedContentResponseSchema.safeParse(JSON.parse(generatedText));
         if (!parsedResponse.success) {
+            after(async () => {
+                await InformAdmin({
+                    subject: `[AI Error] Invalid Schema Response - ${validatedFields.data.platform}`,
+                    html: `
+                        <h3>Content Generation Schema Validation Alert</h3>
+                        <p><strong>User ID:</strong> ${session.user.id}</p>
+                        <p><strong>User Email:</strong> ${session.user.email || "Unknown"}</p>
+                        <p><strong>Project ID:</strong> ${validatedFields.data.projectId}</p>
+                        <p><strong>Platform:</strong> ${validatedFields.data.platform}</p>
+                        <p><strong>Error:</strong> ${parsedResponse.error.message}</p>
+                        <pre><code>${generatedText}</code></pre>
+                    `,
+                });
+            });
             return {
                 success: false,
-                error: "Invalid AI response format",
+                error: "Invalid AI response format received. Our team has been notified.",
             };
         }
 
-        // Increment only after a confirmed successful generation
         await incrementGenerationUsage(session.user.id);
 
         // Mark onboarding step 2 as done (only if not already)
@@ -180,9 +207,23 @@ export async function generateContent(
             data: parsedResponse.data.variations,
         };
     } catch (error: any) {
+        console.error("Error in generateContent:", error);
+
+        after(async () => {
+            await InformAdmin({
+                subject: `[AI Error] Generation Exception - ${data?.platform || "Unknown"}`,
+                html: `
+                    <h3>Content Generation Exception Alert</h3>
+                    <p><strong>Project ID:</strong> ${data?.projectId || "Unknown"}</p>
+                    <p><strong>Platform:</strong> ${data?.platform || "Unknown"}</p>
+                    <p><strong>Error Message:</strong> ${error?.message || "Unknown error"}</p>
+                `,
+            });
+        });
+
         return {
             success: false,
-            error: error.message,
+            error: error?.message || "Failed to generate content. Please try again.",
         };
     }
 }

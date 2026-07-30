@@ -39,10 +39,13 @@ interface GenerateContentFormProps {
     generationsLimit?: number;
 }
 
+import { GenerationErrorModal } from "./generation-error-modal"
+
 export function GenerateContentForm({ projectId, updates, preferences, limitReached = false, generationsUsed = 0, generationsLimit }: GenerateContentFormProps) {
     const router = useRouter();
     const [isGenerating, setIsGenerating] = useState(false);
     const [isUpdatesModalOpen, setIsUpdatesModalOpen] = useState(false);
+    const [errorModal, setErrorModal] = useState<{ isOpen: boolean; message: string }>({ isOpen: false, message: "" });
 
     const form = useForm<GenerateContentInput>({
         resolver: zodResolver(generateContentSchema),
@@ -69,12 +72,19 @@ export function GenerateContentForm({ projectId, updates, preferences, limitReac
                 toast.success("Content generated successfully", { id: toastId });
                 router.push(`/projects/${projectId}/review`);
             } else {
-                console.error(result.message || result.error);
-                toast.error(result.message || result.error || "Failed to generate content", { id: toastId });
+                toast.dismiss(toastId);
+                setErrorModal({
+                    isOpen: true,
+                    message: result.message || result.error || "Failed to generate content",
+                });
             }
-        } catch (error) {
+        } catch (error: any) {
             console.error("Failed to generate content", error);
-            toast.error("Failed to generate content. See console for details.", { id: toastId });
+            toast.dismiss(toastId);
+            setErrorModal({
+                isOpen: true,
+                message: error?.message || "Failed to generate content. Please try again.",
+            });
         } finally {
             setIsGenerating(false);
         }
@@ -266,6 +276,12 @@ export function GenerateContentForm({ projectId, updates, preferences, limitReac
                 </div>
             </div>
 
+            <GenerationErrorModal
+                isOpen={errorModal.isOpen}
+                onClose={() => setErrorModal({ isOpen: false, message: "" })}
+                errorMessage={errorModal.message}
+                onRetry={() => form.handleSubmit(onSubmit)()}
+            />
         </form>
     );
 }

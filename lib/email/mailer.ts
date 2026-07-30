@@ -32,3 +32,29 @@ export async function sendEmail({ to, subject, html }: SendEmailProps) {
         return { success: false, error };
     }
 }
+
+export interface InformAdminProps {
+    subject: string;
+    html: string;
+}
+
+export async function InformAdmin({ subject, html }: InformAdminProps) {
+    const adminEmail = process.env.NEXT_PUBLIC_ADMIN_EMAIL!
+    if (!adminEmail) {
+        return {
+            success: false,
+            error: "Admin email is not configured"
+        }
+    }
+
+    try {
+        await sendEmail({
+            to: adminEmail,
+            subject: subject,
+            html: html
+        })
+    } catch (error) {
+        console.error("informAdmin: Failed to send notification email to admin:", error);
+        return { success: false, error };
+    }
+}
