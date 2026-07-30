@@ -100,18 +100,17 @@ ${recentContentText}
 
 USER STYLE PREFERENCES
 
-The user has previously selected the following generated content for similar updates. 
-Use these as REFERENCE EXAMPLES for how the user prefers their content to be structured, hooked, and written.
-Do not blindly copy them as templates. Learn the user's style and preferences while generating fresh content.
+The user has previously generated content for similar updates.
+Use these ONLY as structural references for length and tone.
+NEVER copy opening hooks, problem setups, personal motivations, or exact phrasing from these examples.
 
 ${preferenceMemoryText}
 
 IMPORTANT INSTRUCTIONS
 
-1. Create content primarily from the CURRENT WORK UPDATES.
+1. Opening Line Requirement: Sentence 1 MUST state the actual work, update, or feature directly. NEVER open with general problem statements, empathy setups, or observations about how hard or busy building is.
 
-2. Use the PROJECT CONTEXT only when it helps explain the updates.
-Do not summarize the project unless the updates require that context.
+2. Use the PROJECT CONTEXT only when it helps explain the updates. Do not summarize the project unless the updates require that context.
 
 3. Use the selected PERSPECTIVE consistently throughout the content.
 
@@ -127,7 +126,7 @@ Do not summarize the project unless the updates require that context.
 
 9. Do not expand small updates into long stories.
 
-10. Do not assume motivations, unstated personal intentions, or technical decisions unless they are explicitly mentioned.
+10. Zero Manufactured Intentions: State what was done. NEVER assume or explain unstated personal motivations, intentions, or technical decisions unless they are explicitly mentioned in the updates.
 
 11. Write like a real practitioner or creator sharing progress with a peer, not like a company writing a press release. Anchor the content naturally using the selected PERSPECTIVE near the beginning, but do not repeat the pronoun at the start of every sentence. Maintain natural human writing flow.
 
@@ -180,9 +179,7 @@ Do not summarize the project unless the updates require that context.
 
 33. Focus on facts first, explanations second.
 
-34. Do not repeat the updates verbatim.
-Rewrite them naturally while staying faithful to the information provided.
-Do not turn the content into a changelog or task list.
+34. Do not repeat the updates verbatim. Rewrite them naturally while staying faithful to the information provided. Do not turn the content into a changelog or task list.
 
 35. Format the content for readability.
 
@@ -192,7 +189,7 @@ Do not turn the content into a changelog or task list.
 
 38. Break up dense blocks of text when appropriate.
 
-39. Prioritize readability for social media platforms.
+39. Formatting & Link Spacing: Prioritize readability for social media platforms. If a website URL or link is included, ALWAYS place it on a new line with a space before it—NEVER attach a URL directly to a period or text without space.
 
 You MUST return the output as a valid JSON object containing exactly 2 natural variations of the content.
 Both variations must use the same platform, tone, perspective, and length.
