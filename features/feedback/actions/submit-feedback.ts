@@ -8,6 +8,7 @@ import { z } from "zod";
 import mongoose from "mongoose";
 import { InformAdmin, sendEmail } from "@/lib/email/mailer";
 import { getFeedbackNotificationEmailHtml } from "@/lib/email/templates";
+import { after } from "next/server";
 
 const submitFeedbackSchema = z.object({
     rating: z.number().min(1, "Please select a star rating").max(5),
@@ -52,15 +53,17 @@ export async function submitFeedback(input: SubmitFeedbackInput) {
             message: validated.data.message,
         });
 
-        await InformAdmin({
-            subject: `[New Feedback] ${validated.data.category} - ${userName}`,
-            html: getFeedbackNotificationEmailHtml(
-                userName,
-                session.user.email,
-                validated.data.category,
-                validated.data.rating,
-                validated.data.message
-            )
+        after(async () => {
+            await InformAdmin({
+                subject: `[New Feedback] ${validated.data.category} - ${userName}`,
+                html: getFeedbackNotificationEmailHtml(
+                    userName,
+                    session.user.email,
+                    validated.data.category,
+                    validated.data.rating,
+                    validated.data.message
+                )
+            })
         })
 
         return {

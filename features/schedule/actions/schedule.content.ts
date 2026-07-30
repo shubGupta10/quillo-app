@@ -7,6 +7,7 @@ import { connectDB } from "@/lib/db";
 import SocialAccount from "@/features/schedule/model/socialAccount.model";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
+import { after } from "next/server";
 import Project from "@/features/projects/models/project.model";
 import { redis } from "@/lib/redis";
 import { sendEmail } from "@/lib/email/mailer";
@@ -101,11 +102,17 @@ export async function scheduleContent(contentId: string, scheduledFor: Date) {
         revalidatePath(`/content/${contentId}`);
         revalidatePath("/content");
 
-        await sendEmail({
-            to: session.user.email as string,
-            subject: "Your post is scheduled! 📅",
-            html: getScheduledEmailHtml(content.title || "Your Scheduled Content", new Date(scheduledFor))
-        })
+        after(async () => {
+            try {
+                await sendEmail({
+                    to: session.user.email as string,
+                    subject: "Your post is scheduled! 📅",
+                    html: getScheduledEmailHtml(content.title || "Your Scheduled Content", new Date(scheduledFor))
+                });
+            } catch (emailError) {
+                console.error("Background schedule email error:", emailError);
+            }
+        });
 
         return {
             success: true,

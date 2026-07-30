@@ -10,6 +10,7 @@ import Project from "@/features/projects/models/project.model";
 import { checkDailyUpdateLimit } from "@/features/subscriptions/services/usage.service";
 import Auth from "@/features/auth/model/auth.model";
 import { calculateStreak } from "@/lib/streak-engine";
+import { after } from "next/server";
 
 export async function createDailyUpdate(data: CreateDailyUpdateInput) {
     try {
@@ -73,32 +74,38 @@ export async function createDailyUpdate(data: CreateDailyUpdateInput) {
             projectId: project._id,
         });
 
-        // Mark onboarding step 1 as done (only if not already)
-        if (!project.onboarding?.loggedUpdate) {
-            await Project.updateOne(
-                { _id: project._id },
-                { $set: { "onboarding.loggedUpdate": true } }
-            );
-        }
-
-        const userProjects = await Project.find({ userId: session.user.id }).select("_id").lean();
-        const projectIds = userProjects.map((p: any) => p._id);
-        const allUpdates = await DailyUpdate.find({ projectId: { $in: projectIds } }).select("createdAt").lean();
-        const updateDates = allUpdates.map((u: any) => u.createdAt);
-        const computedStreak = calculateStreak(updateDates);
-
-        await Auth.updateOne(
-            { _id: authUser._id },
-            {
-                $set: {
-                    "streak.currentStreak": computedStreak.currentStreak,
-                    "streak.lastUpdateDate": computedStreak.lastUpdateDate || new Date(),
-                    ...(computedStreak.longestStreak > (authUser.streak?.longestStreak || 0)
-                        ? { "streak.longestStreak": computedStreak.longestStreak }
-                        : {})
+        after(async () => {
+            try {
+                // Mark onboarding step 1 as done (only if not already)
+                if (!project.onboarding?.loggedUpdate) {
+                    await Project.updateOne(
+                        { _id: project._id },
+                        { $set: { "onboarding.loggedUpdate": true } }
+                    );
                 }
+
+                const userProjects = await Project.find({ userId: session.user.id }).select("_id").lean();
+                const projectIds = userProjects.map((p: any) => p._id);
+                const allUpdates = await DailyUpdate.find({ projectId: { $in: projectIds } }).select("createdAt").lean();
+                const updateDates = allUpdates.map((u: any) => u.createdAt);
+                const computedStreak = calculateStreak(updateDates);
+
+                await Auth.updateOne(
+                    { _id: authUser._id },
+                    {
+                        $set: {
+                            "streak.currentStreak": computedStreak.currentStreak,
+                            "streak.lastUpdateDate": computedStreak.lastUpdateDate || new Date(),
+                            ...(computedStreak.longestStreak > (authUser.streak?.longestStreak || 0)
+                                ? { "streak.longestStreak": computedStreak.longestStreak }
+                                : {})
+                        }
+                    }
+                );
+            } catch (error) {
+                console.error("Background createDailyUpdate task error:", error);
             }
-        );
+        })
 
         revalidatePath(`/projects/${validatedFields.data.projectId}`);
         revalidateTag("daily-updates", "default");
